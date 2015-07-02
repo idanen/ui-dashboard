@@ -2,6 +2,7 @@ function startServer() {
     var express = require('express');
     var app = express();
 
+    require('./routes/routes.js')(app);
     app.get('/', function (req, res) {
         res.send('Hello World!')
     });
