@@ -2,7 +2,7 @@ function startServer() {
     var express = require('express');
     var app = express();
 
-    require('./../../src/server/app.js')(app);
+    require('./../src/server/app.js')(app);
 
     app.use(express.static('src/client'));
     app.use(express.static('src/client/index'));
