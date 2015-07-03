@@ -2,3 +2,4 @@
 node_modules/
 .idea/
 src/index/index.html
+resources/test.json
