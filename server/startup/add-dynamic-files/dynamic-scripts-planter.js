@@ -9,16 +9,17 @@ function replaceAll(find, replace, str) {
 function recreateIndexHTML() {
     var walk    = require('walk');
     var files   = [];
-    var INDEX_TEMPLATE_FILE_LOCATION = '../src/index/index_template.html';
-    var INDEX_FILE_LOCATION = '../src/index/index.html';
-    var walker  = walk.walk('../src/js', { followLinks: false });
+    var PATH_PREFIX = '../../src/';
+    var INDEX_TEMPLATE_FILE_LOCATION = PATH_PREFIX + 'index/index_template.html';
+    var INDEX_FILE_LOCATION = PATH_PREFIX + 'index/index.html';
+    var walker  = walk.walk(PATH_PREFIX + 'js', { followLinks: false });
 
     walker.on('file', function(root, stat, next) {
         if (stat.name.indexOf('.js') === -1) {
             next();
             return;
         }
-        root = root.substr(7);
+        root = root.substr(PATH_PREFIX.length);
         var correctRoot = replaceAll('\\', '/', root);
         var fileName = correctRoot + '/' + stat.name;
         var scriptLine = '<script src="' + fileName + '"><' + '/script>';

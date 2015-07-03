@@ -2,7 +2,7 @@ module.exports = function(grunt) {
     grunt.initConfig({
         watch: {
             all: {
-                files: ['../src/**/*.js', '../src/**/*.html', '!../src/index/index.html'],
+                files: ['../../src/**/*.js', '../../src/**/*.html', '!../../src/index/index.html'],
                 tasks: ['execute']
             }
         },
