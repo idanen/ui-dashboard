@@ -1,6 +1,6 @@
 exports.UIDashboardController = function () {
     var fs = require('fs');
-    var DATA_LOCATION = 'resources/test.json';
+    var DATA_LOCATION = 'src/server/resources/test.json';
     return {
 
         save : function(req, res) {
