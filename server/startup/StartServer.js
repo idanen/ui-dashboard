@@ -2,10 +2,10 @@ function startServer() {
     var express = require('express');
     var app = express();
 
-    require('./../../src/server/app.js')(app, express);
+    require('./../../src/server/app.js')(app);
 
-    app.use(express.static('src'));
-    app.use(express.static('src/index'));
+    app.use(express.static('src/client'));
+    app.use(express.static('src/client/index'));
 
     var server = app.listen(3000, function () {
         var host = server.address().address;

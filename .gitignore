@@ -1,5 +1,5 @@
 .idea/*.*
 node_modules/
 .idea/
-src/index/index.html
+src/client/index/index.html
 resources/test.json
