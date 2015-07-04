@@ -4,6 +4,6 @@
 angular.module('ui').directive('uiFacade', [function () {
     return {
         restrict: 'E',
-        template: '<div>ui Facade</div>'
+        templateUrl: '/js/ui-facade/ui-facade-tmpl.html'
     };
 }]);
