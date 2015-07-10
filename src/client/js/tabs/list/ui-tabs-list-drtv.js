@@ -10,9 +10,9 @@ angular.module('tabs').directive('uiTabsList', ['RegisteredTabsList', function (
 
             var selectedTab = 0;
 
-            scope.tabsNames = RegisteredTabsList.getTabsNames();
+            scope.tabsIds = RegisteredTabsList.getTabsIds();
 
-            scope.selectTab = function selectTab(tabIndex) {
+            scope.selectTab = function selectTab(tabIndex, tabId) {
 
                 var selectedElement = element.find('#item-' + selectedTab);
                 selectedElement.removeClass('active');
@@ -21,6 +21,8 @@ angular.module('tabs').directive('uiTabsList', ['RegisteredTabsList', function (
 
                 selectedElement = element.find('#item-' + tabIndex);
                 selectedElement.addClass('active');
+
+                scope.appplySelectedTabContent(tabId);
             };
         }
     };

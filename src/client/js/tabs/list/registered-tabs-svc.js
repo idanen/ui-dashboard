@@ -5,10 +5,12 @@ angular.module('tabs').service('RegisteredTabsList', [function () {
 
     var registeredTabs = {
         pushQueue: {
+            id: 'pushQueue',
             display: 'Push Queue',
             content: 'test1'
         },
         ciStatus: {
+            id: 'ciStatus',
             display: 'CI Status',
             content: 'test2'
         }
@@ -21,15 +23,22 @@ angular.module('tabs').service('RegisteredTabsList', [function () {
         }
     };
 
-    this.getTabContent = function(tabName) {
-        if (registeredTabs[tabName]) {
-            return registeredTabs[tabName].content;
+    this.getTabContent = function(tabId) {
+        if (registeredTabs[tabId]) {
+            return registeredTabs[tabId].content;
         }
         return undefined;
     };
 
-    this.getTabsNames = function getTabsNames() {
-        return _.pluck(_.values(registeredTabs), 'display');
+    this.getTabDisplay = function getTabDisplay(tabId) {
+        if (registeredTabs[tabId]) {
+            return registeredTabs[tabId].display;
+        }
+        return undefined;
+    };
+
+    this.getTabsIds = function getTabsIds() {
+        return Object.keys(registeredTabs);
     };
 
 }]);
