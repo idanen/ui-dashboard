@@ -1,3 +1,19 @@
-.aTest {
-    color: red;
+.dashboard-header {
+    margin-bottom: 20px;
+}
+
+.main-stage {
+    box-shadow: 0px 0px 10px 10px rgba(87,87,87,0.9);
+    padding-top: 10px;
+}
+
+.tabs-navigation-list {
+    background-color: gainsboro;
+    height: 700px;
+    margin-bottom: 10px;
+}
+
+.single-tab-navigation-header {
+    margin: 5px 0px;
+    font-size: x-large;
 }
