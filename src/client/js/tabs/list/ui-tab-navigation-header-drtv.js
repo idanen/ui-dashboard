@@ -3,7 +3,7 @@
 
 angular.module('tabs').directive('uiTabNavigationHeader', ['RegisteredTabsList', function (RegisteredTabsList) {
     return {
-        restrict: 'E',
+        restrict: 'A',
         templateUrl: 'js/tabs/list/ui-tab-navigation-header-tmpl.html',
         link: function (scope) {
 
