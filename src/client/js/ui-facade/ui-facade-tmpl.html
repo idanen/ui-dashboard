@@ -5,10 +5,7 @@
             <h1 class="text-center dashboard-header">UI Dashboard</h1>
             <div class="row main-stage">
                 <ui-tabs-list></ui-tabs-list>
-                <div id="tabs-content" class="col-lg-9">
-                    tab content
-                </div>
-
+                <div id="tabs-content" class="col-lg-9" ng-include="selectedTabContent"></div>
             </div>
         </div>
         <div class="col-lg-1"></div>

@@ -9,7 +9,7 @@ angular.module('ui').directive('uiFacade', ['RegisteredTabsList', function (Regi
 
             scope.appplySelectedTabContent = function applySelectedTabContent(tabId) {
                 var tabUrlContent = RegisteredTabsList.getTabContent(tabId);
-                console.log('applying tab ID content' + tabId + '; tab content: ' + tabUrlContent);
+                scope.selectedTabContent = tabUrlContent;
             };
         }
     };

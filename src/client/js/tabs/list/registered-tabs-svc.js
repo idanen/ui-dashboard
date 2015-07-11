@@ -7,12 +7,12 @@ angular.module('tabs').service('RegisteredTabsList', [function () {
         pushQueue: {
             id: 'pushQueue',
             display: 'Push Queue',
-            content: 'test1'
+            content: 'js/tabs/list/tab-content-ui-push-queue-tmpl.html'
         },
         ciStatus: {
             id: 'ciStatus',
             display: 'CI Status',
-            content: 'test2'
+            content: 'js/tabs/list/tab-content-ui-team-members-tmpl.html'
         }
 
     };
