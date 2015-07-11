@@ -4,7 +4,7 @@
 angular.module('tabs').directive('uiTabNavigationHeader', ['RegisteredTabsList', function (RegisteredTabsList) {
     return {
         restrict: 'A',
-        templateUrl: 'js/tabs/list/ui-tab-navigation-header-tmpl.html',
+        templateUrl: 'js/tabs/list/ui-tab-navigation-header/ui-tab-navigation-header-tmpl.html',
         link: function (scope) {
 
             scope.tabNavigationHeader = RegisteredTabsList.getTabDisplay(scope.tabId);

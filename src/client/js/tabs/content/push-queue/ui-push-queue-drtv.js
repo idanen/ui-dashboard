@@ -13,7 +13,7 @@ angular.module('tabs').directive('uiPushQueue', ['PushQueueService', 'TeamMember
             };
 
         }],
-        templateUrl: 'js/tabs/push-queue/ui-push-queue-tmpl.html',
+        templateUrl: 'js/tabs/content/push-queue/ui-push-queue-tmpl.html',
         link: function ($scope) {
             $scope.pushQueueCtrl.invalidateHead();
         }
