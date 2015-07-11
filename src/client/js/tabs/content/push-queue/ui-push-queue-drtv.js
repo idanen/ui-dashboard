@@ -6,10 +6,10 @@ angular.module('tabs').directive('uiPushQueue', ['PushQueueService', 'TeamMember
         restrict: 'E',
         controllerAs: 'pushQueueCtrl',
         controller: [function () {
-
+            var ctrl = this;
             this.invalidateHead = function () {
                 var userId = PushQueueService.invalidateHead();
-                this.head = TeamMembersService.getUserNameById(userId);
+                ctrl.head = TeamMembersService.getUserNameById(userId);
             };
 
         }],
