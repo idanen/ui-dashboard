@@ -12,6 +12,11 @@ angular.module('tabs').service('RegisteredTabsList', [function () {
         ciStatus: {
             id: 'ciStatus',
             display: 'CI Status',
+            content: 'js/tabs/list/tabs-content-templates/tab-content-ui-team-1-tmpl.html'
+        },
+        teamMembers: {
+            id: 'teamMembers',
+            display: 'Team Members',
             content: 'js/tabs/list/tabs-content-templates/tab-content-ui-team-members-tmpl.html'
         }
 

@@ -9,7 +9,7 @@ angular.module('tabs').directive('uiPushQueue', ['PushQueueService', 'TeamMember
             var ctrl = this;
             this.invalidateHead = function () {
                 var userId = PushQueueService.invalidateHead();
-                ctrl.head = TeamMembersService.getUserNameById(userId);
+
             };
 
         }],
