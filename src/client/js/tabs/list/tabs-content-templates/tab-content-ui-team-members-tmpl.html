@@ -1,1 +1,71 @@
-<div>Team members - TBD</div>
+<div class="bs-example" ng-app="tabs" ng-controller="membersController">
+        <div class="well well-sm">
+            <h1><center>Team Members</h1>
+    </div>
+
+    <!-- Trigger the modal with a button -->
+    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#newMemberModal" style="margin-bottom:10px;">New Member</button>
+
+    <!-- Modal -->
+    <div id="newMemberModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Sign Up</h4>
+                </div>
+                <div class="modal-body">
+                    <form novalidate class="simple-form" role="form" name="addMemberForm">
+                        <div class="form-group">
+                            First Name: <input type="text" class="form-control" ng-model="member.fname" /><br />
+                        </div>
+                        <div class="form-group">
+                            Last Name: <input type="text" class="form-control" ng-model="member.lname" /><br />
+                        </div>
+                        <div class="form-group">
+                            E-mail: <input type="email" class="form-control" ng-model="member.email" /><br />
+                        </div>
+                        <div class="form-group">
+                            Image Source: <input type="text" class="form-control" ng-model="member.img" /><br />
+                        </div>
+
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" ng-click="addMember(member)" class="btn btn-default" value="Register" data-dismiss="modal"/>
+                    </form>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <label>Search: <input ng-model="searchText"></label><br>
+    <div class="panel-group" id="accordion">
+        <div class="panel panel-default" ng-repeat="member in members | filter: {fname: searchText}">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#{{member.index}}">
+                        <img ng-src="{{member.img}}" width="25px" height="25px" style="margin-right:20px;margin-left:10px;"/>{{member.fname + " " + member.lname | uppercase}}
+                    </a>
+                </h4>
+            </div>
+            <div id="{{member.index}}" class="panel-collapse collapse ">
+                <div class="panel-body">
+                    <table class="table"><tr>
+                        <td class="col-sm-3"><img ng-src="{{member.img}}" width="100px" height="100px"/></td>
+                        <td class="col-sm-3">{{member.fname}}</td>
+                        <td class="col-sm-3">{{member.lname}}</td>
+                        <td class="col-sm-3">{{member.email}}</td>
+                        </a>
+                    </tr></table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <center><div class="btn-group">
+        <button type="button" class="btn btn-primary" ng-click="goPrevPage()"> Prev </button>
+        <button type="button" class="btn btn-primary">{{ currentPage }}</button>
+        <button type="button" class="btn btn-primary" ng-click="goNextPage()"> Next </button>
+    </div></center>
+</div>
