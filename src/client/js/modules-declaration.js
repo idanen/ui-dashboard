@@ -1,2 +1,2 @@
 angular.module('ui', ['tabs']);
-angular.module('tabs', []);
+angular.module('tabs', ['firebase']);

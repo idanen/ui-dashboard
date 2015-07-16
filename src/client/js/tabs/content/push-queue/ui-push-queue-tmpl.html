@@ -1,46 +1,35 @@
 <div class="row">
     <div class="col-lg-7">
         <div class="row">
-            <div class="col-lg-8">
-                Head: {{pushQueueCtrl.head}}
+            <div class="col-lg-7">
+                <input type="text" class="form-control" placeholder="Name" ng-model="pushQueueCtrl.name" id="nameField">
+                <button type="button" class="btn btn-info col-lg-3 col-md-offset-1 pull-right"
+                        ng-click="pushQueueCtrl.addToQueue()" style="width: 105px;"
+                        ng-disabled="pushQueueCtrl.name === '' || pushQueueCtrl.name === undefined">Push
+                </button>
             </div>
-            <div class="col-lg-1">
-                <button type="button" class="btn btn-primary">POP !</button>
-            </div>
-            <div class="col-lg-3"></div>
         </div>
         <div class="row">
-            <div class="col-lg-5">
+            <div class="col-lg-7">
+                <h3>{{pushQueueCtrl.empty}}</h3>
                 <ul class="list-group">
-                    <li class="list-group-item">Ofer</li>
-                    <li class="list-group-item">Idit</li>
-                    <li class="list-group-item">Yael</li>
+                    <!-- arrays are fully sortable and filterable -->
+                    <li ng-repeat="name in pushQueueCtrl.queue" class="list-group-item">
+                        <div class="row">
+                            <div class="col-lg-7"> {{ name.content }}</div>
+                            <div class="col-lg-3 col-md-offset-2">
+                                <!-- delete a message using $remove -->
+                                <button type="button" class="btn btn-info pull-right"
+                                        ng-click="pushQueueCtrl.removeFromQueue(name)">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </li>
                 </ul>
             </div>
-            <div class="col-lg-1">
-                <div style="margin-top: 10px;"></div>
-                <div class="row">
-                    <button type="button" class="btn btn-info">
-                        <span class="glyphicon glyphicon-hand-up"></span>
-                    </button>
-                </div>
-                <div style="margin-top: 10px;"></div>
-                <div class="row">
-                    <button type="button" class="btn btn-info">
-                        <span class="glyphicon glyphicon-remove"></span>
-                    </button>
-                </div>
-                <div style="margin-top: 10px;"></div>
-                <div class="row">
-                    <button type="button" class="btn btn-info">
-                        <span class="glyphicon glyphicon-hand-down"></span>
-                    </button>
-                </div>
-            </div>
-            <div class="col-lg-6"></div>
         </div>
-    </div>
-    <div class="col-lg-4">
-        here we'll have an image
+
     </div>
 </div>
+<!--/*pushQueueCtrl.queue.$remove(name)*/-->
