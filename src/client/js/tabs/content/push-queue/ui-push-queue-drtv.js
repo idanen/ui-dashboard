@@ -5,31 +5,28 @@ angular.module('tabs').directive('uiPushQueue', ['PushQueueService', 'TeamMember
         restrict: 'E',
         controllerAs: 'pushQueueCtrl',
         controller: [function () {
+
             var ctrl = this;
             this.queue = QueueService;
-            this.addToQueue = function () {
-                // $add on a synchronized array is like Array.push() except it saves to the database!
-                if (!ctrl.name == '') {
-                    ctrl.queue.$add({
-                        content: ctrl.name,
-                        timestamp: Firebase.ServerValue.TIMESTAMP
-                    });
-                    ctrl.empty = '';
-                    ctrl.name = '';
-                }
-            };
-            this.removeFromQueue = function (name) {
-                ctrl.queue.$remove(name);
-                if (ctrl.queue.length-1 === 0) {
-                    ctrl.empty = 'Queue is Empty';
-                }
+            this.members = TeamMembersService.members;
+            this.selected = this.members[0];
+            this.empty = '';
+
+            this.getMemberByID = function (memberId) {
+                return TeamMembersService.getMemberByID(memberId);
             }
-            var nameField = $('#nameField');
-            nameField.keypress(function (e) {
-                if (e.keyCode == 13) {
-                    ctrl.addToQueue();
-                }
-            });
+            this.addToQueue = function () {
+                ctrl.queue.$add({
+                    id: this.selected.memberId
+                });
+                ctrl.empty = '';
+            };
+            this.removeFromQueue = function (id) {
+                ctrl.queue.$remove(id).then(function(ref) {
+                if (ctrl.queue.length === 0) {
+                    ctrl.empty = 'Queue is Empty';
+                }});
+            }
         }],
 
         templateUrl: 'js/tabs/content/push-queue/ui-push-queue-tmpl.html',
@@ -43,3 +40,4 @@ angular.module('tabs').directive('uiPushQueue', ['PushQueueService', 'TeamMember
         }
     }
 }]);
+

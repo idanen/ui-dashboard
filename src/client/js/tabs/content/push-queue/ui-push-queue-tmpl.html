@@ -2,25 +2,19 @@
     <div class="col-lg-7">
         <div class="row">
             <div class="col-lg-7">
-                <input type="text" class="form-control" placeholder="Name" ng-model="pushQueueCtrl.name" id="nameField">
-                <button type="button" class="btn btn-info col-lg-3 col-md-offset-1 pull-right"
-                        ng-click="pushQueueCtrl.addToQueue()" style="width: 105px;"
-                        ng-disabled="pushQueueCtrl.name === '' || pushQueueCtrl.name === undefined">Push
-                </button>
+                <select class="form-control" ng-model="pushQueueCtrl.selected" ng-options="member.fname for member in pushQueueCtrl.members"></select>
+                <button type="button" class="btn btn-info col-lg-3 col-md-offset-1 pull-right" ng-click="pushQueueCtrl.addToQueue()" style="width: 105px;">Push</button>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-7">
                 <h3>{{pushQueueCtrl.empty}}</h3>
                 <ul class="list-group">
-                    <!-- arrays are fully sortable and filterable -->
-                    <li ng-repeat="name in pushQueueCtrl.queue" class="list-group-item">
+                    <li ng-repeat="member in pushQueueCtrl.queue" class="list-group-item">
                         <div class="row">
-                            <div class="col-lg-7"> {{ name.content }}</div>
+                            <div class="col-lg-7"> {{ pushQueueCtrl.getMemberByID(member.id).fname }}</div>
                             <div class="col-lg-3 col-md-offset-2">
-                                <!-- delete a message using $remove -->
-                                <button type="button" class="btn btn-info pull-right"
-                                        ng-click="pushQueueCtrl.removeFromQueue(name)">
+                                <button type="button" class="btn btn-info pull-right" ng-click="pushQueueCtrl.removeFromQueue(member)">
                                     <span class="glyphicon glyphicon-remove"></span>
                                 </button>
                             </div>
@@ -29,7 +23,5 @@
                 </ul>
             </div>
         </div>
-
     </div>
 </div>
-<!--/*pushQueueCtrl.queue.$remove(name)*/-->
