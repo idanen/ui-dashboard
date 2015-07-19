@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-lg-7">
+    <div class="col-lg-6">
         <div class="row">
             <div class="col-lg-7">
                 <select class="form-control" ng-model="pushQueueCtrl.selected" ng-options="member.fname for member in pushQueueCtrl.members"></select>
@@ -23,5 +23,10 @@
                 </ul>
             </div>
         </div>
+    </div>
+
+    <div class="col-lg-6" ng-show="pushQueueCtrl.queue.length > 0">
+            <h3>Head: <b>{{ pushQueueCtrl.getMemberByID(pushQueueCtrl.queue[0].id).fname }}</b></h3>
+            <img width="150" src="{{ pushQueueCtrl.getMemberByID(pushQueueCtrl.queue[0].id).img }}" />
     </div>
 </div>
