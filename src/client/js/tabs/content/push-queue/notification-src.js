@@ -22,7 +22,7 @@ angular.module('tabs').service('NotificationService', [function () {
             });
 
             notification.onclick = function () {
-                window.open("http://127.0.0.1:3000/index.html#");
+                window.focus();
             };
         }
     }

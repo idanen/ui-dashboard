@@ -26,8 +26,6 @@ angular.module('tabs').directive('uiPushQueue', ['PushQueueService', 'TeamMember
                     ctrl.queue.$remove(id).then(function () {
                         if (ctrl.queue.length === 0) {
                             ctrl.empty = 'Queue is Empty';
-                        } else {
-                            $timeout(ctrl.callAtTimeout, 2000);
                         }
                     });
                 }
@@ -42,7 +40,15 @@ angular.module('tabs').directive('uiPushQueue', ['PushQueueService', 'TeamMember
                         controller.empty = 'Queue is Empty';
                     }
                 });
-
+                controller.queue.$watch(function (event) {
+                        if (event.event == 'child_removed') {
+                            if (controller.queue.length > 0) {
+                                controller.callAtTimeout();
+                            }
+                        }
+                    }
+                );
             }
         }
-    }]);
+    }])
+;
