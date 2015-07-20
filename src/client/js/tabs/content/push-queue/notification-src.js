@@ -7,7 +7,7 @@ angular.module('tabs').service('NotificationService', [function () {
             Notification.requestPermission();
     });
 
-    this.notifyQueueChanged = function (nextName) {
+    this.notifyQueueChanged = function (nextName, nextImg) {
         if (!Notification) {
             alert('Desktop notifications not available in your browser. Try Chromium.');
             return;
@@ -17,7 +17,7 @@ angular.module('tabs').service('NotificationService', [function () {
             Notification.requestPermission();
         else {
             var notification = new Notification('Push Queue Changed!', {
-                icon: 'http://www.officialpsds.com/images/thumbs/Thundercats-psd33581.png',
+                icon: nextImg,
                 body: nextName + " is Next!",
             });
 

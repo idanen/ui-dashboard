@@ -32,7 +32,7 @@ angular.module('tabs').directive('uiPushQueue', ['PushQueueService', 'TeamMember
                     });
                 }
                 this.callAtTimeout = function () {
-                    NotificationService.notifyQueueChanged(ctrl.getMemberByID(ctrl.queue[0].id).fname);
+                    NotificationService.notifyQueueChanged(ctrl.getMemberByID(ctrl.queue[0].id).fname, ctrl.getMemberByID(ctrl.queue[0].id).img);
                 }
             }],
             templateUrl: 'js/tabs/content/push-queue/ui-push-queue-tmpl.html',
