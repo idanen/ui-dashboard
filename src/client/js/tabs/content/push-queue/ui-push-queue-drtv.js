@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('tabs').directive('uiPushQueue', ['PushQueueService', 'TeamMembersService', 'QueueService', 'NotificationService', '$timeout',
-    function (PushQueueService, TeamMembersService, QueueService, NotificationService, $timeout) {
+angular.module('tabs').directive('uiPushQueue', ['TeamMembersService', 'QueueService', 'NotificationService',
+    function (TeamMembersService, QueueService, NotificationService) {
         return {
             restrict: 'E',
             controllerAs: 'pushQueueCtrl',
@@ -10,12 +10,11 @@ angular.module('tabs').directive('uiPushQueue', ['PushQueueService', 'TeamMember
                 var ctrl = this;
                 this.queue = QueueService;
                 this.members = TeamMembersService.members;
-                this.selected = this.members[0];
                 this.empty = '';
 
                 this.getMemberByID = function (memberId) {
                     return TeamMembersService.getMemberByID(memberId);
-                }
+                };
                 this.addToQueue = function () {
                     ctrl.queue.$add({
                         id: this.selected.memberId
@@ -28,8 +27,8 @@ angular.module('tabs').directive('uiPushQueue', ['PushQueueService', 'TeamMember
                             ctrl.empty = 'Queue is Empty';
                         }
                     });
-                }
-                this.callAtTimeout = function () {
+                };
+                this.fireNotification = function () {
                     NotificationService.notifyQueueChanged(ctrl.getMemberByID(ctrl.queue[0].id).fname, ctrl.getMemberByID(ctrl.queue[0].id).img);
                 }
             }],
@@ -43,12 +42,11 @@ angular.module('tabs').directive('uiPushQueue', ['PushQueueService', 'TeamMember
                 controller.queue.$watch(function (event) {
                         if (event.event == 'child_removed') {
                             if (controller.queue.length > 0) {
-                                controller.callAtTimeout();
+                                controller.fireNotification();
                             }
                         }
                     }
                 );
             }
         }
-    }])
-;
+    }]);
