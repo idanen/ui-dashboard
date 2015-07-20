@@ -19,6 +19,7 @@ angular.module('tabs').service('NotificationService', [function () {
             var notification = new Notification('Push Queue Changed!', {
                 icon: nextImg,
                 body: nextName + " is Next!",
+                tag: "PushQueueNotification"
             });
 
             notification.onclick = function () {
