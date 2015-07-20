@@ -40,7 +40,7 @@ angular.module('tabs').controller('membersController', ['$scope', 'TeamMembersSe
             $scope.members = $scope.tmp.slice(($scope.currentPage - 1) * 10, ($scope.currentPage * 10) - 1);
         }
 
-    }
+    };
     $scope.paginate();
 
     $scope.goPrevPage = function () {
@@ -48,14 +48,14 @@ angular.module('tabs').controller('membersController', ['$scope', 'TeamMembersSe
             $scope.currentPage--;
             $scope.paginate();
         }
-    }
+    };
 
     $scope.goNextPage = function () {
         if ($scope.tmp.length >= ($scope.currentPage * 10)) {
             $scope.currentPage++;
             $scope.paginate();
         }
-    }
+    };
 
 
     $scope.addMember = function (member) {
@@ -65,7 +65,7 @@ angular.module('tabs').controller('membersController', ['$scope', 'TeamMembersSe
             member.index = index;
         });
         $scope.paginate();
-    }
+    };
 
     angular.forEach($scope.members, function (member, index) {
         //Just add the index to your item

@@ -17,9 +17,10 @@
                         </ui-select>
                     </div>
                     <div class="col-md-3">
-                            <button type="button" class="btn btn-info btn-block member-selector"
-                                    ng-click="pushQueueCtrl.addToQueue()">Push
-                            </button>
+                        <button type="button" class="btn btn-info btn-block member-selector"
+                                ng-disabled="pushQueueCtrl.selected === undefined"
+                                ng-click="pushQueueCtrl.addToQueue()">Push
+                        </button>
                     </div>
                 </div>
             </div>
