@@ -8,7 +8,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr class="{{ trStatus(job) }}" ng-repeat="job in nameJson">
+        <tr class="{{ trStatus(job) }}" ng-repeat="job in nameJson | unique:'jobName'" >
             <td>{{ displayName(job) }}</td>
             <td><img ng-src="{{ chooseImg(job) }}"> {{ status(job) }}</td>
             <td><input type="checkbox" checked data-toggle="toggle"></td>
@@ -32,12 +32,13 @@
                 <div class="modal-body">
                     <form novalidate class="simple-form" role="form" name="addJobForm">
                         <div class="form-group">
-                            Job Name: <input type="text" class="form-control" ng-model="job.name" /><br />
-                            <h6 style="padding-top:0px;color:red">* job name as in Jenkins (e.g. MaaS-Platf-UI-Branch-master)</h6>
+                            Job Name: <input type="text" class="form-control" name="jobName" ng-model="job.name" required/><br />
+                              <span style="color:red" ng-show="addJobForm.jobName.$dirty && addJobForm.jobName.$invalid">
+                                <span ng-show="addJobForm.jobName.$error.required">job name required as in Jenkins (e.g. MaaS-Platf-UI-Branch-master)</span>
                         </div>
                         <div class="form-group">
-                            Job Alias: <input type="text" class="form-control" ng-model="job.alias" /><br />
-                            <h6 style="color:red">* short name to use</h6>
+                            Job Alias: <input type="text" class="form-control" ng-model="job.alias" required/><br />
+                            <span>* short name to use</span>
                         </div>
 
                 </div>
