@@ -1,6 +1,7 @@
 .idea/*.*
 .idea/
-src/client/index/index.html
+src/client/index.html
 src/server/resources/*.*
 node_modules/
 ui-dashboard.iml
+dist/

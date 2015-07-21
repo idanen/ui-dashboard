@@ -1,3 +1,5 @@
+(function (angular) {
+    'use strict';
 
 angular.module('tabs').service('TeamMembersService', [function ( ) {
     this.members = [
@@ -12,65 +14,65 @@ angular.module('tabs').service('TeamMembersService', [function ( ) {
         {memberId:8, fname:"Yael",  lname:"Schnabel",email:"fadi.matar@hp.com", img:"http://www.mykonosgreekcuisine.com/Cute_Dog_Clipart.png"},
         {memberId:9, fname:"Evgeny",lname:"Ogurko",  email:"fadi.matar@hp.com", img:"http://www.clker.com/cliparts/P/N/C/N/f/d/cartoon-elephant-hi.png"}];
 
-    this.uniqueMemberId = this.members.length;
+        this.uniqueMemberId = this.members.length;
 
-    this.addMember = function (member) {
-        member.memberId = this.uniqueMemberId;
-        this.uniqueMemberId++;
+        this.addMember = function (member) {
+            member.memberId = this.uniqueMemberId;
+            this.uniqueMemberId++;
 
-        var tmp = {};
-        angular.copy(member, tmp);
-        this.members.push(tmp);
-    };
+            var tmp = {};
+            angular.copy(member, tmp);
+            this.members.push(tmp);
+        };
 
-    this.getMemberByID = function (memberId) {
-        return this.members.filter(function (obj) {
-            return obj.memberId == memberId;
-        })[0];
-    }
-}]);
+        this.getMemberByID = function (memberId) {
+            return this.members.filter(function (obj) {
+                return obj.memberId == memberId;
+            })[0];
+        };
+    }]);
 
-angular.module('tabs').controller('membersController', ['$scope', 'TeamMembersService', function ($scope, TeamMembersService) {
-    $scope.currentPage = 1;
-    $scope.tmp = TeamMembersService.members;
-    $scope.paginate = function () {
-        if ($scope.tmp.length < 10)
-            $scope.members = $scope.tmp;
-        else {
-            $scope.members = $scope.tmp.slice(($scope.currentPage - 1) * 10, ($scope.currentPage * 10) - 1);
-        }
+    angular.module('tabs').controller('membersController', ['$scope', 'TeamMembersService', function ($scope, TeamMembersService) {
+        $scope.currentPage = 1;
+        $scope.tmp = TeamMembersService.members;
+        $scope.paginate = function () {
+            if ($scope.tmp.length < 10)
+                $scope.members = $scope.tmp;
+            else {
+                $scope.members = $scope.tmp.slice(($scope.currentPage - 1) * 10, ($scope.currentPage * 10) - 1);
+            }
 
-    };
-    $scope.paginate();
+        };
+        $scope.paginate();
 
-    $scope.goPrevPage = function () {
-        if ($scope.currentPage > 1) {
-            $scope.currentPage--;
+        $scope.goPrevPage = function () {
+            if ($scope.currentPage > 1) {
+                $scope.currentPage--;
+                $scope.paginate();
+            }
+        };
+
+        $scope.goNextPage = function () {
+            if ($scope.tmp.length >= ($scope.currentPage * 10)) {
+                $scope.currentPage++;
+                $scope.paginate();
+            }
+        };
+
+
+        $scope.addMember = function (member) {
+            TeamMembersService.addMember(member);
+            angular.forEach($scope.members, function (member, index) {
+                //Just add the index to your item
+                member.index = index;
+            });
             $scope.paginate();
-        }
-    };
+        };
 
-    $scope.goNextPage = function () {
-        if ($scope.tmp.length >= ($scope.currentPage * 10)) {
-            $scope.currentPage++;
-            $scope.paginate();
-        }
-    };
-
-
-    $scope.addMember = function (member) {
-        TeamMembersService.addMember(member);
         angular.forEach($scope.members, function (member, index) {
             //Just add the index to your item
             member.index = index;
         });
-        $scope.paginate();
-    };
 
-    angular.forEach($scope.members, function (member, index) {
-        //Just add the index to your item
-        member.index = index;
-    });
-
-}]);
-
+    }]);
+})(window.angular);
