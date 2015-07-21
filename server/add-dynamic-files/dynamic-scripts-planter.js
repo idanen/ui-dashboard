@@ -10,7 +10,7 @@ function recreateIndexHTML() {
     var walk    = require('walk');
     var files   = [];
     var PATH_PREFIX = '../src/client/';
-    var INDEX_TEMPLATE_FILE_LOCATION = PATH_PREFIX + 'index/index_template.html';
+    var INDEX_TEMPLATE_FILE_LOCATION = PATH_PREFIX + 'index/index.html';
     var INDEX_FILE_LOCATION = PATH_PREFIX + 'index/index.html';
     var walker  = walk.walk(PATH_PREFIX + 'js', { followLinks: false });
 
