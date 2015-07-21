@@ -8,6 +8,7 @@ var runSequence = require('run-sequence');
 var browserSync = require('browser-sync');
 var pagespeed = require('psi');
 var reload = browserSync.reload;
+var inject = require('gulp-inject');
 
 var AUTOPREFIXER_BROWSERS = [
   'ie >= 10',
@@ -122,8 +123,15 @@ gulp.task('html', function () {
 // Clean output directory
 gulp.task('clean', del.bind(null, ['.tmp', 'dist/*', '!dist/.git'], {dot: true}));
 
+// Inject app *.js files to index.html
+gulp.task('inject', function () {
+  return gulp.src('src/client/index_template/index.html')
+    .pipe(inject(gulp.src('src/client/js/**/*.js', {read: false}), {relative: true}))
+    .pipe(gulp.dest('src/client'));
+});
+
 // Watch files for changes & reload
-gulp.task('serve', ['styles'], function () {
+gulp.task('serve', ['styles', 'inject'], function () {
   browserSync({
     notify: false,
     // Customize the BrowserSync console logging prefix
@@ -137,7 +145,7 @@ gulp.task('serve', ['styles'], function () {
 
   gulp.watch(['src/client/**/*.html'], reload);
   gulp.watch(['src/client/css/**/*.{scss,css}'], ['styles', reload]);
-  gulp.watch(['src/client/js/**/*.js'], ['jshint']);
+  gulp.watch(['src/client/js/**/*.js'], ['jshint', 'inject']);
   gulp.watch(['src/client/img/**/*'], reload);
 });
 
@@ -156,7 +164,7 @@ gulp.task('serve:dist', ['default'], function () {
 
 // Build production files, the default task
 gulp.task('default', ['clean'], function (cb) {
-  runSequence('styles', ['jshint', 'html', 'images', 'fonts', 'copy'], cb);
+  runSequence('styles', ['jshint', 'html', 'images', 'fonts', 'copy'], 'inject', cb);
 });
 
 // watch files for changes and reload
