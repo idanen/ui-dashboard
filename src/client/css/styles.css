@@ -17,3 +17,7 @@
     margin: 5px 0px;
     font-size: x-large;
 }
+
+.required{
+    background-color: beige;
+}

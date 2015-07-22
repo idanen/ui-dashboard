@@ -21,8 +21,7 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http', functi
     $http.get("http://mydtbld0021.isr.hp.com:8080/jenkins/job/MaaS-Platf-UI-Branch-master/3068/api/json")
         .success(function(response) {$scope.nameHttp = response;});
     $scope.btnStyle="btn btn-default";
-
-    $scope.toggle = function (job,btnType) {
+    $scope.toggleFreeze = function (job,btnType) {
         if( (btnType == 'onButton' && job.freeze.state == false) || // toggle if need to
             (btnType == 'offButton' && job.freeze.state == true)){
             job.freeze.state = !job.freeze.state;
@@ -181,3 +180,4 @@ angular.module('tabs').filter('unique', function () {
         return items;
     };
 });
+
