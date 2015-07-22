@@ -1,50 +1,43 @@
 (function (angular) {
     'use strict';
 
-    angular.module('tabs').directive('uiPushQueue', ['TeamMembersService', 'FirebaseService', 'NotificationService',
-        function (TeamMembersService, FirebaseService, NotificationService) {
+    angular.module('tabs').directive('uiPushQueue', ['PushQueueService', 'TeamMembersService', 'FirebaseService', 'NotificationService',
+        function (PushQueueService, TeamMembersService, FirebaseService, NotificationService) {
             return {
                 restrict: 'E',
                 controllerAs: 'pushQueueCtrl',
                 controller: [function () {
 
                     var ctrl = this;
-                    this.queue = FirebaseService.getQueue();
+                    this.queue = PushQueueService.getQueue();
                     this.members = TeamMembersService.getMembers();
                     this.empty = '';
 
-                    this.queue.$watch(function (event) {
-                        if (event.event == 'child_removed') {
-                            if (ctrl.queue.length > 0) {
-                                ctrl.fireNotification();
-                            }
-                        }
-                    });
-
                     this.addToQueue = function () {
-                        ctrl.queue.$add({
-                            id: this.selected.memberId
-                        });
+                        PushQueueService.addToQueue(this.selected.memberId);
                         ctrl.empty = '';
                     };
+
                     this.removeFromQueue = function (id) {
-                        ctrl.queue.$remove(id).then(function () {
-                            if (ctrl.queue.length === 0) {
+                        PushQueueService.removeFromQueue(id).then(function (isEmpty) {
+                            if (isEmpty) {
                                 ctrl.empty = 'Queue is Empty';
                             }
+                        }).catch(function () {
+                            console.log();
                         });
                     };
 
                     this.getFirstName = function (memberId) {
-                        return ctrl.getMemberByID(memberId).fname;
+                        return PushQueueService.getFirstName(memberId);
                     };
 
                     this.getMemberByID = function (memberId) {
-                        return TeamMembersService.getMemberByID(memberId);
+                        return PushQueueService.getMemberByID(memberId);
                     };
 
                     this.fireNotification = function () {
-                        NotificationService.notifyQueueChanged(ctrl.getMemberByID(ctrl.queue[0].id).fname, ctrl.getMemberByID(ctrl.queue[0].id).img);
+                        PushQueueService.fireNotification();
                     };
                 }],
                 templateUrl: 'js/tabs/content/push-queue/ui-push-queue-tmpl.html',
