@@ -19,21 +19,13 @@
 
         this.getMemberByID = function (memberId) {
             if (memberId) {
-                var member = this.members.filter(function (obj) {
+                return this.members.filter(function (obj) {
                     return obj.memberId == memberId;
                 })[0];
-                return member;
             }
         };
         this.getMembers = function () {
             return svc.members;
         }
-    }]);
-
-    angular.module('tabs').controller('membersController', ['$scope', 'TeamMembersService', function ($scope, TeamMembersService) {
-        $scope.members = TeamMembersService.members;
-        $scope.addMember = function (member) {
-            TeamMembersService.addMember(member);
-        };
     }]);
 })(window.angular);
