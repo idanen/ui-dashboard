@@ -26,6 +26,6 @@
         };
         this.getMembers = function () {
             return svc.members;
-        }
+        };
     }]);
 })(window.angular);
