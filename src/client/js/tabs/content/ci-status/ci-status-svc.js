@@ -20,8 +20,27 @@ angular.module('tabs').service('CiStatusService', ['$http',function ($http) {
 angular.module('tabs').controller('ciStatusController',['$scope','$http', function($scope,$http){
     $http.get("http://mydtbld0021.isr.hp.com:8080/jenkins/job/MaaS-Platf-UI-Branch-master/3068/api/json")
         .success(function(response) {$scope.nameHttp = response;});
+    $scope.btnStyle="btn btn-default";
+
+    $scope.toggle = function (job,btnType) {
+        if( (btnType == 'onButton' && job.freeze.state == false) || // toggle if need to
+            (btnType == 'offButton' && job.freeze.state == true)){
+            job.freeze.state = !job.freeze.state;
+            if (job.freeze.onStyle == "btn btn-default") {
+                job.freeze.onStyle = "btn btn-primary";
+                job.freeze.offStyle = "btn btn-default";
+            } else {
+                job.freeze.offStyle = "btn btn-primary";
+                job.freeze.onStyle = "btn btn-default";
+            }
+        }
+    };
     $scope.warning="";
-    $scope.nameJson =[];
+    $scope.nameJson =[{jobName:'MaaS-Platf-UI-Branch-master',aliasName:'master',freeze:{
+        state:false,
+        onStyle:'btn btn-default',
+        offStyle:'btn btn-primary'
+    }}];
     $scope.addJob = function(job){
         $scope.tmpJob = [];
         var url = "http://mydtbld0021.isr.hp.com:8080/jenkins/job/" + job.name + "/api/json";
@@ -42,14 +61,18 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http', functi
     }
 
     $scope.addTheJob = function(job,alias){
-        var newJob = {jobName:job.fullDisplayName,aliasName:alias,freeze:"false",result:job.result,buildStatus:job.building};
+        var newJob = {jobName:job.fullDisplayName,aliasName:alias,freeze:{
+            state:false,
+            onStyle:'btn btn-default',
+            offStyle:'btn btn-primary'
+        }, result:job.result,buildStatus:job.building};
 
         $scope.nameJson.push(newJob);
     }
 
     $scope.displayName = function(job){
         console.log(job.aliasName);
-        if(job.aliasName != ""){
+        if(job.aliasName != "" && job.aliasName !== undefined){
             return job.aliasName;
         }else{
             return job.jobName;

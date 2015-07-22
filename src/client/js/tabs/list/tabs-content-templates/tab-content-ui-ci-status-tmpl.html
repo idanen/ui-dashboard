@@ -9,9 +9,14 @@
         </thead>
         <tbody>
         <tr class="{{ trStatus(job) }}" ng-repeat="job in nameJson | unique:'jobName'" >
-            <td>{{ displayName(job) }}</td>
-            <td><img ng-src="{{ chooseImg(job) }}"> {{ status(job) }}</td>
-            <td><input type="checkbox" checked data-toggle="toggle"></td>
+            <td style="height: 30px;line-height: 30px;width:40%;"><h4>{{ displayName(job) | limitTo:30 }}</h4></td>
+            <td style="height: 30px;line-height: 30px;width:30%;"><img ng-src="{{ chooseImg(job) }}"> {{ status(job) }}</td>
+            <td style="height: 30px;line-height: 30px;width:30%;"><div class="btn-group">
+                    <button ng-click="toggle(job,'onButton')" class="{{ job.freeze.onStyle }}">On</button>
+                    <button ng-click="toggle(job,'offButton')" class="{{ job.freeze.offStyle }}">Off</button>
+            </div></td>
+
+
         </tr>
         </tbody>
     </table>
