@@ -3,12 +3,13 @@
 }
 
 .main-stage {
-    box-shadow: 0 0 15px 3px rgba(87, 87, 87, 0.3);
+    box-shadow: 0 0 15px 3px rgba(0,0,0,.3);
 }
 
 .tabs-navigation-list {
     background-color: gainsboro;
     height: 700px;
+    box-shadow: inset -10px 0 25px -17px rgba(0,0,0,.3);
 }
 
 .single-tab-navigation-header {
@@ -23,6 +24,7 @@
 .tabs-content {
     padding-top: 10px;
     padding-bottom: 10px;
+    height: 700px;
 }
 
 .member-selector,

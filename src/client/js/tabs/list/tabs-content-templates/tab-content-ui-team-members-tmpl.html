@@ -21,16 +21,23 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label>First Name:</label><input type="text" class="form-control" ng-model="member.fname"/><br/>
+                            <label>First Name:</label><input type="text" class="form-control"
+                                                             ng-model="member.fname"/><br/>
                         </div>
                         <div class="form-group">
-                            <label>Last Name: </label><input type="text" class="form-control" ng-model="member.lname"/><br/>
+                            <label>Last Name: </label><input type="text" class="form-control"
+                                                             ng-model="member.lname"/><br/>
                         </div>
                         <div class="form-group">
-                            <label>E-mail: </label><input type="email" class="form-control" ng-model="member.email"/><br/>
+                            <label>E-mail: </label><input type="email" class="form-control"
+                                                          ng-model="member.email"/><br/>
                         </div>
                         <div class="form-group">
                             <label>Image Source: </label><input type="text" class="form-control" ng-model="member.img"/><br/>
+                        </div>
+                        <div class="form-group">
+                            <label>Computer Name: </label><input type="text" class="form-control"
+                                                                 ng-model="member.compName"/><br/>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -44,35 +51,36 @@
     </div>
     <label>Search: <input ng-model="searchText"></label><br>
 
-    <div class="panel-group" id="accordion">
+    <div class="panel-group" id="accordion" style="overflow-y: scroll; max-height:inherit">
         <div class="panel panel-default" ng-repeat="member in members | filter: {fname: searchText}">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#{{member.index}}">
-                        <img ng-src="{{member.img}}" width="25px" height="25px"
-                             style="margin-right:20px;margin-left:10px;"/>{{member.fname + " " + member.lname |
-                        uppercase}}
+                    <a data-toggle="collapse" data-parent="#accordion" href="#{{member.memberId}}">
+                        <div class="row">
+                            <span class="col-sm-1">
+                                <img width="25px" ng-src="{{member.img}}"/>
+                            </span>
+                            <span class="col-sm-8">{{member.fname + " " + member.lname |  uppercase}}</span>
+                            <span class="col-sm-2">{{member.compName}}</span>
+                        </div>
                     </a>
                 </h4>
             </div>
-            <div id="{{member.index}}" class="panel-collapse collapse ">
+            <div id="{{member.memberId}}" class="panel-collapse collapse ">
                 <div class="panel-body">
                     <table class="table">
                         <tr>
-                            <td class="col-sm-3">{{member.memberId}}</td>
+                            <td class="col-sm-1">{{member.memberId}}</td>
+                            <td class="col-sm-1">{{member.fname}}</td>
+                            <td class="col-sm-1">{{member.lname}}</td>
+                            <td class="col-sm-2">{{member.email}}</td>
+                            <td class="col-sm-2">{{member.compName}}</td>
                             <td class="col-sm-3"><img ng-src="{{member.img}}" width="100px" height="100px"/></td>
-                            <td class="col-sm-3">{{member.fname}}</td>
-                            <td class="col-sm-3">{{member.lname}}</td>
-                            <td class="col-sm-3">{{member.email}}</td>
+
                         </tr>
                     </table>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="btn-group">
-        <button type="button" class="btn btn-primary" ng-click="goPrevPage()"> Prev</button>
-        <button type="button" class="btn btn-primary">{{ currentPage }}</button>
-        <button type="button" class="btn btn-primary" ng-click="goNextPage()"> Next</button>
     </div>
 </div>

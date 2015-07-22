@@ -1,17 +1,25 @@
 (function (angular) {
     'use strict';
 
-    angular.module('tabs').directive('uiPushQueue', ['TeamMembersService', 'QueueService', 'NotificationService',
-        function (TeamMembersService, QueueService, NotificationService) {
+    angular.module('tabs').directive('uiPushQueue', ['TeamMembersService', 'FirebaseService', 'NotificationService',
+        function (TeamMembersService, FirebaseService, NotificationService) {
             return {
                 restrict: 'E',
                 controllerAs: 'pushQueueCtrl',
                 controller: [function () {
 
                     var ctrl = this;
-                    this.queue = QueueService;
-                    this.members = TeamMembersService.members;
+                    this.queue = FirebaseService.getQueue();
+                    this.members = TeamMembersService.getMembers();
                     this.empty = '';
+                    this.getMembers
+                    this.queue.$watch(function (event) {
+                        if (event.event == 'child_removed') {
+                            if (ctrl.queue.length > 0) {
+                                ctrl.fireNotification();
+                            }
+                        }
+                    });
 
                     this.getMemberByID = function (memberId) {
                         return TeamMembersService.getMemberByID(memberId);
@@ -29,6 +37,7 @@
                             }
                         });
                     };
+
                     this.fireNotification = function () {
                         NotificationService.notifyQueueChanged(ctrl.getMemberByID(ctrl.queue[0].id).fname, ctrl.getMemberByID(ctrl.queue[0].id).img);
                     };
@@ -40,15 +49,9 @@
                             controller.empty = 'Queue is Empty';
                         }
                     });
-                    controller.queue.$watch(function (event) {
-                            if (event.event == 'child_removed') {
-                                if (controller.queue.length > 0) {
-                                    controller.fireNotification();
-                                }
-                            }
-                        }
-                    );
                 }
             };
-        }]);
-})(window.angular);
+        }])
+    ;
+})
+(window.angular);
