@@ -31,7 +31,7 @@
                 <ul class="list-group">
                     <li ng-repeat="member in pushQueueCtrl.queue" class="list-group-item">
                         <div class="row">
-                            <div class="col-md-7"> {{ pushQueueCtrl.getMemberByID(member.id).fname }}</div>
+                            <div class="col-md-7"> {{ pushQueueCtrl.getFirstName(member.id)}}</div>
                             <div class="col-md-3 col-md-offset-2">
                                 <button type="button" class="btn btn-info pull-right"
                                         ng-click="pushQueueCtrl.removeFromQueue(member)">

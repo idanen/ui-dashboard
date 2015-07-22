@@ -3,13 +3,13 @@
 }
 
 .main-stage {
-    box-shadow: 0 0 15px 3px rgba(0,0,0,.3);
+    box-shadow: 0 0 15px 3px rgba(0, 0, 0, .3);
 }
 
 .tabs-navigation-list {
     background-color: gainsboro;
     height: 700px;
-    box-shadow: inset -10px 0 25px -17px rgba(0,0,0,.3);
+    box-shadow: inset -10px 0 25px -17px rgba(0, 0, 0, .3);
 }
 
 .single-tab-navigation-header {
@@ -28,14 +28,33 @@
 }
 
 .member-selector,
-.selectize-input{
+.selectize-input {
     line-height: 30px;
 }
 
 .profile-image {
-    width: 30px; margin-right: 20px;
+    width: 30px;
+    margin-right: 20px;
 }
 
-.selectize-dropdown-content{
+.selectize-dropdown-content {
     max-height: 400px;
+}
+
+.panel-group {
+    overflow: auto;
+    max-height: 520px
+}
+
+.new-member-button {
+    margin-bottom: 10px;
+}
+
+.member-image {
+    width: 100px;
+    height: 100px
+}
+
+.panel-group-member-image{
+    width:25px;
 }

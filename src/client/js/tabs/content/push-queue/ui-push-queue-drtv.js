@@ -12,7 +12,7 @@
                     this.queue = FirebaseService.getQueue();
                     this.members = TeamMembersService.getMembers();
                     this.empty = '';
-                    this.getMembers
+
                     this.queue.$watch(function (event) {
                         if (event.event == 'child_removed') {
                             if (ctrl.queue.length > 0) {
@@ -21,9 +21,6 @@
                         }
                     });
 
-                    this.getMemberByID = function (memberId) {
-                        return TeamMembersService.getMemberByID(memberId);
-                    };
                     this.addToQueue = function () {
                         ctrl.queue.$add({
                             id: this.selected.memberId
@@ -36,6 +33,14 @@
                                 ctrl.empty = 'Queue is Empty';
                             }
                         });
+                    };
+
+                    this.getFirstName = function (memberId) {
+                        return ctrl.getMemberByID(memberId).fname;
+                    };
+
+                    this.getMemberByID = function (memberId) {
+                        return TeamMembersService.getMemberByID(memberId);
                     };
 
                     this.fireNotification = function () {
