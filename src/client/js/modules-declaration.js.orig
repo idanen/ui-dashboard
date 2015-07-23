@@ -1,5 +1,6 @@
-angular.module('tabs', ['firebase', 'ngSanitize', 'ui.select']);
+<<<<<<< HEAD
 angular.module('ui', ['tabs']);
+angular.module('tabs', []);
 
 
 angular.module('tabs').controller('infoCtrl',['$scope',function($scope){
@@ -14,3 +15,7 @@ angular.module('tabs').controller('infoCtrl',['$scope',function($scope){
         return $scope.currentStatue;
     }
 }]);
+=======
+angular.module('tabs', ['firebase', 'ngSanitize', 'ui.select']);
+angular.module('ui', ['tabs']);
+>>>>>>> master
