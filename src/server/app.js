@@ -5,5 +5,6 @@ module.exports = function(app){
 
     // setup routes
     require('./routes/routes.js')(app);
+    //require('./service/ciStatusService.js')();
 
 };

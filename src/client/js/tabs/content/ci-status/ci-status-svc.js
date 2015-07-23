@@ -6,21 +6,22 @@
 'use strict';
 
 angular.module('tabs').service('CiStatusService', ['$http',function ($http) {
-
-
-
-
     this.invalidateHead = function() {
         return 3;
     };
-
 }]);
+
 
 
 angular.module('tabs').controller('ciStatusController',['$scope','$http', function($scope,$http){
     $http.get("http://mydtbld0021.isr.hp.com:8080/jenkins/job/MaaS-Platf-UI-Branch-master/3068/api/json")
         .success(function(response) {$scope.nameHttp = response;});
     $scope.btnStyle="btn btn-default";
+
+    $http.get("/updateJob").success(function(response){console.log(response);
+        });
+
+
     $scope.toggleFreeze = function (job,btnType) {
         if( (btnType == 'onButton' && job.freeze.state == false) || // toggle if need to
             (btnType == 'offButton' && job.freeze.state == true)){
@@ -40,6 +41,8 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http', functi
         onStyle:'btn btn-default',
         offStyle:'btn btn-primary'
     }}];
+
+
     $scope.addJob = function(job){
         $scope.tmpJob = [];
         var url = "http://mydtbld0021.isr.hp.com:8080/jenkins/job/" + job.name + "/api/json";
@@ -77,14 +80,6 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http', functi
             return job.jobName;
         }
     }
-/* for http use
-    $scope.status = function(){
-        if($scope.name.building == true){
-            return "Running";
-        }else{
-            return $scope.name.result;
-        }
-    }*/
 
     // for json and http use
     $scope.status = function(job){
@@ -102,21 +97,7 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http', functi
             return "../images/" + job.result + ".png";
         }
     }
-/* for http use
-    $scope.trStatus = function() {
-        if ($scope.name.building == true) {
-            return "active";
-        } else {
-            if ($scope.name.result == "SUCCESS") {
-                return "success";
-            } else if ($scope.name.result == "FAILURE") {
-                return "danger";
-            } else if ($scope.name.result == "UNSTABLE") {
-                return "warning";
-            }
-        }
-    }
-    */
+
     // for json and http
     $scope.trStatus = function(job) {
         if (job.buildStatus == true) {
