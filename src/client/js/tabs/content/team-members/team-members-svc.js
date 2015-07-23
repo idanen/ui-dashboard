@@ -18,11 +18,9 @@
         };
 
         this.getMemberByID = function (memberId) {
-            if (memberId) {
-                return this.members.filter(function (obj) {
-                    return obj.memberId == memberId;
-                })[0];
-            }
+            return this.members.filter(function (obj) {
+                return obj.memberId == memberId;
+            })[0];
         };
         this.getMembers = function () {
             return svc.members;

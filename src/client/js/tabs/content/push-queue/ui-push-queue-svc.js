@@ -15,11 +15,10 @@
                 }
             });
 
-            this.addToQueue = function () {
+            this.addToQueue = function (memberId) {
                 svc.queue.$add({
-                    id: this.selected.memberId
+                    id: memberId
                 });
-                svc.empty = '';
             };
             this.removeFromQueue = function (id) {
                 return svc.queue.$remove(id).then(function () {
