@@ -1,7 +1,7 @@
 <div class="row push-queue-content">
     <div class="col-md-6">
         <div class="row">
-            <div class="col-md-9">
+            <div class="col-md-11">
                 <div class="row">
                     <div class="col-md-9">
                         <ui-select ng-model="pushQueueCtrl.selected" theme="selectize">
@@ -26,12 +26,12 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-9">
+            <div class="col-md-11">
                 <h3>{{pushQueueCtrl.empty}}</h3>
                 <ul class="list-group">
                     <li ng-repeat="member in pushQueueCtrl.queue" class="list-group-item">
                         <div class="row">
-                            <div class="col-md-7"> {{ pushQueueCtrl.getMemberByID(member.id).fname }}</div>
+                            <div class="col-md-7"> {{ pushQueueCtrl.getFirstName(member.id)}}</div>
                             <div class="col-md-3 col-md-offset-2">
                                 <button type="button" class="btn btn-info pull-right"
                                         ng-click="pushQueueCtrl.removeFromQueue(member)">

@@ -26,6 +26,9 @@
                 notification.onclick = function () {
                     window.focus();
                 };
+                setTimeout(function(){
+                    notification.close();
+                },7000);
             }
         };
     }]);
