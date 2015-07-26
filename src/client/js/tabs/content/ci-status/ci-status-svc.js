@@ -14,12 +14,9 @@ angular.module('tabs').service('CiStatusService', ['$http',function ($http) {
 
 
 angular.module('tabs').controller('ciStatusController',['$scope','$http', function($scope,$http){
-    $http.get("http://mydtbld0021.isr.hp.com:8080/jenkins/job/MaaS-Platf-UI-Branch-master/3068/api/json")
-        .success(function(response) {$scope.nameHttp = response;});
+
     $scope.btnStyle="btn btn-default";
 
-    $http.get("/updateJob").success(function(response){console.log(response);
-        });
 
 
     $scope.toggleFreeze = function (job,btnType) {
@@ -36,27 +33,15 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http', functi
         }
     };
     $scope.warning="";
-    $scope.nameJson =[{jobName:'MaaS-Platf-UI-Branch-master',aliasName:'master',freeze:{
-        state:false,
-        onStyle:'btn btn-default',
-        offStyle:'btn btn-primary'
-    }}];
+    $scope.nameJson =[];
 
 
     $scope.addJob = function(job){
         $scope.tmpJob = [];
         var url = "http://mydtbld0021.isr.hp.com:8080/jenkins/job/" + job.name + "/api/json";
         var newJob;
-        $http.get(url)
-            .success(function(response) {
-                $http.get(response.builds[0].url + "/api/json") // to check if build exist
-                    .success(function(res) {$scope.addTheJob(res,job.alias);
-
-                    });
-            }).
-            error(function(){
-                $scope.warning = "ERRORRR";
-            }
+        $http.post("/updateJob",job.name) // to check if build exist
+            .success(function(res) {$scope.addTheJob(res,job.alias);}
         );
 
 

@@ -31,7 +31,7 @@ exports.UIDashboardController = function () {
             });
         },
 
-        getIt: function (req, response) {
+        getIt: function (request, response) {
             resultJobs.splice(0, resultJobs.length);
             var promises = [];
             for (var i = 0; i < requestedJobs.length; i++) {
@@ -43,7 +43,7 @@ exports.UIDashboardController = function () {
                     res.forEach(function (result) {
                         resultJobs.push(result);
                     });
-                    response.send(resultJobs);
+                    response.send(resultJobs[0]);
                 }).catch(function (err) {
                     console.error(err);
                 });
@@ -63,7 +63,7 @@ exports.UIDashboardController = function () {
             var options = {
                 host: 'mydtbld0021.isr.hp.com',
                 port: 8080,
-                path: '/jenkins/job/' + jobName + '/api/json'
+                path: '/jenkins/job/' + jobName + '/lastBuild/api/json'
             };
 
             var afterHttp = function (response) {
@@ -77,9 +77,10 @@ exports.UIDashboardController = function () {
                 //the whole response has been recieved, so we just print it out here
                 response.on('end', function () {
                     var tmp = JSON.parse(str);
-                    updateCurrentJob(tmp.displayName);
-                    console.log("resolving with " + tmp.displayName);
-                    resolve(tmp.displayName);
+                    var saveData= {fullDisplayName:jobName,result:tmp.result,building:tmp.building};
+                    updateCurrentJob(saveData);
+                    console.log("resolving with " + saveData);
+                    resolve(saveData);
                 });
             };
             http.request(options, afterHttp).end();
