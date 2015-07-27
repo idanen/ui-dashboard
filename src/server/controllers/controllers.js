@@ -1,5 +1,6 @@
 var Promise = require('promise');
 
+
 exports.UIDashboardController = function () {
     var requestedJobs = ["MaaS-Platf-UI-Branch-master", "MaaS-Platf-UI-Branch-master", "MaaS-Platf-UI-Branch-master"];
     var resultJobs = [];

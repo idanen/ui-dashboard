@@ -40,7 +40,7 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http', functi
         $scope.tmpJob = [];
         var url = "http://mydtbld0021.isr.hp.com:8080/jenkins/job/" + job.name + "/api/json";
         var newJob;
-        $http.post("/updateJob",job.name) // to check if build exist
+        $http.post("/updateJob") // to check if build exist
             .success(function(res) {$scope.addTheJob(res,job.alias);}
         );
 
