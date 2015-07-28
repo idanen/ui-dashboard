@@ -15,7 +15,7 @@
         <tbody>
         <tr class="{{ trStatus(job) }}" ng-repeat="job in nameJson | unique:'jobName'" >
             <td style="height: 30px;line-height: 30px;width:40%;" data-toggle="tooltip" title="{{ job.jobName }}"><h4>{{ displayName(job) | limitTo:30 }}</h4></td>
-            <td style="height: 30px;line-height: 30px;width:30%;"><img ng-src="{{ chooseImg(job) }}"> {{ status(job) }}</td>
+            <td style="height: 30px;line-height: 30px;width:30%;"><img ng-src="{{ chooseImg(job) }}"> {{ status(job) }}<div ng-show="fadeShow"> aaaa</div></td>
             <td style="height: 30px;line-height: 30px;width:30%;"><div class="btn-group">
                     <button ng-click="toggleFreeze(job,'onButton')" class="{{ job.freeze.onStyle }}">On</button>
                     <button ng-click="toggleFreeze(job,'offButton')" class="{{ job.freeze.offStyle }}">Off</button>
@@ -40,8 +40,7 @@
                 <div class="modal-body">
                     <form novalidate class="simple-form" role="form" name="addJobForm">
                         <div class="form-group">
-                            Job Name: <input type="text" class="form-control required" name="jobName"  ng-model="job.name" required/><br />
-                            <span>e.g. MaaS-Platf-UI-Branch-master</span>
+                            Job Name: <input type="text" class="form-control required" name="jobName" placeholder="e.g. MaaS-Platf-UI-Branch-master" ng-model="job.name" required/><br />
                               <span style="color:red" ng-show="addJobForm.jobName.$dirty && addJobForm.jobName.$invalid">
                                 <span ng-show="addJobForm.jobName.$error.required">Job name required as in Jenkins</span>
                         </div>

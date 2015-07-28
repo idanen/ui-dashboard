@@ -13,15 +13,21 @@ angular.module('tabs').service('CiStatusService', ['$http',function ($http) {
 
 
 
-angular.module('tabs').controller('ciStatusController',['$scope','$http', function($scope,$http){
+angular.module('tabs').controller('ciStatusController',['$scope','$http','$interval', function($scope,$http,$interval){
 
     $scope.btnStyle="btn btn-default";
-
-
+    $scope.runEachSeconds = false;
+  /* // Update Jobs Each 5 Seconds
+    $interval(function(){
+        if($scope.runEachSeconds == true){
+            $interval($scope.addJob({name:"MaaS-Platf-UI-Branch-master"}),5000);
+        }
+    },1000);
+*/
 
     $scope.toggleFreeze = function (job,btnType) {
-        if( (btnType == 'onButton' && job.freeze.state == false) || // toggle if need to
-            (btnType == 'offButton' && job.freeze.state == true)){
+        if( (btnType === 'onButton' && job.freeze.state === false) || // toggle if need to
+            (btnType === 'offButton' && job.freeze.state === true)){
             job.freeze.state = !job.freeze.state;
             if (job.freeze.onStyle == "btn btn-default") {
                 job.freeze.onStyle = "btn btn-primary";
@@ -40,11 +46,11 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http', functi
         $scope.tmpJob = [];
         var url = "http://mydtbld0021.isr.hp.com:8080/jenkins/job/" + job.name + "/api/json";
         var newJob;
-        $http.post("/updateJob") // to check if build exist
+        $http.post("//localhost:4000/updateJob", job) // to check if build exist
             .success(function(res) {$scope.addTheJob(res,job.alias);}
         );
 
-
+    $scope.runEachSeconds = true;
     }
 
     $scope.addTheJob = function(job,alias){

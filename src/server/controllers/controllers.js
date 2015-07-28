@@ -2,7 +2,6 @@ var Promise = require('promise');
 
 
 exports.UIDashboardController = function () {
-    var requestedJobs = ["MaaS-Platf-UI-Branch-master", "MaaS-Platf-UI-Branch-master", "MaaS-Platf-UI-Branch-master"];
     var resultJobs = [];
     var currentJob;
     var fs = require('fs');
@@ -35,9 +34,9 @@ exports.UIDashboardController = function () {
         getIt: function (request, response) {
             resultJobs.splice(0, resultJobs.length);
             var promises = [];
-            for (var i = 0; i < requestedJobs.length; i++) {
-                promises.push(loadRequestedJob(requestedJobs[i]));
-            }
+            var ciJob = request.body;
+            console.log("Line 38: " +ciJob.name);
+            promises.push(loadRequestedJob(ciJob.name));
 
             Promise.all(promises)
                 .then(function (res) {
@@ -62,9 +61,12 @@ exports.UIDashboardController = function () {
             var http = require('http');
             var returnResult;
             var options = {
+                host: 'boiling-inferno-9766.firebaseio.com',
+                port: 443,
+                path: '/jobs.json'/*
                 host: 'mydtbld0021.isr.hp.com',
                 port: 8080,
-                path: '/jenkins/job/' + jobName + '/lastBuild/api/json'
+                path: '/jenkins/job/' + jobName + '/lastBuild/api/json'*/
             };
 
             var afterHttp = function (response) {
@@ -77,10 +79,11 @@ exports.UIDashboardController = function () {
 
                 //the whole response has been recieved, so we just print it out here
                 response.on('end', function () {
+
                     var tmp = JSON.parse(str);
                     var saveData= {fullDisplayName:jobName,result:tmp.result,building:tmp.building};
                     updateCurrentJob(saveData);
-                    console.log("resolving with " + saveData);
+                    console.log("Line 86 : resolving with " + saveData);
                     resolve(saveData);
                 });
             };
