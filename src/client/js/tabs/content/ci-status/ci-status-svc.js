@@ -14,9 +14,10 @@ angular.module('tabs').service('CiStatusService', ['$http',function ($http) {
 
 
 angular.module('tabs').controller('ciStatusController',['$scope','$http','$interval', function($scope,$http,$interval){
-
+    $scope.warning="";
+    $scope.nameJson =[];
     $scope.btnStyle="btn btn-default";
-    $scope.runEachSeconds = false;
+    $scope.animateOnUpdate = "fadeOut"; // ng-class fading for refreshing data
   /* // Update Jobs Each 5 Seconds
     $interval(function(){
         if($scope.runEachSeconds == true){
@@ -24,6 +25,82 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
         }
     },1000);
 */
+
+    // Load All Jobs From The Server - Push Result Into $scope.nameJson array.
+    $scope.loadJobs = function(){
+        $http.get("//localhost:4000/loadJobs")
+            .success(function(res){
+                $scope.nameJson =  res;
+                $scope.animateOnUpdate = "fadeIn";
+            });
+    };
+
+    // Refresh Jobs List
+    $scope.updateAllJobs = function(){
+        $scope.animateOnUpdate = "fadeOut";
+        $scope.loadJobs();
+    };
+
+    // Add New Job - Server add job to Firebase.
+    $scope.addJob = function(job) {
+        var newJob = {name:job.name,alias:job.alias,freeze:{
+            state:false,
+            onStyle:'btn btn-default',
+            offStyle:'btn btn-primary'
+        }, result:'',building:''};
+        $http.post("//localhost:4000/addJob", newJob) // to check if build exist
+            .success(function (res) {
+
+            }
+        );
+    };
+
+    $scope.addTheJob = function(job){
+
+
+        $scope.nameJson.push(newJob);
+    };
+
+    $scope.displayName = function(job){
+        console.log(job.alias);
+        if(job.alias != "" && job.alias !== undefined){
+            return job.alias;
+        }else{
+            return job.name;
+        }
+    };
+
+    // for json and http use
+    $scope.status = function(job){
+        if(job.building == true){
+            return "Running";
+        }else{
+            return job.result;
+        }
+    };
+
+    $scope.chooseImg = function(job){
+        if(job.building == true){
+            return "../images/green_anime.gif";
+        }else{
+            return "../images/" + job.result + ".png";
+        }
+    };
+
+    // for json and http
+    $scope.trStatus = function(job) {
+        if (job.building == true) {
+            return "active";
+        } else {
+            if (job.result == "SUCCESS") {
+                return "success";
+            } else if (job.result == "FAILURE") {
+                return "danger";
+            } else if (job.result == "UNSTABLE") {
+                return "warning";
+            }
+        }
+    };
 
     $scope.toggleFreeze = function (job,btnType) {
         if( (btnType === 'onButton' && job.freeze.state === false) || // toggle if need to
@@ -38,71 +115,6 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
             }
         }
     };
-    $scope.warning="";
-    $scope.nameJson =[];
-
-
-    $scope.addJob = function(job){
-        $scope.tmpJob = [];
-        var url = "http://mydtbld0021.isr.hp.com:8080/jenkins/job/" + job.name + "/api/json";
-        var newJob;
-        $http.post("//localhost:4000/updateJob", job) // to check if build exist
-            .success(function(res) {$scope.addTheJob(res,job.alias);}
-        );
-
-    $scope.runEachSeconds = true;
-    }
-
-    $scope.addTheJob = function(job,alias){
-        var newJob = {jobName:job.fullDisplayName,aliasName:alias,freeze:{
-            state:false,
-            onStyle:'btn btn-default',
-            offStyle:'btn btn-primary'
-        }, result:job.result,buildStatus:job.building};
-
-        $scope.nameJson.push(newJob);
-    }
-
-    $scope.displayName = function(job){
-        console.log(job.aliasName);
-        if(job.aliasName != "" && job.aliasName !== undefined){
-            return job.aliasName;
-        }else{
-            return job.jobName;
-        }
-    }
-
-    // for json and http use
-    $scope.status = function(job){
-        if(job.buildStatus == true){
-            return "Running";
-        }else{
-            return job.result;
-        }
-    }
-
-    $scope.chooseImg = function(job){
-        if(job.buildStatus == true){
-            return "../images/green_anime.gif";
-        }else{
-            return "../images/" + job.result + ".png";
-        }
-    }
-
-    // for json and http
-    $scope.trStatus = function(job) {
-        if (job.buildStatus == true) {
-            return "active";
-        } else {
-            if (job.result == "SUCCESS") {
-                return "success";
-            } else if (job.result == "FAILURE") {
-                return "danger";
-            } else if (job.result == "UNSTABLE") {
-                return "warning";
-            }
-        }
-    }
 }]);
 
 

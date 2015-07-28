@@ -1,6 +1,5 @@
 var Promise = require('promise');
-
-
+var eRequest = require("request");
 exports.UIDashboardController = function () {
     var resultJobs = [];
     var currentJob;
@@ -31,67 +30,50 @@ exports.UIDashboardController = function () {
             });
         },
 
-        getIt: function (request, response) {
-            resultJobs.splice(0, resultJobs.length);
-            var promises = [];
-            var ciJob = request.body;
-            console.log("Line 38: " +ciJob.name);
-            promises.push(loadRequestedJob(ciJob.name));
+        addNewJob: function (request, response) {
+            var job = request.body;
+            var tmpJson = JSON.stringify(job);
+            eRequest.post({
+                headers: {'content-type': 'application/json'},
+                url: 'https://boiling-inferno-9766.firebaseio.com/allJobs.json',
+                body: tmpJson
+            }, function (error, response, body) {
 
-            Promise.all(promises)
-                .then(function (res) {
-                    res.forEach(function (result) {
-                        resultJobs.push(result);
-                    });
-                    response.send(resultJobs[0]);
-                }).catch(function (err) {
-                    console.error(err);
-                });
+            });
+
+
         },
 
         getAllJobs: function (req, res) {
-            res.send(arr);
+            eRequest("http://boiling-inferno-9766.firebaseio.com/allJobs.json", function(error, response, body) {
+                var jobs = JSON.parse(body);
+                var arr = Object.keys(jobs).map(function(k) { return jobs[k] });
+                res.send(updateJobsFromJenkins(arr));
+            });
+
         }
     };
 
 
-    function loadRequestedJob(jobName) {
-        return new Promise(function (resolve, reject) {
 
-            var http = require('http');
-            var returnResult;
-            var options = {
-                host: 'boiling-inferno-9766.firebaseio.com',
-                port: 443,
-                path: '/jobs.json'/*
-                host: 'mydtbld0021.isr.hp.com',
-                port: 8080,
-                path: '/jenkins/job/' + jobName + '/lastBuild/api/json'*/
-            };
-
-            var afterHttp = function (response) {
-                var str = '';
-
-                //another chunk of data has been recieved, so append it to `str`
-                response.on('data', function (chunk) {
-                    str += chunk;
-                });
-
-                //the whole response has been recieved, so we just print it out here
-                response.on('end', function () {
-
-                    var tmp = JSON.parse(str);
-                    var saveData= {fullDisplayName:jobName,result:tmp.result,building:tmp.building};
-                    updateCurrentJob(saveData);
-                    console.log("Line 86 : resolving with " + saveData);
-                    resolve(saveData);
-                });
-            };
-            http.request(options, afterHttp).end();
+    function updateJobsFromJenkins(jobs) {
+        return(getJobs()).then(function(res){
+            return res;
         });
-    }
+    };
 
-    function updateCurrentJob(curr) {
-        currentJob = curr;
-    }
+    function getJobs() {
+        return new Promise(function (resolve, reject) {
+            for (var key in jobs) {
+                var jenkinsUrl = "http://mydtbld0021.isr.hp.com:8080/jenkins/job/" + jobs[key].name + "/lastBuild/api/json";
+                eRequest.get(jenkinsUrl, function (error, response, body) {
+                    var jsonIt = JSON.parse(body);
+                    jobs[key].result = jsonIt.result;
+                    jobs[key].building = jsonIt.building;
+                });
+            }
+            resolve(jobs);
+        });
+    };
+
 };

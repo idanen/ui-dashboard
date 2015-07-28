@@ -7,8 +7,8 @@ module.exports = function(app){
 
     app.get('/fetch', controller.load);
 
-    app.post('/updateJob', controller.getIt);
+    app.post('/addJob', controller.addNewJob);
 
-    app.get('/getJobs',controller.getAllJobs);
+    app.get('/loadJobs',controller.getAllJobs);
 
 };
