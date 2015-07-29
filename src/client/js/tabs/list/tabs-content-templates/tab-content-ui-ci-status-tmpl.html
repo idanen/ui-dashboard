@@ -3,7 +3,8 @@
         <tr><td>
             <div><h3> Loading Jobs List , Please Wait..</h3></div>
             <div class="progress" >
-                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="{{ progBarWidth }}">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="50"
+                     aria-valuemin="0" aria-valuemax="100" style="{{ progBarWidth }}">
                     {{ progBarCurStatus }}
                 </div>
             </div>
@@ -12,9 +13,9 @@
     <table class="table" ng-hide="progressBarStatus">
         <thead>
         <tr>
-
             <!-- Trigger the modal with a button -->
             <button type="button" class="btn btn-default mainBtns" data-toggle="modal" data-target="#newMemberModal" >Add New Job</button>
+            <!-- Refresh The Job List -->
             <button type="button" class="btn btn-link mainBtns" data-toggle="modal" ng-click="updateAllJobs()" >Refresh</button>
         </tr>
         <tr>
@@ -24,15 +25,20 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-class="styleJobRow(job)"  ng-repeat="job in nameJson | unique:'name'" >
-            <td style="height: 30px;line-height: 30px;width:40%;" data-toggle="tooltip" title="{{ job.name }}"><h4>{{ displayName(job) | limitTo:30 }}</h4></td>
-            <td style="height: 30px;line-height: 30px;width:30%;"><img class="statusImg" ng-src="{{ chooseImg(job) }}"> {{ status(job) }}</td>
-            <td style="height: 30px;line-height: 30px;width:30%;"><div class="btn-group">
+        <tr ng-class="styleJobRow(job)"  ng-repeat="job in listOfJobs | unique:'name'" >
+            <td style="height: 30px;line-height: 30px;width:40%;" data-toggle="tooltip" title="{{ job.name }}">
+                <h4>{{ displayName(job) | limitTo:30 }}</h4>
+            </td>
+            <td style="height: 30px;line-height: 30px;width:30%;">
+                <img class="statusImg" ng-src="{{ chooseImg(job) }}">
+                {{ status(job) }}
+            </td>
+            <td style="height: 30px;line-height: 30px;width:30%;">
+                <div class="btn-group">
                     <button ng-click="toggleFreeze(job,'onButton')" class="{{ job.freeze.onStyle }}">On</button>
                     <button ng-click="toggleFreeze(job,'offButton')" class="{{ job.freeze.offStyle }}">Off</button>
-            </div></td>
-
-
+                </div>
+            </td>
         </tr>
         </tbody>
     </table>

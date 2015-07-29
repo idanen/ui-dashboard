@@ -31,20 +31,24 @@ exports.UIDashboardController = function () {
             });
         },
 
+
         addNewJob: function (request, res) {
             var job = request.body;
             var tmpJson = JSON.stringify(job);
+            // apply first validation , job name exists in Jenkins
             eRequest.get("http://mydtbld0021.isr.hp.com:8080/jenkins/job/" + job.name + "/lastBuild/api/json",
                 function(error, response, body) {
-                    if(response.statusCode == 404){
+                    if(response.statusCode == 404){ // if not exist return error
                         res.send("3");
                     }else{
+                        // apply second validation , check if job already exists in the DB
                         eRequest.get("http://boiling-inferno-9766.firebaseio.com/allJobs.json", function(error, response, body) {
                             var jobsObj = JSON.parse(body),
                                 jobsArr = Object.keys(jobsObj).map(function(k) {
                                     return jobsObj[k];
                                 });
-                            if(checkJobExistInDB(jobsArr,job.name) == false){
+                            if(checkJobExistInDB(jobsArr,job.name) == false){ // calling a function that search if job exists in the array
+                                // if its not duplicated , add the job to DB
                                 eRequest.patch({
                                     headers: {'content-type': 'application/json'},
                                     url: 'https://boiling-inferno-9766.firebaseio.com/allJobs/' + job.name + '.json',
@@ -69,6 +73,7 @@ exports.UIDashboardController = function () {
             var tmpJson = JSON.stringify(job);
             delete tmpJson.result;
             delete tmpJson.building;
+            // using 'patch' to overwrite only required fields
             eRequest.patch({
                 headers: {'content-type': 'application/json'},
                 url: 'https://boiling-inferno-9766.firebaseio.com/allJobs/' + job.name + '.json',
@@ -92,6 +97,7 @@ exports.UIDashboardController = function () {
         }
     };
 
+    // get the job list from the DB ('filter' unused for now)
     function getJobsFromDatabase(filter) {
         return new Promise(function (resolve, reject) {
             eRequest.get("http://boiling-inferno-9766.firebaseio.com/allJobs.json", function(error, response, body) {
@@ -108,7 +114,10 @@ exports.UIDashboardController = function () {
             });
         });
     }
-
+    /*
+    job status depending on result and building fields , that we always extract them from Jenkins and not from DB,
+    so this function iterate over the jobs list and update their status .
+     */
     function getJobsStatus(jobs) {
         return new Promise(function (resolve, reject) {
             var promises = [];
@@ -130,7 +139,7 @@ exports.UIDashboardController = function () {
         });
     };
 
-
+    // adding given job to the database
     function addJobToDB(job){
         return new Promise(function (resolve, reject) {
             eRequest.patch({
@@ -144,6 +153,10 @@ exports.UIDashboardController = function () {
         });
     };
 
+    /* find if a job exists in jobs array ( for duplication validations)
+    jobsArray - array of jobs
+     searchedJobName - job name that we search
+     */
     function checkJobExistInDB(jobsArray,searchedJobName){
         jobsArray.forEach(function(job){
             if(job.name == searchedJobName){

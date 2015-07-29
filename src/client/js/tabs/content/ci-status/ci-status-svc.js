@@ -14,55 +14,28 @@ angular.module('tabs').service('CiStatusService', ['$http',function ($http) {
 
 
 angular.module('tabs').controller('ciStatusController',['$scope','$http','$interval', function($scope,$http,$interval){
-    $scope.warning="";
-    $scope.nameJson =[];
-    $scope.btnStyle="btn btn-default";
+
+    /*******************************
+     ********** Variables **********
+    *******************************/
+
+    $scope.listOfJobs =[]; // the list of jobs we get from server and use in ng-repeat
     $scope.animateOnUpdate = "fadeOut"; // ng-class fading for refreshing data
-    $scope.progressBarStatus = true;
-    $scope.progBarWidth = "width:20%";
-    $scope.progBarCurStatus = "Loading.. (20%)";
-    $scope.progBarValue = 20;
-    $scope.dataDismiss = " ";
-    $scope.validateForm = false;
-    $scope.addJobFormSendBtn = "btn btn-default";
-    $scope.addJobResultButtonValue = "Add";
-    $scope.validationErrorMessage;
-  /* // Update Jobs Each 5 Seconds
-    $interval(function(){
-        if($scope.runEachSeconds == true){
-            $interval($scope.addJob({name:"MaaS-Platf-UI-Branch-master"}),5000);
-        }
-    },1000);
-*/
-    var progressBarStatus = $interval(function() {
-        $scope.progBarWidth = "width:" + $scope.progBarValue + "%";
-        $scope.progBarCurStatus = "Loading.. (" + $scope.progBarValue + "%)";
-        $scope.progBarValue += 10;
-        if($scope.progBarValue == 100){
-            $scope.stopProgressBar();
-        }
-    }, 700);
+    $scope.progressBarStatus = true; // when it true , progress bar enabled and job list disabled..
+    $scope.progBarWidth = "width:20%"; // progress bar style , the width could be from 0 to 100
+    $scope.progBarCurStatus = "Loading.. (20%)"; // progress bar status that appears in the bar
+    $scope.progBarValue = 20; // progress bar current value
+    $scope.dataDismiss = " "; // we change it to keep the modal open until response of the server
+    $scope.validateForm = false; // control visibility of the Error Message in the modal
+    $scope.validationErrorMessage; // Error Message to show in the modal if input is invalid
+    $scope.addJobFormSendBtn = "btn btn-default"; // 'Add' button style in the 'add job' modal
+    $scope.addJobResultButtonValue = "Add"; // 'Add' button style in the 'add job' modal
 
-    $scope.stopProgressBar = function(){
-        $interval.cancel(progressBarStatus);
-        $scope.progressBarStatus = false;
-    };
 
-    // Load All Jobs From The Server - Push Result Into $scope.nameJson array.
-    $scope.loadJobs = function(){
-        $http.get("//localhost:4000/loadJobs")
-            .success(function(res){
-                $scope.nameJson =  res;
-                $scope.animateOnUpdate = "fadeIn";
-                $scope.stopProgressBar();
-            });
-    };
 
-    // Refresh Jobs List
-    $scope.updateAllJobs = function(){
-        $scope.animateOnUpdate = "fadeOut";
-        $scope.loadJobs();
-    };
+    /*************************************************************
+     ********** Functions - Connecting Server Functions **********
+     ************************************************************/
 
     // Add New Job - Server add job to Firebase.
     $scope.addJob = function(job) {
@@ -78,6 +51,7 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
         }};
         $http.post("//localhost:4000/addJob", newJob) // to check if build exist
             .success(function (res) {
+                // handle response from server
                 if(res == "3") {
                     $scope.validateForm = true;
                     $scope.validationErrorMessage="Invalid name: Job name required as in Jenkins";
@@ -99,6 +73,75 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
     };
 
 
+    // Load All Jobs From The Server - Push Result Into $scope.listOfJobs array.
+    $scope.loadJobs = function(){
+        $http.get("//localhost:4000/loadJobs")
+            .success(function(res){
+                $scope.listOfJobs =  res;
+                $scope.animateOnUpdate = "fadeIn";
+                $scope.stopProgressBar();
+            });
+    };
+
+
+    // Refresh Jobs List
+    $scope.updateAllJobs = function(){
+        $scope.animateOnUpdate = "fadeOut";
+        $scope.loadJobs();
+    };
+
+
+    /*
+     runs when a toggle button clicked on one of the jobs
+     */
+    $scope.toggleFreeze = function (job,btnType) {
+        if( (btnType === 'onButton' && job.freeze.state === false) || // toggle if need to
+            (btnType === 'offButton' && job.freeze.state === true)){
+            job.freeze.state = !job.freeze.state; // change state
+            if (job.freeze.onStyle == "btn btn-default") { // swap styles between 'on' and 'off' buttons
+                job.freeze.onStyle = "btn btn-primary";
+                job.freeze.offStyle = "btn btn-default";
+            } else {
+                job.freeze.offStyle = "btn btn-primary";
+                job.freeze.onStyle = "btn btn-default";
+            }
+            $http.post("//localhost:4000/updateJob", job) // send job to server to update freeze in DB
+                .success(function (res) {
+                    console.log("sent successfully");
+                }
+            );
+        }
+    };
+
+
+
+    /*************************************************************
+     ********** Functions - Affecting View Functions **********
+     ************************************************************/
+
+
+    /*
+        Progress Bar running when load page.
+        This function runs the progress bar and change the percent in it until reachs 100%
+         */
+    var progressBarStatus = $interval(function() {
+        $scope.progBarWidth = "width:" + $scope.progBarValue + "%";
+        $scope.progBarCurStatus = "Loading.. (" + $scope.progBarValue + "%)";
+        $scope.progBarValue += 10;
+        if($scope.progBarValue == 100){
+            $scope.stopProgressBar();
+        }
+    }, 700);
+
+    // stop running interval , hide progress bar and show the result table
+    $scope.stopProgressBar = function(){
+        $interval.cancel(progressBarStatus);
+        $scope.progressBarStatus = false;
+    };
+
+
+
+    // the shown name should be the alias , if it not exist we will show the job name.
     $scope.displayName = function(job){
         if(job.alias != "" && job.alias !== undefined){
             return job.alias;
@@ -116,6 +159,7 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
         }
     };
 
+    // choose animated image or not , depending on the running status of the job
     $scope.chooseImg = function(job){
         if(job.building == true){
             return "../images/green_anime.gif";
@@ -124,7 +168,7 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
         }
     };
 
-    // for json and http
+    // update the class value of the table rows depending on job state (affecting the colour of the row)
     $scope.trStatus = function(job) {
         if (job.building == true) {
             return "active";
@@ -139,30 +183,12 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
         }
     };
 
+    // update the class value of the table rows , depending on trStatus() and 'animateOnUpdate' to make it fade if reuqired
     $scope.styleJobRow = function(job){
         return $scope.trStatus(job) + " " + $scope.animateOnUpdate;
     }
 
-    $scope.toggleFreeze = function (job,btnType) {
-        if( (btnType === 'onButton' && job.freeze.state === false) || // toggle if need to
-            (btnType === 'offButton' && job.freeze.state === true)){
-            job.freeze.state = !job.freeze.state;
-            console.log("toggling");
-            if (job.freeze.onStyle == "btn btn-default") {
-                job.freeze.onStyle = "btn btn-primary";
-                job.freeze.offStyle = "btn btn-default";
-            } else {
-                job.freeze.offStyle = "btn btn-primary";
-                job.freeze.onStyle = "btn btn-default";
-            }
-            console.log("apply it to DB");
-            $http.post("//localhost:4000/updateJob", job) // to check if build exist
-                .success(function (res) {
-                    console.log("toggled successfully");
-                }
-            );
-        }
-    };
+
 }]);
 
 
