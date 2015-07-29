@@ -87,7 +87,9 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
     // Refresh Jobs List
     $scope.updateAllJobs = function(){
         $scope.animateOnUpdate = "fadeOut";
+        $interval.progressBarStatus();
         $scope.loadJobs();
+        $scope.stopProgressBar();
     };
 
 
@@ -125,6 +127,7 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
         This function runs the progress bar and change the percent in it until reachs 100%
          */
     var progressBarStatus = $interval(function() {
+        $scope.progressBarStatus = true;
         $scope.progBarWidth = "width:" + $scope.progBarValue + "%";
         $scope.progBarCurStatus = "Loading.. (" + $scope.progBarValue + "%)";
         $scope.progBarValue += 10;
@@ -137,6 +140,7 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
     $scope.stopProgressBar = function(){
         $interval.cancel(progressBarStatus);
         $scope.progressBarStatus = false;
+        $scope.progBarValue= 20;
     };
 
 
