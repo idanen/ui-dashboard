@@ -9,6 +9,8 @@ module.exports = function(app){
 
     app.post('/addJob', controller.addNewJob);
 
+    app.post('/updateJob', controller.updateJob);
+
     app.get('/loadJobs',controller.getAllJobs);
 
 };

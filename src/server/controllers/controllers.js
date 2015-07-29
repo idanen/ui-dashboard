@@ -1,9 +1,10 @@
 var Promise = require('promise');
-var eRequest = require("request");
+var eRequest = require('request');
 exports.UIDashboardController = function () {
     var resultJobs = [];
     var currentJob;
     var fs = require('fs');
+    var dealArr;
     var DATA_LOCATION = 'src/server/resources/test.json';
     return {
 
@@ -23,57 +24,133 @@ exports.UIDashboardController = function () {
 
                 if (err) {
                     res.send(err);
-                    return console.log(err);
+                    return console.log("Error controllers 27: " + err);
                 }
 
                 res.send(JSON.parse(fileContent));
             });
         },
 
-        addNewJob: function (request, response) {
+        addNewJob: function (request, res) {
             var job = request.body;
             var tmpJson = JSON.stringify(job);
-            eRequest.post({
+            eRequest.get("http://mydtbld0021.isr.hp.com:8080/jenkins/job/" + job.name + "/lastBuild/api/json",
+                function(error, response, body) {
+                    if(response.statusCode == 404){
+                        res.send("3");
+                    }else{
+                        eRequest.get("http://boiling-inferno-9766.firebaseio.com/allJobs.json", function(error, response, body) {
+                            var jobsObj = JSON.parse(body),
+                                jobsArr = Object.keys(jobsObj).map(function(k) {
+                                    return jobsObj[k];
+                                });
+                            if(checkJobExistInDB(jobsArr,job.name) == false){
+                                eRequest.patch({
+                                    headers: {'content-type': 'application/json'},
+                                    url: 'https://boiling-inferno-9766.firebaseio.com/allJobs/' + job.name + '.json',
+                                    body: tmpJson
+                                }, function (error, response, body) {
+                                    if(error){
+                                        res.send("1");
+                                    }else{
+                                        res.send("0");
+                                    }
+                                });
+                            }else{
+                                res.send("2");
+                            }
+                        });
+                    }
+                });
+        },
+
+        updateJob: function (request, res) {
+            var job = request.body;
+            var tmpJson = JSON.stringify(job);
+            delete tmpJson.result;
+            delete tmpJson.building;
+            eRequest.patch({
                 headers: {'content-type': 'application/json'},
-                url: 'https://boiling-inferno-9766.firebaseio.com/allJobs.json',
+                url: 'https://boiling-inferno-9766.firebaseio.com/allJobs/' + job.name + '.json',
                 body: tmpJson
             }, function (error, response, body) {
-
+                res.send("success");
             });
 
 
         },
 
         getAllJobs: function (req, res) {
-            eRequest("http://boiling-inferno-9766.firebaseio.com/allJobs.json", function(error, response, body) {
-                var jobs = JSON.parse(body);
-                var arr = Object.keys(jobs).map(function(k) { return jobs[k] });
-                res.send(updateJobsFromJenkins(arr));
-            });
-
+            getJobsFromDatabase()
+                .then(getJobsStatus)
+                .then(function (jobsWithStatuses) {
+                    res.send(jobsWithStatuses);
+                })
+                .catch(function (err) {
+                    res.send(err);
+                });
         }
     };
 
+    function getJobsFromDatabase(filter) {
+        return new Promise(function (resolve, reject) {
+            eRequest.get("http://boiling-inferno-9766.firebaseio.com/allJobs.json", function(error, response, body) {
+                var jobsObj = JSON.parse(body),
+                    jobsArr = Object.keys(jobsObj).map(function(k) {
+                        return jobsObj[k];
+                    });
+                if (filter) {
+                    jobsArr = jobsArr.filter(function (job) {
+                        return RegExp('^' + filter, 'i').test(job.name);
+                    });
+                }
+                resolve(jobsArr);
+            });
+        });
+    }
 
-
-    function updateJobsFromJenkins(jobs) {
-        return(getJobs()).then(function(res){
-            return res;
+    function getJobsStatus(jobs) {
+        return new Promise(function (resolve, reject) {
+            var promises = [];
+            jobs.forEach(function (job) {
+                var jobPromise = new Promise(function getJobStatus(resolveJob, rejectJob) {
+                    var jenkinsUrl = "http://mydtbld0021.isr.hp.com:8080/jenkins/job/" + job.name + "/lastBuild/api/json";
+                    eRequest.get(jenkinsUrl, function (error, response, body) {
+                        var jsonIt = JSON.parse(body);
+                        job.result = jsonIt.result;
+                        job.building = jsonIt.building;
+                        resolveJob(job);
+                    });
+                });
+                promises.push(jobPromise);
+            });
+            Promise.all(promises).then(function (jobsWithStatuses) {
+                resolve(jobsWithStatuses);
+            });
         });
     };
 
-    function getJobs() {
+
+    function addJobToDB(job){
         return new Promise(function (resolve, reject) {
-            for (var key in jobs) {
-                var jenkinsUrl = "http://mydtbld0021.isr.hp.com:8080/jenkins/job/" + jobs[key].name + "/lastBuild/api/json";
-                eRequest.get(jenkinsUrl, function (error, response, body) {
-                    var jsonIt = JSON.parse(body);
-                    jobs[key].result = jsonIt.result;
-                    jobs[key].building = jsonIt.building;
-                });
-            }
-            resolve(jobs);
+            eRequest.patch({
+                headers: {'content-type': 'application/json'},
+                url: 'https://boiling-inferno-9766.firebaseio.com/allJobs/' + job.name + '.json',
+                body: job
+            }, function (error, response, body) {
+                res.send("success");
+                resolve("done");
+            });
         });
+    };
+
+    function checkJobExistInDB(jobsArray,searchedJobName){
+        jobsArray.forEach(function(job){
+            if(job.name == searchedJobName){
+                return false;
+            }
+        });
+        return true;
     };
 
 };

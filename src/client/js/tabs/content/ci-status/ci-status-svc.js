@@ -18,6 +18,15 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
     $scope.nameJson =[];
     $scope.btnStyle="btn btn-default";
     $scope.animateOnUpdate = "fadeOut"; // ng-class fading for refreshing data
+    $scope.progressBarStatus = true;
+    $scope.progBarWidth = "width:20%";
+    $scope.progBarCurStatus = "Loading.. (20%)";
+    $scope.progBarValue = 20;
+    $scope.dataDismiss = " ";
+    $scope.validateForm = false;
+    $scope.addJobFormSendBtn = "btn btn-default";
+    $scope.addJobResultButtonValue = "Add";
+    $scope.validationErrorMessage;
   /* // Update Jobs Each 5 Seconds
     $interval(function(){
         if($scope.runEachSeconds == true){
@@ -25,6 +34,19 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
         }
     },1000);
 */
+    var progressBarStatus = $interval(function() {
+        $scope.progBarWidth = "width:" + $scope.progBarValue + "%";
+        $scope.progBarCurStatus = "Loading.. (" + $scope.progBarValue + "%)";
+        $scope.progBarValue += 10;
+        if($scope.progBarValue == 100){
+            $scope.stopProgressBar();
+        }
+    }, 700);
+
+    $scope.stopProgressBar = function(){
+        $interval.cancel(progressBarStatus);
+        $scope.progressBarStatus = false;
+    };
 
     // Load All Jobs From The Server - Push Result Into $scope.nameJson array.
     $scope.loadJobs = function(){
@@ -32,6 +54,7 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
             .success(function(res){
                 $scope.nameJson =  res;
                 $scope.animateOnUpdate = "fadeIn";
+                $scope.stopProgressBar();
             });
     };
 
@@ -43,26 +66,40 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
 
     // Add New Job - Server add job to Firebase.
     $scope.addJob = function(job) {
+        if($scope.addJobResultButtonValue == "Done"){
+            $scope.addJobFormSendBtn = "btn btn-default";
+            $scope.addJobResultButtonValue = "Add";
+            return;
+        }
         var newJob = {name:job.name,alias:job.alias,freeze:{
             state:false,
             onStyle:'btn btn-default',
             offStyle:'btn btn-primary'
-        }, result:'',building:''};
+        }};
         $http.post("//localhost:4000/addJob", newJob) // to check if build exist
             .success(function (res) {
-
+                if(res == "3") {
+                    $scope.validateForm = true;
+                    $scope.validationErrorMessage="Invalid name: Job name required as in Jenkins";
+                }else if(res == "2") {
+                    $scope.validateForm = true;
+                    $scope.validationErrorMessage="Job Already Exists..";
+                }else if(res == "1"){
+                    $scope.validateForm = true;
+                    $scope.validationErrorMessage="Connection Problem , please try again..";
+                }else {
+                    $scope.validateForm = false;
+                    $scope.dataDismiss = "modal";
+                    $scope.addJobFormSendBtn = "btn btn-success";
+                    $scope.addJobResultButtonValue = "Done";
+                    $scope.updateAllJobs();
+                }
             }
         );
     };
 
-    $scope.addTheJob = function(job){
-
-
-        $scope.nameJson.push(newJob);
-    };
 
     $scope.displayName = function(job){
-        console.log(job.alias);
         if(job.alias != "" && job.alias !== undefined){
             return job.alias;
         }else{
@@ -102,10 +139,15 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
         }
     };
 
+    $scope.styleJobRow = function(job){
+        return $scope.trStatus(job) + " " + $scope.animateOnUpdate;
+    }
+
     $scope.toggleFreeze = function (job,btnType) {
         if( (btnType === 'onButton' && job.freeze.state === false) || // toggle if need to
             (btnType === 'offButton' && job.freeze.state === true)){
             job.freeze.state = !job.freeze.state;
+            console.log("toggling");
             if (job.freeze.onStyle == "btn btn-default") {
                 job.freeze.onStyle = "btn btn-primary";
                 job.freeze.offStyle = "btn btn-default";
@@ -113,6 +155,12 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
                 job.freeze.offStyle = "btn btn-primary";
                 job.freeze.onStyle = "btn btn-default";
             }
+            console.log("apply it to DB");
+            $http.post("//localhost:4000/updateJob", job) // to check if build exist
+                .success(function (res) {
+                    console.log("toggled successfully");
+                }
+            );
         }
     };
 }]);
