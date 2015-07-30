@@ -1,18 +1,7 @@
 <div class="bs-example" ng-app="tabs" ng-controller="ciStatusController" ng-init="loadJobs()">
-    <table class="table" ng-hide="!progressBarStatus">
-        <tr><td>
-            <div><h3> Loading Jobs List , Please Wait..</h3></div>
-            <div class="progress" >
-                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="50"
-                     aria-valuemin="0" aria-valuemax="100" style="{{ progBarWidth }}">
-                    {{ progBarCurStatus }}
-                </div>
-            </div>
-        </td></tr>
-    </table>
-    <table class="table" ng-hide="progressBarStatus">
+    <table class="table" >
         <thead>
-        <tr>
+        <tr >
             <!-- Trigger the modal with a button -->
             <button type="button" class="btn btn-default mainBtns" data-toggle="modal" data-target="#newMemberModal" >Add New Job</button>
             <!-- Refresh The Job List -->
@@ -25,7 +14,23 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-class="styleJobRow(job)"  ng-repeat="job in listOfJobs | unique:'name'" >
+        <!-- Loader -->
+        <tr ng-hide="activeLoader">
+            <td colspan="3">
+                <div id="floatingCirclesG">
+                    <div class="f_circleG" id="frotateG_01"></div>
+                    <div class="f_circleG" id="frotateG_02"></div>
+                    <div class="f_circleG" id="frotateG_03"></div>
+                    <div class="f_circleG" id="frotateG_04"></div>
+                    <div class="f_circleG" id="frotateG_05"></div>
+                    <div class="f_circleG" id="frotateG_06"></div>
+                    <div class="f_circleG" id="frotateG_07"></div>
+                    <div class="f_circleG" id="frotateG_08"></div>
+                </div>
+            </td>
+        </tr>
+        <tr ng-hide="activeLoader"><td colspan="3" align="center"><div> Loading List..</div></td></tr>
+        <tr ng-hide="!activeLoader" ng-class="styleJobRow(job)"  ng-repeat="job in listOfJobs | unique:'name'" >
             <td style="height: 30px;line-height: 30px;width:40%;" data-toggle="tooltip" title="{{ job.name }}">
                 <h4>{{ displayName(job) | limitTo:30 }}</h4>
             </td>

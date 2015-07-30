@@ -21,16 +21,15 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
 
     $scope.listOfJobs =[]; // the list of jobs we get from server and use in ng-repeat
     $scope.animateOnUpdate = "fadeOut"; // ng-class fading for refreshing data
-    $scope.progressBarStatus = true; // when it true , progress bar enabled and job list disabled..
-    $scope.progBarWidth = "width:20%"; // progress bar style , the width could be from 0 to 100
-    $scope.progBarCurStatus = "Loading.. (20%)"; // progress bar status that appears in the bar
-    $scope.progBarValue = 20; // progress bar current value
+    $scope.activeLoader = false; // when it true , progress bar enabled and job list disabled..
     $scope.dataDismiss = " "; // we change it to keep the modal open until response of the server
     $scope.validateForm = false; // control visibility of the Error Message in the modal
     $scope.validationErrorMessage; // Error Message to show in the modal if input is invalid
     $scope.addJobFormSendBtn = "btn btn-default"; // 'Add' button style in the 'add job' modal
     $scope.addJobResultButtonValue = "Add"; // 'Add' button style in the 'add job' modal
-
+    //$scope.progBarWidth = "width:20%"; // progress bar style , the width could be from 0 to 100
+    //$scope.progBarCurStatus = "Loading.. (20%)"; // progress bar status that appears in the bar
+    //$scope.progBarValue = 20; // progress bar current value
 
 
     /*************************************************************
@@ -75,11 +74,14 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
 
     // Load All Jobs From The Server - Push Result Into $scope.listOfJobs array.
     $scope.loadJobs = function(){
+    //    $scope.startProgressBar();
+        $scope.activeLoader = false;
         $http.get("//localhost:4000/loadJobs")
             .success(function(res){
                 $scope.listOfJobs =  res;
                 $scope.animateOnUpdate = "fadeIn";
-                $scope.stopProgressBar();
+                $scope.activeLoader = true;
+        //        $scope.stopProgressBar();
             });
     };
 
@@ -87,9 +89,7 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
     // Refresh Jobs List
     $scope.updateAllJobs = function(){
         $scope.animateOnUpdate = "fadeOut";
-        $interval.progressBarStatus();
         $scope.loadJobs();
-        $scope.stopProgressBar();
     };
 
 
@@ -126,22 +126,27 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
         Progress Bar running when load page.
         This function runs the progress bar and change the percent in it until reachs 100%
          */
-    var progressBarStatus = $interval(function() {
-        $scope.progressBarStatus = true;
-        $scope.progBarWidth = "width:" + $scope.progBarValue + "%";
-        $scope.progBarCurStatus = "Loading.. (" + $scope.progBarValue + "%)";
-        $scope.progBarValue += 10;
-        if($scope.progBarValue == 100){
-            $scope.stopProgressBar();
-        }
-    }, 700);
 
-    // stop running interval , hide progress bar and show the result table
-    $scope.stopProgressBar = function(){
-        $interval.cancel(progressBarStatus);
-        $scope.progressBarStatus = false;
-        $scope.progBarValue= 20;
-    };
+    //$scope.startProgressBar = function(){
+    //    $scope.progressBar = $interval(function() {
+    //        $scope.progressBarStatus = true;
+    //        $scope.progBarWidth = "width:" + $scope.progBarValue + "%";
+    //        $scope.progBarCurStatus = "Loading.. (" + $scope.progBarValue + "%)";
+    //        $scope.progBarValue += 10;
+    //        if($scope.progBarValue == 100){
+    //            $scope.stopProgressBar();
+    //        }
+    //    }, 700);
+    //};
+
+    //$scope.stopProgressBar = function(){
+    //    if(angular.isDefined($scope.progressBar)){
+    //        $interval.cancel($scope.progressBar);
+    //        $scope.progressBarStatus = false;
+    //        $scope.progBarValue= 20;
+    //    }
+    //}
+
 
 
 
