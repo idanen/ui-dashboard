@@ -27,6 +27,7 @@
     "jshint-stylish": "^1.0.0",
     "opn": "^1.0.0",
     "psi": "^1.0.4",
+    "request": "^2.60.0",
     "require-dir": "^0.1.0",
     "run-sequence": "^1.0.1"
   },

@@ -8,6 +8,7 @@
             var ref = new Firebase("https://boiling-inferno-9766.firebaseio.com/");
             var queueRef = ref.child('queue');
             var membersRef = ref.child('members');
+            var jobsRef = ref.child('jobs');
 
             return {
                 getQueue: function () {
@@ -20,6 +21,9 @@
                     return $firebaseArray(membersRef).$loaded(function (data) {
                         return data.$getRecord(origRecordKey);
                     });
+                },
+		getJobs: function(){
+                    return $firebaseArray(jobsRef);
                 }
             };
         }
