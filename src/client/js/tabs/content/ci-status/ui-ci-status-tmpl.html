@@ -1,4 +1,4 @@
-<div class="bs-example" ng-app="tabs" ng-controller="ciStatusController" ng-init="loadJobs()">
+<div class="bs-example" ng-app="tabs" ng-init="loadJobs()">
     <table class="table">
         <thead>
         <tr>
@@ -40,7 +40,7 @@
                 <div> Loading List..</div>
             </td>
         </tr>
-        <tr ng-hide="!activeLoader" ng-class="styleJobRow(job)" ng-repeat="job in listOfJobs | unique:'name'">
+        <tr ng-show="activeLoader" ng-class="styleJobRow(job)" ng-repeat="job in listOfJobs | unique:'name'">
             <td style="height: 30px;line-height: 30px;width:40%;" data-toggle="tooltip" title="{{ job.name }}">
                 <h4>{{ displayName(job) | limitTo:30 }}</h4>
             </td>
