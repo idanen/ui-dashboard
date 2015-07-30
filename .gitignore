@@ -5,3 +5,4 @@ src/server/resources/*.*
 node_modules/
 ui-dashboard.iml
 dist/
+.tmp/

@@ -27,7 +27,7 @@
                 columns: 6
             },
             {
-                title: 'Team Members',
+                title: 'CI/CD Status',
                 contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-team-members-tmpl.html',
                 columns: 6
             }
