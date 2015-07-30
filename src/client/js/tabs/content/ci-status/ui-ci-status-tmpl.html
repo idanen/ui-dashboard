@@ -1,14 +1,17 @@
-<div class="bs-example" ng-app="tabs" ng-controller="ciStatusController" ng-init="loadJobs()">
+<div class="bs-example" ng-app="tabs" ng-init="loadJobs()">
     <table class="table">
         <thead>
         <tr>
-            <!-- Trigger the modal with a button -->
-            <button type="button" class="btn btn-default mainBtns" data-toggle="modal" data-target="#newMemberModal"
-                    ng-click="dataDismiss = ' '">Add New Job
-            </button>
-            <!-- Refresh The Job List -->
-            <button type="button" class="btn btn-link mainBtns" data-toggle="modal" ng-click="updateAllJobs()">Refresh
-            </button>
+            <th>
+                <!-- Trigger the modal with a button -->
+                <button type="button" class="btn btn-default mainBtns" data-toggle="modal" data-target="#newMemberModal"
+                        ng-click="dataDismiss = ' '">Add New Job
+                </button>
+                <!-- Refresh The Job List -->
+                <button type="button" class="btn btn-link mainBtns" data-toggle="modal" ng-click="updateAllJobs()">
+                    Refresh
+                </button>
+            </th>
         </tr>
         <tr>
             <th>Job Name</th>
@@ -37,9 +40,9 @@
                 <div> Loading List..</div>
             </td>
         </tr>
-        <tr ng-hide="!activeLoader" ng-class="styleJobRow(job)" ng-repeat="job in listOfJobs | unique:'name'">
+        <tr ng-show="activeLoader" ng-class="styleJobRow(job)" ng-repeat="job in listOfJobs | unique:'name'">
             <td style="height: 30px;line-height: 30px;width:40%;" data-toggle="tooltip" title="{{ job.name }}">
-                <h4>{{ displayName(job) | limitTo:30 }}</h4>
+                <h4><a ng-href="{{'http://mydtbld0021.isr.hp.com:8080/jenkins/job/' + job.name}}" target="_blank">{{ (job.alias || job.name) | limitTo:30 }}</a></h4>
             </td>
             <td style="height: 30px;line-height: 30px;width:30%;">
                 <img class="statusImg" ng-src="{{ chooseImg(job) }}">
@@ -61,13 +64,13 @@
         <div class="modal-dialog">
 
             <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Add New Job</h4>
-                </div>
-                <div class="modal-body">
-                    <form novalidate class="simple-form" role="form" name="addJobForm">
+            <form novalidate class="simple-form" role="form" name="addJobForm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Add New Job</h4>
+                    </div>
+                    <div class="modal-body">
                         <div class="form-group">
                             Job Name: <input type="text" class="form-control required" name="jobName"
                                              placeholder="e.g. MaaS-Platf-UI-Branch-master" ng-model="job.name"
@@ -80,16 +83,15 @@
                             <span>* short name to use</span>
                         </div>
 
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" ng-click="addJob(job)" ng-class="addJobFormSendBtn"
+                               value="{{ addJobResultButtonValue }}" data-dismiss="{{ dataDismiss }}"
+                               ng-disabled="addJobForm.$invalid"/>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <input type="submit" ng-click="addJob(job)" ng-class="addJobFormSendBtn"
-                           value="{{ addJobResultButtonValue }}" data-dismiss="{{ dataDismiss }}"
-                           ng-disabled="addJobForm.$invalid"/>
-                    </form>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
-
 </div>
