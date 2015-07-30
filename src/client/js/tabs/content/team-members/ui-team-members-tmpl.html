@@ -9,6 +9,41 @@
     </button>
 
     <!-- Modal -->
+    <div id="editMemberModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <form novalidate class="simple-form" role="form" name="addMemberForm">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Edit</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>First Name:</label><input type="text" class="form-control" ng-model="teamMembersCtrl.editMember.fname"/><br/>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name: </label><input type="text" class="form-control" ng-model="teamMembersCtrl.editMember.lname"/><br/>
+                        </div>
+                        <div class="form-group">
+                            <label>E-mail: </label><input type="email" class="form-control" ng-model="teamMembersCtrl.editMember.email"/><br/>
+                        </div>
+                        <div class="form-group">
+                            <label>Image Source: </label><input type="text" class="form-control" ng-model="teamMembersCtrl.editMember.img"/><br/>
+                        </div>
+                        <div class="form-group">
+                            <label>Computer Name: </label><input type="text" class="form-control" ng-model="teamMembersCtrl.editMember.compName"/><br/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" ng-click="teamMembersCtrl.saveMember()" class="btn btn-default" value="Save" data-dismiss="modal"/>
+                        <input type="submit" ng-click="teamMembersCtrl.cancelEditMember()" class="btn btn-default" value="Cancel" data-dismiss="modal"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div id="newMemberModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
 
@@ -37,7 +72,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <input type="submit" ng-click="addMember(member)" class="btn btn-default" value="Register" data-dismiss="modal"/>
+                        <input type="submit" ng-click="teamMembersCtrl.addMember(member)" class="btn btn-default" value="Register" data-dismiss="modal"/>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </form>
@@ -47,8 +82,8 @@
     <label>Search: <input ng-model="searchText"></label><br>
 
     <div class="panel-group" id="accordion">
-        <div class="panel panel-default" ng-repeat="member in members | filter: {fname: searchText}">
-            <div class="panel-heading">
+        <div class="panel panel-default" ng-repeat="member in teamMembersCtrl.members | filter: {fname: searchText}">
+            <div class="panel-heading" ng-click="teamMembersCtrl.setEditMember(member)">
                 <h4 class="panel-title">
                     <a data-toggle="collapse" data-parent="#accordion" href="#{{member.memberId}}">
                         <div class="row">
@@ -72,6 +107,12 @@
                             <td class="col-sm-2">{{member.compName}}</td>
                             <td class="col-sm-3">
                                 <img ng-src="{{member.img}}" class="member-image"/>
+                            </td>
+                            <td class="col-sm-1">
+                                <button type="button" class="btn btn-default new-member-button" data-toggle="modal"
+                                        data-target="#editMemberModal" ng-click="teamMembersCtrl.setEditMember(member)">
+                                    Edit
+                                </button>
                             </td>
                         </tr>
                     </table>
