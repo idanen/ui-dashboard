@@ -8,6 +8,7 @@ module.exports = function(app){
 
     // setup routes
     require('./routes/routes.js')(app);
+    //require('./service/ciStatusService.js')();
 
     console.info('Hello server side');
 
