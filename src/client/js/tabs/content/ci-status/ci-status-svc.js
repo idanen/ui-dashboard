@@ -13,7 +13,8 @@ angular.module('tabs').service('CiStatusService', ['$http',function ($http) {
 
 
 
-angular.module('tabs').controller('ciStatusController',['$scope','$http','$interval', function($scope,$http,$interval){
+angular.module('tabs').controller('ciStatusController',['$scope','$http','$interval', 'ENV', function($scope,$http,$interval, ENV){
+    var serviceUrl = `//${ENV.HOST}:${ENV.PORT}`;
 
     /*******************************
      ********** Variables **********
@@ -48,7 +49,7 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
             onStyle:'btn btn-default',
             offStyle:'btn btn-primary'
         }};
-        $http.post("//localhost:4000/addJob", newJob) // to check if build exist
+        $http.post(`${serviceUrl}/addJob`, newJob) // to check if build exist
             .success(function (res) {
                 // handle response from server
                 if(res == "3") {
@@ -76,7 +77,7 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
     $scope.loadJobs = function(){
     //    $scope.startProgressBar();
         $scope.activeLoader = false;
-        $http.get("//localhost:4000/loadJobs")
+        $http.get(`${serviceUrl}/loadJobs`)
             .success(function(res){
                 $scope.listOfJobs =  res;
                 $scope.animateOnUpdate = "fadeIn";
@@ -107,7 +108,7 @@ angular.module('tabs').controller('ciStatusController',['$scope','$http','$inter
                 job.freeze.offStyle = "btn btn-primary";
                 job.freeze.onStyle = "btn btn-default";
             }
-            $http.post("//localhost:4000/updateJob", job) // send job to server to update freeze in DB
+            $http.post(`${serviceUrl}/updateJob`, job) // send job to server to update freeze in DB
                 .success(function (res) {
                     console.log("sent successfully");
                 }

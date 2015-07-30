@@ -1,16 +1,5 @@
-angular.module('tabs', ['firebase', 'ngSanitize', 'ui.select']);
+angular.module('tabs', ['firebase', 'ngSanitize', 'ui.select']).constant('ENV', {
+    HOST: 'shnabel1',
+    PORT: '4000'
+});
 angular.module('ui', ['tabs']);
-
-
-angular.module('tabs').controller('infoCtrl',['$scope',function($scope){
-    $scope.currentStatue = "infoImg";
-    $scope.status = function(){
-        if($scope.currentStatue == "" || $scope.currentStatue == "infoImg"){
-            $scope.currentStatue="enlarge";
-        }else{
-            $scope.currentStatue="infoImg";
-        }
-
-        return $scope.currentStatue;
-    }
-}]);
