@@ -80,6 +80,6 @@
     "yui"           : false,
 
     "globals"       : {
-      "angulae": false
+      "angular": false
     }
 }
