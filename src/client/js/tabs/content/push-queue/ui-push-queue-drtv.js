@@ -1,8 +1,8 @@
 (function (angular) {
     'use strict';
 
-    angular.module('tabs').directive('uiPushQueue', ['PushQueueService', 'TeamMembersService', 'FirebaseService', 'NotificationService',
-        function (PushQueueService, TeamMembersService, FirebaseService, NotificationService) {
+    angular.module('tabs').directive('uiPushQueue', ['PushQueueService', 'TeamMembersService',
+        function (PushQueueService, TeamMembersService) {
             return {
                 restrict: 'E',
                 controllerAs: 'pushQueueCtrl',

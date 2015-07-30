@@ -8,7 +8,7 @@
                 templateUrl: '/js/ui-facade/ui-facade-tmpl.html',
                 controller: 'UiFacadeCtrl',
                 controllerAs: 'facade',
-                link: function (scope, element) {
+                link: function (scope) {
 
                     scope.appplySelectedTabContent = function applySelectedTabContent(tabId) {
                         var tabUrlContent = RegisteredTabsList.getTabContent(tabId);
@@ -28,7 +28,7 @@
             },
             {
                 title: 'CI/CD Status',
-                contentUrl: 'js/tabs/content/push-queue/ui-push-queue-tmpl.html',
+                contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-ci-status-tmpl.html',
                 columns: 6
             }
         ];

@@ -28,7 +28,7 @@
                 };
             }],
             templateUrl: 'js/tabs/content/team-members/ui-team-members-tmpl.html',
-            link: function ($scope, element, attributes, controller) {
+            link: function () {
 
             }
         };
