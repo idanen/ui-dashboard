@@ -17,6 +17,10 @@
             newMember = null;
         };
 
+        this.saveMemberInfo = function (updatedMember) {
+            this.members.$save(updatedMember);
+        };
+
         this.getMemberByID = function (memberId) {
             return this.members.filter(function (obj) {
                 return obj.memberId == memberId;
@@ -24,6 +28,10 @@
         };
         this.getMembers = function () {
             return svc.members;
+        };
+
+        this.getOrigMember = function(memberKey){
+            return FirebaseService.getOrigRecord(memberKey);
         };
     }]);
 })(window.angular);
