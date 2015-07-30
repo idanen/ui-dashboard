@@ -79,7 +79,7 @@
     "wsh"           : false,
     "yui"           : false,
 
-    "globals"       : {},
-
-    "predef": ["angular"]
+    "globals"       : {
+      "angulae": false
+    }
 }
