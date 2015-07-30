@@ -15,6 +15,11 @@
                 },
                 getMembers: function () {
                     return $firebaseArray(membersRef);
+                },
+                getOrigRecord: function (origRecordKey) {
+                    return $firebaseArray(membersRef).$loaded(function (data) {
+                        return data.$getRecord(origRecordKey);
+                    });
                 }
             };
         }
