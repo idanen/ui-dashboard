@@ -8,7 +8,7 @@
             this.queue = FirebaseService.getQueue();
 
             this.queue.$watch(function (event) {
-                if (event.event == 'child_removed') {
+                if (event.event === 'child_removed') {
                     if (svc.queue.length > 0) {
                         svc.fireNotification();
                     }

@@ -23,7 +23,7 @@
 
         this.getMemberByID = function (memberId) {
             return this.members.filter(function (obj) {
-                return obj.memberId == memberId;
+                return obj.memberId === memberId;
             })[0];
         };
         this.getMembers = function () {
