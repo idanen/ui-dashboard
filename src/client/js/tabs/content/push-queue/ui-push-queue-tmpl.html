@@ -1,7 +1,12 @@
 <div class="row push-queue-content">
-    <div class="col-md-6">
+    <!--<div class="col-md-3" ng-show="pushQueueCtrl.queue.length > 0">-->
+        <!--<h3>Head: <strong>{{ pushQueueCtrl.getMemberByID(pushQueueCtrl.queue[0].id).fname }}</strong></h3>-->
+        <!--<div class="head-mark"><img ng-src="{{ pushQueueCtrl.getMemberByID(pushQueueCtrl.queue[0].id).img }}"/></div>-->
+    <!--</div>-->
+    <!--<div class="col-md-9">-->
+    <div class="col-md-12">
         <div class="row">
-            <div class="col-md-11">
+            <div class="col-md-12">
                 <div class="row">
                     <div class="col-md-9">
                         <ui-select ng-model="pushQueueCtrl.selected" theme="selectize">
@@ -26,10 +31,11 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-11">
+            <div class="col-md-12">
                 <h3>{{pushQueueCtrl.empty}}</h3>
                 <ul class="list-group">
-                    <li ng-repeat="member in pushQueueCtrl.queue" class="list-group-item">
+                    <li ng-repeat="member in pushQueueCtrl.queue" class="list-group-item"
+                        ng-class="{'active': $index === 0}">
                         <div class="row">
                             <div class="col-md-7"> {{ pushQueueCtrl.getFirstName(member.id)}}</div>
                             <div class="col-md-3 col-md-offset-2">
@@ -43,10 +49,5 @@
                 </ul>
             </div>
         </div>
-    </div>
-
-    <div class="col-md-6" ng-show="pushQueueCtrl.queue.length > 0">
-        <h3>Head: <b>{{ pushQueueCtrl.getMemberByID(pushQueueCtrl.queue[0].id).fname }}</b></h3>
-        <img width="150" ng-src="{{ pushQueueCtrl.getMemberByID(pushQueueCtrl.queue[0].id).img }}"/>
     </div>
 </div>
