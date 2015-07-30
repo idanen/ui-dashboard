@@ -12,7 +12,7 @@
             ciStatus: {
                 id: 'ciStatus',
                 display: 'CI Status',
-                content: 'js/tabs/list/tabs-content-templates/tab-content-ui-team-1-tmpl.html'
+            content: 'js/tabs/list/tabs-content-templates/tab-content-ui-ci-status-tmpl.html'
             },
             teamMembers: {
                 id: 'teamMembers',
