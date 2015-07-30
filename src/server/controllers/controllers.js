@@ -48,7 +48,7 @@ exports.UIDashboardController = function () {
                                     return jobsObj[k];
                                 });
                             var jobExistInDB = checkJobExistInDB(jobsArr, job.name);
-                            if(jobExistInDB){ // calling a function that search if job exists in the array
+                            if(jobExistInDB == true){ // calling a function that search if job exists in the array
                                 // if its not duplicated , add the job to DB
                                 eRequest.patch({
                                     headers: {'content-type': 'application/json'},
