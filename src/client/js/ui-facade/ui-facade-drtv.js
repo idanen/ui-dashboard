@@ -28,7 +28,7 @@
             },
             {
                 title: 'CI/CD Status',
-                contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-team-members-tmpl.html',
+                contentUrl: 'js/tabs/content/push-queue/ui-push-queue-tmpl.html',
                 columns: 6
             }
         ];
