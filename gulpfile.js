@@ -71,9 +71,7 @@ gulp.task('styles', function () {
   // For best performance, don't add Sass partials to `gulp.src`
   return gulp.src([
     'src/client/css/*.scss',
-    'src/client/css/**/*.css',
-    'src/client/css/components/_components/_loader.scss',
-    'src/client/css/components/components.scss'
+    'src/client/css/**/*.css'
   ])
     .pipe($.sourcemaps.init())
     .pipe($.changed('.tmp/css', {extension: '.css'}))
