@@ -2,7 +2,7 @@
 .idea/
 src/client/index.html
 src/server/resources/*.*
-node_modules/
+node_modules
 ui-dashboard.iml
 dist/
 .tmp/

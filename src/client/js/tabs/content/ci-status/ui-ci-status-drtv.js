@@ -143,7 +143,7 @@
                 if (job.building === true) {
                     return "../images/green_anime.gif";
                 } else {
-                    return "../images/" + job.result + ".png";
+                    return "../images/" + (job.result.toLowerCase()) + ".png";
                 }
             };
 
