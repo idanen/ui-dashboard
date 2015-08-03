@@ -34,22 +34,33 @@
 </nav>
 <div class="container">
     <div class="row">
-        <div class="col-md-12">
-            <div class="row">
-                <div class="tabs-content col-md-12" id="tabs-content">
-                    <div class="row">
-                        <div ng-repeat="widget in facade.widgets"
-                             ng-class="widget.columns && ('col-md-' + widget.columns)">
-                            <paper-material class="widget" elevation="1">
-                                <h1>{{ widget.title }}</h1>
-
-                                <div ng-include="widget.contentUrl"></div>
-                            </paper-material>
-                        </div>
-                    </div>
-                </div>
-                <!--<div class="tabs-content col-md-9" id="tabs-content" ng-include="selectedTabContent"></div>-->
-            </div>
+        <div class="widget-container" ng-repeat="widget in facade.mainWidgets"
+             ng-class="('col-md-' + (12 / facade.mainWidgets.length))">
+        <paper-material class="widget" elevation="1">
+            <paper-header-panel class="content fit" mode="standard">
+                <paper-toolbar>
+                    <paper-icon-button icon="menu"></paper-icon-button>
+                    <div class="title">{{ widget.title }}</div>
+                </paper-toolbar>
+                <div class="widget-content" ng-include="widget.contentUrl"></div>
+            </paper-header-panel>
+        </paper-material>
         </div>
+    </div>
+    <div class="row">
+        <div class="widget-container" ng-repeat="widget in facade.widgets"
+             ng-class="widget.columns && ('col-md-' + widget.columns)">
+            <paper-material class="widget" elevation="1">
+                <paper-header-panel class="content fit" mode="standard">
+                    <paper-toolbar>
+                        <paper-icon-button icon="menu"></paper-icon-button>
+                        <div class="title">{{ widget.title }}</div>
+                    </paper-toolbar>
+                    <div class="widget-content" ng-include="widget.contentUrl">Content goes here...
+                    </div>
+                </paper-header-panel>
+            </paper-material>
+        </div>
+        <!--<div class="tabs-content col-md-9" id="tabs-content" ng-include="selectedTabContent"></div>-->
     </div>
 </div>

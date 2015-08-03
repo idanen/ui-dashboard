@@ -71,11 +71,19 @@ body {
     width:25px;
 }
 
+.widget-container {
+    height: 400px;
+}
+
 .widget {
-    height: 500px;
+    height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
     padding: 10px;
+}
+
+.widget-content {
+    padding-top: 10px;
 }
 
 .head-mark > img {

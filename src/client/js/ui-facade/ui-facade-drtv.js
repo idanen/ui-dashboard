@@ -20,17 +20,17 @@
         .controller('UiFacadeCtrl', UiFacadeController);
 
     function UiFacadeController() {
-        this.widgets = [
+        this.mainWidgets = [
             {
                 title: 'Push Queue',
-                contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-push-queue-tmpl.html',
-                columns: 6
+                contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-push-queue-tmpl.html'
             },
             {
                 title: 'CI/CD Status',
-                contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-ci-status-tmpl.html',
-                columns: 6
-            },
+                contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-ci-status-tmpl.html'
+            }
+        ];
+        this.widgets = [
             {
                 title: 'Team Members',
                 contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-team-members-tmpl.html',
