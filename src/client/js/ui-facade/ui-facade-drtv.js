@@ -37,5 +37,13 @@
                 columns: 12
             }
         ];
+
+        this.currentWidget = this.widgets[0];
     }
+
+    UiFacadeController.prototype = {
+        setCurrent: function (idx) {
+            this.currentWidget = this.widgets[idx];
+        }
+    };
 })(window.angular);

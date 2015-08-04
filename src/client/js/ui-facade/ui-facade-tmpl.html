@@ -39,7 +39,7 @@
         <paper-material class="widget" elevation="1">
             <paper-header-panel class="content fit" mode="standard">
                 <paper-toolbar>
-                    <paper-icon-button icon="menu"></paper-icon-button>
+                    <paper-icon-button icon="star"></paper-icon-button>
                     <div class="title">{{ widget.title }}</div>
                 </paper-toolbar>
                 <div class="widget-content" ng-include="widget.contentUrl"></div>
@@ -48,19 +48,21 @@
         </div>
     </div>
     <div class="row">
-        <div class="widget-container" ng-repeat="widget in facade.widgets"
-             ng-class="widget.columns && ('col-md-' + widget.columns)">
+        <div class="widget-container col-md-12">
             <paper-material class="widget" elevation="1">
                 <paper-header-panel class="content fit" mode="standard">
                     <paper-toolbar>
-                        <paper-icon-button icon="menu"></paper-icon-button>
-                        <div class="title">{{ widget.title }}</div>
+                        <paper-menu-button>
+                            <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
+                            <paper-menu class="dropdown-content" selected="{{ facade.widgets.indexOf(facade.currentWidget) }}">
+                                <paper-item ng-repeat="widget in facade.widgets" ng-click="facade.setCurrent($index)">{{ widget.title }}</paper-item>
+                            </paper-menu>
+                        </paper-menu-button>
+                        <div class="title">{{ facade.currentWidget.title }}</div>
                     </paper-toolbar>
-                    <div class="widget-content" ng-include="widget.contentUrl">Content goes here...
-                    </div>
+                    <div class="widget-content" ng-include="facade.currentWidget.contentUrl"></div>
                 </paper-header-panel>
             </paper-material>
         </div>
-        <!--<div class="tabs-content col-md-9" id="tabs-content" ng-include="selectedTabContent"></div>-->
     </div>
 </div>
