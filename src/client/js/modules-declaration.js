@@ -1,4 +1,4 @@
-angular.module('tabs', ['firebase', 'ngSanitize', 'ui.select'])
+angular.module('tabs', ['firebase', 'ngSanitize', 'ui.select', 'angular-ladda'])
     .constant('ENV', {
         HOST: 'localhost',
         PORT: '4000'

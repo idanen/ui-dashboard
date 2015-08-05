@@ -8,8 +8,8 @@
                         ng-click="dataDismiss = ' '">Add New Job
                 </button>
                 <!-- Refresh The Job List -->
-                <button type="button" class="btn btn-link mainBtns" data-toggle="modal" ng-click="updateAllJobs()">
-                    Refresh
+                <button type="button" ladda="loading" class="btn btn-default ladda-button mainBtns" data-style="expand-right" data-spinner-color="#FF0000" ng-click="updateAllJobs()">
+                    <span class="ladda-label">Refresh</span>
                 </button>
             </th>
         </tr>
@@ -20,27 +20,7 @@
         </tr>
         </thead>
         <tbody>
-        <!-- Loader -->
-        <tr ng-hide="activeLoader">
-            <td colspan="3">
-                <div id="floatingCirclesG">
-                    <div class="f_circleG" id="frotateG_01"></div>
-                    <div class="f_circleG" id="frotateG_02"></div>
-                    <div class="f_circleG" id="frotateG_03"></div>
-                    <div class="f_circleG" id="frotateG_04"></div>
-                    <div class="f_circleG" id="frotateG_05"></div>
-                    <div class="f_circleG" id="frotateG_06"></div>
-                    <div class="f_circleG" id="frotateG_07"></div>
-                    <div class="f_circleG" id="frotateG_08"></div>
-                </div>
-            </td>
-        </tr>
-        <tr ng-hide="activeLoader">
-            <td colspan="3" align="center">
-                <div> Loading List..</div>
-            </td>
-        </tr>
-        <tr ng-show="activeLoader" ng-class="styleJobRow(job)" ng-repeat="job in listOfJobs | unique:'name'">
+        <tr ng-hide="loading" ng-class="styleJobRow(job)" ng-repeat="job in listOfJobs | unique:'name'">
             <td style="height: 30px;line-height: 30px;width:40%;" data-toggle="tooltip" title="{{ job.name }}">
                 <h4><a ng-href="{{'http://mydtbld0021.isr.hp.com:8080/jenkins/job/' + job.name}}" target="_blank">{{ (job.alias || job.name) | limitTo:30 }}</a></h4>
             </td>

@@ -22,7 +22,7 @@
 
             $scope.listOfJobs = []; // the list of jobs we get from server and use in ng-repeat
             $scope.animateOnUpdate = "fadeOut"; // ng-class fading for refreshing data
-            $scope.activeLoader = false; // when it true , progress bar enabled and job list disabled..
+            $scope.loading = false; // when it true , progress bar enabled and job list disabled..
             $scope.dataDismiss = " "; // we change it to keep the modal open until response of the server
             $scope.validateForm = false; // control visibility of the Error Message in the modal
             $scope.validationErrorMessage = ''; // Error Message to show in the modal if input is invalid
@@ -75,13 +75,14 @@
             // Load All Jobs From The Server - Push Result Into $scope.listOfJobs array.
             $scope.loadJobs = function () {
                 //    $scope.startProgressBar();
-                $scope.activeLoader = false;
+                $scope.loading = true;
                 $http.get(serviceUrl + '/loadJobs')
                     .success(function (res) {
                         $scope.listOfJobs = res;
                         $scope.animateOnUpdate = "fadeIn";
-                        $scope.activeLoader = true;
                         //        $scope.stopProgressBar();
+                    }).finally(function () {
+                        $scope.loading = false;
                     });
             };
 
