@@ -44,6 +44,15 @@ body {
     margin-right: 20px;
 }
 
+.push-queue {
+    /* To complement the scale transformation */
+    margin-top: 15px;
+}
+
+.push-queue li {
+    transition: all 200ms ease-in-out;
+}
+
 .push-queue .active {
     transform: scale(1.1);
     box-shadow: 0 3px 5px rgba(0,0,0,.3);
@@ -69,6 +78,10 @@ body {
 
 .panel-group-member-image{
     width:25px;
+}
+
+.dynamic-widgets-container {
+    margin-top: 10px;
 }
 
 .widget-container {

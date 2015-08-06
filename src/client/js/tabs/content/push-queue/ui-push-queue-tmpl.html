@@ -31,6 +31,14 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-md-12">
+                <span>Last master merge: </span>
+                <button class="btn btn-default" ng-click="pushQueueCtrl.updateMergedToMaster()">
+                    <strong>{{ pushQueueCtrl.lastMasterMerge | date:pushQueueCtrl.dateFormat }}</strong> <span class="glyphicon glyphicon-refresh"></span>
+                </button>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <h3 ng-show="pushQueueCtrl.queue.length === 0">Queue is empty</h3>
                 <ul class="list-group push-queue">

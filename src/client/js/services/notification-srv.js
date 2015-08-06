@@ -1,35 +1,44 @@
 (function (angular, Notification) {
     'use strict';
 
-    angular.module('tabs').service('NotificationService', [function () {
+    angular.module('tabs').service('NotificationService', ['$timeout', '$window', function ($timeout, $window) {
+        var noNotificationsNotified = false,
+            svc = this;
 
-        document.addEventListener('DOMContentLoaded', function () {
+        $window.document.addEventListener('DOMContentLoaded', function () {
             if (Notification.permission !== "granted") {
                 Notification.requestPermission();
             }
         });
 
-        this.notifyQueueChanged = function (nextName, nextImg) {
-            if (!Notification) {
-                alert('Desktop notifications not available in your browser. Try Chromium.');
+        svc.notifyQueueChanged = function (nextName, nextImg) {
+            return svc.notify(nextName + " is Next!", null, nextImg, "PushQueueNotification");
+        };
+
+        svc.notify = function (message, title, img, tag, closeAfter) {
+            if (!Notification && !noNotificationsNotified) {
+                alert('Desktop notifications not available in your browser. Try Chrome.');
+                noNotificationsNotified = true;
                 return;
             }
 
             if (Notification.permission !== "granted") {
                 Notification.requestPermission();
             } else {
-                var notification = new Notification('Push Queue Changed!', {
-                    icon: nextImg,
-                    body: nextName + " is Next!",
-                    tag: "PushQueueNotification"
+                var notification = new Notification(title, {
+                    icon: img,
+                    body: message,
+                    tag: tag
                 });
 
                 notification.onclick = function () {
-                    window.focus();
+                    $window.focus();
                 };
-                setTimeout(function(){
+
+                $timeout(function () {
                     notification.close();
-                },7000);
+                }, closeAfter || 7000, false);
+                // TODO (idan): convert to provider to config default timeout
             }
         };
     }]);

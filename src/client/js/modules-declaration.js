@@ -5,11 +5,16 @@
         .constant('ENV', {
             HOST: 'localhost',
             PORT: '4000'
-        }).config(['laddaProvider', function (laddaProvider) {
+        })
+        .constant('DATE_FORMAT', 'HH:mm dd/MM/yyyy')
+        .config(['$locationProvider', 'laddaProvider', function ($locationProvider, laddaProvider) {
             laddaProvider.setOption({
                 style: 'expand-right'
             });
-        }])/*.config(['$stateProvider', '$locationProvider'/!*, '$urlRouterProvider'*!/, function config($stateProvider, $locationProvider/!*, $urlRouterProvider*!/) {
+
+            $locationProvider.html5Mode(true);
+        }])
+        /*.config(['$stateProvider', '$locationProvider'/!*, '$urlRouterProvider'*!/, function config($stateProvider, $locationProvider/!*, $urlRouterProvider*!/) {
              $locationProvider.html5Mode(true);
 
              $stateProvider.state('members', {
