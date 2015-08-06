@@ -4,16 +4,15 @@
     angular.module('tabs')
         .controller('PushQueueCtrl', PushQueueController);
 
-    PushQueueController.$inject = ['PushQueueService', 'TeamMembersService', 'DATE_FORMAT'];
+    PushQueueController.$inject = ['PushQueueService', 'TeamMembersService', 'MasterStatusService', 'DATE_FORMAT'];
 
-    function PushQueueController(PushQueueService, TeamMembersService, DATE_FORMAT) {
+    function PushQueueController(PushQueueService, TeamMembersService, MasterStatusService, DATE_FORMAT) {
         var vm = this;
 
         vm.dateFormat = DATE_FORMAT;
         vm.queue = PushQueueService.getQueue();
         vm.members = TeamMembersService.getMembers();
-        // TODO : move this to firebase
-        vm.lastMasterMerge = new Date(1970, 0, 1);
+        vm.lastMasterMerge = MasterStatusService.getLastUpdateTime;
 
         vm.addToQueue = function () {
             PushQueueService.addToQueue(vm.selected.memberId);
@@ -36,8 +35,7 @@
         };
 
         vm.updateMergedToMaster = function () {
-            vm.lastMasterMerge = new Date();
-            PushQueueService.masterUpdateNotification(vm.lastMasterMerge);
+            MasterStatusService.setUpdated(new Date());
         };
     }
 })();
