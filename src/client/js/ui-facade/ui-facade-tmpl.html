@@ -54,7 +54,7 @@
                     <paper-toolbar>
                         <paper-menu-button>
                             <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
-                            <paper-menu class="dropdown-content" selected="{{ facade.widgets.indexOf(facade.currentWidget) }}">
+                            <paper-menu class="dropdown-content">
                                 <paper-item ng-repeat="widget in facade.widgets" ng-click="facade.setCurrent($index)">{{ widget.title }}</paper-item>
                             </paper-menu>
                         </paper-menu-button>
