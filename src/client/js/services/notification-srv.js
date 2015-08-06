@@ -12,7 +12,7 @@
         });
 
         svc.notifyQueueChanged = function (nextName, nextImg) {
-            return svc.notify(nextName + " is Next!", null, nextImg, "PushQueueNotification");
+            return svc.notify(nextName + ' is Next!', 'Push Queue Changed!', nextImg, 'PushQueueNotification');
         };
 
         svc.notify = function (message, title, img, tag, closeAfter) {
