@@ -39,6 +39,11 @@ body {
     line-height: 30px;
 }
 
+.push-button {
+    background-color: #5bc0de;
+    color: white;
+}
+
 .profile-image {
     width: 30px;
     margin-right: 20px;

@@ -1,10 +1,16 @@
 <div class="row team-members-container">
     <div class="col-md-12">
         <!-- Trigger the modal with a button -->
-        <button type="button" class="btn btn-default new-member-button" data-toggle="modal"
+        <paper-button raised type="button" data-toggle="modal"
                 data-target="#newMemberModal">
-            New Member
-        </button>
+            <span class="glyphicon glyphicon-plus"></span>
+            <span>New Member</span>
+        </paper-button>
+        <paper-input-container>
+            <label>Search</label>
+            <input is="iron-input" ng-model="searchText">
+        </paper-input-container>
+        <br>
 
         <!-- Modal -->
         <div id="editMemberModal" class="modal fade" role="dialog">
@@ -90,7 +96,6 @@
                 </div>
             </div>
         </div>
-        <label>Search: <input ng-model="searchText"></label><br>
 
         <div class="panel-group" id="accordion">
             <div class="panel panel-default"

@@ -1,9 +1,11 @@
 <div class="row useful-links-container">
     <div class="col-md-12">
-        <paper-menu>
-            <paper-item ng-repeat="link in usefulLinksCtrl.links">
-                <a target="_blank" ng-href="{{ link.href }}">{{ link.name }}</a>
-            </paper-item>
-        </paper-menu>
+        <paper-input-container>
+            <label>Search</label>
+            <input is="iron-input" ng-model="usefulLinksCtrl.filter">
+        </paper-input-container>
+        <ul class="list-group">
+            <li class="list-group-item" ng-repeat="link in usefulLinksCtrl.links | filter:usefulLinksCtrl.filter"><a target="_blank" ng-href="{{ link.href }}">{{ link.name }}</a></li>
+        </ul>
     </div>
 </div>

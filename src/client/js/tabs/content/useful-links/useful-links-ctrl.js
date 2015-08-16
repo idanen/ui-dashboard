@@ -10,5 +10,7 @@
                 href: 'http://myd-vm01227.hpswlabs.adapps.hp.com/api/'
             }
         ];
+
+        this.filter = '';
     }
 })();
