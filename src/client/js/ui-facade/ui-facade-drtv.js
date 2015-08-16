@@ -35,6 +35,11 @@
                 title: 'Team Members',
                 contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-team-members-tmpl.html',
                 columns: 12
+            },
+            {
+                title: 'Useful Links',
+                contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-useful-links-tmpl.html',
+                columns: 12
             }
         ];
 
