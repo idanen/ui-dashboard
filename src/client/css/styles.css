@@ -1,3 +1,10 @@
+/*
+ * This is added to support fixed navbar
+ */
+body {
+    padding-top: 70px;
+}
+
 .dashboard-header {
     margin-bottom: 20px;
 }
@@ -37,6 +44,20 @@
     margin-right: 20px;
 }
 
+.push-queue {
+    /* To complement the scale transformation */
+    margin-top: 15px;
+}
+
+.push-queue li {
+    transition: all 200ms ease-in-out;
+}
+
+.push-queue .active {
+    transform: scale(1.1);
+    box-shadow: 0 3px 5px rgba(0,0,0,.3);
+}
+
 .selectize-dropdown-content {
     max-height: 400px;
 }
@@ -55,8 +76,31 @@
     height: 100px
 }
 
-.panel-group-member-image {
-    width: 25px;
+.panel-group-member-image{
+    width:25px;
+}
+
+.dynamic-widgets-container {
+    margin-top: 10px;
+}
+
+.widget-container {
+    height: 400px;
+}
+
+.widget {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.widget-content {
+    padding: 15px 10px;
+}
+
+.head-mark > img {
+    width: 30px;
 }
 
 .statusImg {

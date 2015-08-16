@@ -1,45 +1,55 @@
 (function (angular) {
     'use strict';
 
-    angular.module('tabs').service('PushQueueService', ['TeamMembersService', 'FirebaseService', 'NotificationService',
-        function (TeamMembersService, FirebaseService, NotificationService) {
+    angular.module('tabs').service('PushQueueService', PushQueueService);
 
-            var svc = this;
-            this.queue = FirebaseService.getQueue();
+    PushQueueService.$inject = ['TeamMembersService', 'FirebaseService', 'NotificationService'];
 
-            this.queue.$watch(function (event) {
-                if (event.event === 'child_removed') {
-                    if (svc.queue.length > 0) {
-                        svc.fireNotification();
-                    }
+    function PushQueueService(TeamMembersService, FirebaseService, NotificationService) {
+        var svc = this;
+        svc.queue = FirebaseService.getQueue();
+
+        svc.addToQueue = addToQueue;
+        svc.removeFromQueue = removeFromQueue;
+        svc.getQueue = getQueue;
+        svc.getFirstName = getFirstName;
+        svc.getMemberByID = getMemberByID;
+        svc.fireNotification = fireNotification;
+
+        svc.queue.$watch(function (event) {
+            if (event.event === 'child_removed') {
+                if (svc.queue.length > 0) {
+                    svc.fireNotification();
                 }
+            }
+        });
+
+        function addToQueue(memberId) {
+            svc.queue.$add({
+                id: memberId
             });
+        }
 
-            this.addToQueue = function (memberId) {
-                svc.queue.$add({
-                    id: memberId
-                });
-            };
-            this.removeFromQueue = function (id) {
-                return svc.queue.$remove(id).then(function () {
-                    return (svc.queue.length === 0);
-                });
-            };
+        function removeFromQueue(id) {
+            return svc.queue.$remove(id).then(function () {
+                return (svc.queue.length === 0);
+            });
+        }
 
-            this.getQueue = function(){
-                return this.queue;
-            };
-            this.getFirstName = function (memberId) {
-                return svc.getMemberByID(memberId).fname;
-            };
+        function getQueue(){
+            return svc.queue;
+        }
 
-            this.getMemberByID = function (memberId) {
-                return TeamMembersService.getMemberByID(memberId);
-            };
+        function getFirstName(memberId) {
+            return svc.getMemberByID(memberId).fname;
+        }
 
-            this.fireNotification = function () {
-                NotificationService.notifyQueueChanged(svc.getMemberByID(svc.queue[0].id).fname, svc.getMemberByID(svc.queue[0].id).img);
-            };
+        function getMemberByID(memberId) {
+            return TeamMembersService.getMemberByID(memberId);
+        }
 
-        }]);
+        function fireNotification() {
+            NotificationService.notifyQueueChanged(svc.getMemberByID(svc.queue[0].id).fname, svc.getMemberByID(svc.queue[0].id).img);
+        }
+    }
 })(window.angular);

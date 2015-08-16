@@ -1,0 +1,9 @@
+<div class="row useful-links-container">
+    <div class="col-md-12">
+        <paper-menu>
+            <paper-item ng-repeat="link in usefulLinksCtrl.links">
+                <a target="_blank" ng-href="{{ link.href }}">{{ link.name }}</a>
+            </paper-item>
+        </paper-menu>
+    </div>
+</div>

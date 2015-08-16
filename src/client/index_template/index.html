@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>UI Dashboard</title>
 
+    <base href="/"/>
+
     <!-- Add to homescreen -->
     <link rel="manifest" href="manifest.json">
 
@@ -34,6 +36,8 @@
     <link rel="stylesheet" href="lib/select/select.css">
     <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.default.css">
     <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.bootstrap3.css">
+    <!-- Ladda (Loading buttons) -->
+    <link rel="stylesheet" href="css/ladda-themeless.min.css">
 
     <!--css-->
     <link href="css/styles.css" rel="stylesheet" type="text/css">
@@ -41,23 +45,42 @@
 
 <body ng-app="ui">
 <ui-facade></ui-facade>
+<ui-view></ui-view>
 
 <!-- build:js scripts/libs.min.js -->
-<script src="http://www.myersdaily.org/joseph/javascript/md5.js"></script>
+<script src="components/webcomponentsjs/webcomponents.min.js"></script>
+<script src="components/vanilla/time-elements.js"></script>
+<script src="lib/md5/md5.js"></script>
 <script src="lib/lodash/lodash.js"></script>
 <script src="https://cdn.firebase.com/js/client/2.2.1/firebase.js"></script>
 <script src="lib/jquery/jquery-2.1.4.min.js"></script>
 <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="lib/ladda/spin.min.js"></script>
+<script src="lib/ladda/ladda.min.js"></script>
 <script src="lib/angular/angular.js"></script>
 <script src="lib/angular/angular-route.js"></script>
 <script src="lib/angular/angular-resource.js"></script>
 <script src="lib/angular/angular-animate.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular-sanitize.js"></script>
+<script src="lib/angular/angular-sanitize.js"></script>
+<script src="lib/ladda/angular-ladda.min.js"></script>
 <script src="lib/select/select.js"></script>
 <script src="https://cdn.firebase.com/libs/angularfire/1.1.2/angularfire.min.js"></script>
 <!-- endbuild -->
 <!-- inject:js -->
 <!-- endinject -->
+
+<link rel="import" href="components/paper-styles/paper-styles.html"/>
+<link rel="import" href="components/iron-icons/iron-icons.html"/>
+<link rel="import" href="components/iron-icon/iron-icon.html"/>
+<link rel="import" href="components/paper-button/paper-button.html"/>
+<link rel="import" href="components/paper-item/paper-item.html"/>
+<link rel="import" href="components/paper-icon-button/paper-icon-button.html"/>
+<link rel="import" href="components/paper-menu/paper-menu.html"/>
+<link rel="import" href="components/paper-menu-button/paper-menu-button.html"/>
+<link rel="import" href="components/paper-drawer-panel/paper-drawer-panel.html"/>
+<link rel="import" href="components/paper-material/paper-material.html"/>
+<link rel="import" href="components/paper-toolbar/paper-toolbar.html"/>
+<link rel="import" href="components/paper-header-panel/paper-header-panel.html"/>
 </body>
 
 </html>
