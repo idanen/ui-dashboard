@@ -1,23 +1,23 @@
 <div class="bs-example" ng-app="tabs" ng-init="loadJobs()">
     <div class="row">
         <div class="col-xs-12">
+            <!-- Trigger the modal with a button -->
+            <paper-button raised type="button" class="mainBtns" data-toggle="modal" data-target="#newMemberModal"
+                          ng-click="dataDismiss = ' '">
+                <iron-icon icon="add"></iron-icon>
+                <span>Add New Job</span>
+            </paper-button>
+            <!-- Refresh The Job List -->
+            <paper-button raised class="ladda-button mainBtns" ladda="loading" ng-click="updateAllJobs()">
+                <iron-icon icon="refresh"></iron-icon>
+                <span class="ladda-label">Refresh</span>
+            </paper-button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
             <table class="table">
                 <thead>
-                <tr>
-                    <th colspan="3">
-                        <!-- Trigger the modal with a button -->
-                        <paper-button raised type="button" class="mainBtns" data-toggle="modal" data-target="#newMemberModal"
-                                      ng-click="dataDismiss = ' '">
-                            <iron-icon icon="add"></iron-icon>
-                            <span>Add New Job</span>
-                        </paper-button>
-                        <!-- Refresh The Job List -->
-                        <paper-button raised class="ladda-button mainBtns" ladda="loading" ng-click="updateAllJobs()">
-                            <iron-icon icon="refresh"></iron-icon>
-                            <span class="ladda-label">Refresh</span>
-                        </paper-button>
-                    </th>
-                </tr>
                 <tr>
                     <th>Job Name</th>
                     <th>Build Status</th>
