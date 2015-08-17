@@ -1,43 +1,55 @@
 <div class="bs-example" ng-app="tabs" ng-init="loadJobs()">
-    <table class="table">
-        <thead>
-        <tr>
-            <th colspan="3">
-                <!-- Trigger the modal with a button -->
-                <paper-button raised type="button" class="mainBtns" data-toggle="modal" data-target="#newMemberModal"
-                        ng-click="dataDismiss = ' '">
-                    <span>Add New Job</span>
-                </paper-button>
-                <!-- Refresh The Job List -->
-                <paper-button raised class="ladda-button mainBtns" ladda="loading" ng-click="updateAllJobs()">
-                    <span class="ladda-label">Refresh</span>
-                </paper-button>
-            </th>
-        </tr>
-        <tr>
-            <th>Job Name</th>
-            <th>Build Status</th>
-            <th>Freeze</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr ng-hide="loading" ng-class="styleJobRow(job)" ng-repeat="job in listOfJobs | unique:'name'">
-            <td style="height: 30px;line-height: 30px;width:40%;" data-toggle="tooltip" title="{{ job.name }}">
-                <h4><a ng-href="{{'http://mydtbld0021.isr.hp.com:8080/jenkins/job/' + job.name}}" target="_blank">{{ (job.alias || job.name) | limitTo:30 }}</a></h4>
-            </td>
-            <td style="height: 30px;line-height: 30px;width:30%;">
-                <img class="statusImg" ng-src="{{ chooseImg(job) }}">
-                {{ status(job) }}
-            </td>
-            <td style="height: 30px;line-height: 30px;width:30%;">
-                <div class="btn-group">
-                    <button ng-click="toggleFreeze(job,'onButton')" class="{{ job.freeze.onStyle }}">On</button>
-                    <button ng-click="toggleFreeze(job,'offButton')" class="{{ job.freeze.offStyle }}">Off</button>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="row">
+        <div class="col-xs-12">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th colspan="3">
+                        <!-- Trigger the modal with a button -->
+                        <paper-button raised type="button" class="mainBtns" data-toggle="modal" data-target="#newMemberModal"
+                                      ng-click="dataDismiss = ' '">
+                            <iron-icon icon="add"></iron-icon>
+                            <span>Add New Job</span>
+                        </paper-button>
+                        <!-- Refresh The Job List -->
+                        <paper-button raised class="ladda-button mainBtns" ladda="loading" ng-click="updateAllJobs()">
+                            <iron-icon icon="refresh"></iron-icon>
+                            <span class="ladda-label">Refresh</span>
+                        </paper-button>
+                    </th>
+                </tr>
+                <tr>
+                    <th>Job Name</th>
+                    <th>Build Status</th>
+                    <th>Freeze</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-hide="loading" ng-class="styleJobRow(job)" ng-repeat="job in listOfJobs | unique:'name'">
+                    <td style="height: 30px;line-height: 30px;width:40%;" data-toggle="tooltip" title="{{ job.name }}">
+                        <h4><a ng-href="{{'http://mydtbld0021.isr.hp.com:8080/jenkins/job/' + job.name}}" target="_blank">{{ (job.alias || job.name) | limitTo:30 }}</a></h4>
+                    </td>
+                    <td style="height: 30px;line-height: 30px;width:30%;">
+                        <img class="statusImg" ng-src="{{ chooseImg(job) }}">
+                        {{ status(job) }}
+                    </td>
+                    <td style="height: 30px;line-height: 30px;width:30%;">
+                        <div class="btn-group">
+                            <button ng-click="toggleFreeze(job,'onButton')" class="{{ job.freeze.onStyle }}">On</button>
+                            <button ng-click="toggleFreeze(job,'offButton')" class="{{ job.freeze.offStyle }}">Off</button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-1 col-xs-offset-11">
+            <paper-fab class=" pull-right" mini icon="add" title="New Member" data-toggle="modal"
+                       data-target="#newMemberModal" ng-click="dataDismiss = ' '"></paper-fab>
+        </div>
+    </div>
 
 
     <!-- Modal -->

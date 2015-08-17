@@ -56,7 +56,7 @@
                             <!--<div class="title">Change Content</div>-->
                         </paper-toolbar>
                         <paper-menu>
-                            <paper-item ng-repeat="widget in facade.widgets" ng-click="facade.setCurrent($index)">{{ widget.title }}</paper-item>
+                            <paper-item class="widget-link" ng-repeat="widget in facade.widgets" ng-click="facade.setCurrent($index)">{{ widget.title }}</paper-item>
                         </paper-menu>
                     </paper-header-panel>
                     <paper-header-panel main>

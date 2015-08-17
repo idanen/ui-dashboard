@@ -34,6 +34,10 @@ body {
     height: 700px;
 }
 
+.widget-link {
+    cursor: pointer;
+}
+
 .member-selector,
 .selectize-input {
     line-height: 30px;
