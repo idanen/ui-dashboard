@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('tabs')
-        .directive('usefulLinks', function () {
+        .directive('shoutOuts', function () {
             return {
                 restrict: 'E',
                 controllerAs: 'shouter',
