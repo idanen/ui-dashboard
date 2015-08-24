@@ -9,6 +9,7 @@
                 queueRef = ref.child('queue'),
                 membersRef = ref.child('members'),
                 jobsRef = ref.child('jobs'),
+                linksRef = ref.child('usefulLinks'),
                 masterArrRef = ref.child('master'),
                 boundMasterArr = $firebaseArray(masterArrRef),
                 boundMasterStatus = {};
@@ -19,6 +20,9 @@
                 },
                 getMembers: function () {
                     return $firebaseArray(membersRef);
+                },
+                getLinks: function () {
+                    return $firebaseArray(linksRef);
                 },
                 getOrigRecord: function (origRecordKey) {
                     return $firebaseArray(membersRef).$loaded(function (data) {

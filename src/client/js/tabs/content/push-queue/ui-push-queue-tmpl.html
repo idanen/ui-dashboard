@@ -35,7 +35,7 @@
                 <span>Last master merge: </span>
                 <paper-button class="colorful" raised ng-click="pushQueueCtrl.updateMergedToMaster()">
                     <iron-icon icon="refresh"></iron-icon>
-                    <time is="time-ago" datetime="{{ pushQueueCtrl.lastMasterMerge() | date:'yyyy-MM-ddTHH:mmZ' }}">
+                    <time is="time-ago" datetime="{{ pushQueueCtrl.lastMasterMerge() | date:'yyyy-MM-ddTHH:mmZ' }}" title="{{ pushQueueCtrl.lastMasterMerge() | date:pushQueueCtrl.dateFormat }}">
                         {{ pushQueueCtrl.lastMasterMerge() | date:pushQueueCtrl.dateFormat }}
                     </time>
                 </paper-button>
