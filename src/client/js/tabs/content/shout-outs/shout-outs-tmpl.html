@@ -1,0 +1,13 @@
+<div class="row shout-outs-container">
+    <div class="col-xs-9">
+        <paper-input-container>
+            <iron-icon icon="search" prefix></iron-icon>
+            <label>What to shout</label>
+            <input is="iron-input" ng-model="shouter.toShout">
+        </paper-input-container>
+    </div>
+    <div class="col-xs-3">
+        <paper-fab icon="send" ng-click="shouter.shout()" title="Shout!">
+        </paper-fab>
+    </div>
+</div>

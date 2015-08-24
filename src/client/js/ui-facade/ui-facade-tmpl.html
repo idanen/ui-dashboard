@@ -56,7 +56,12 @@
                             <!--<div class="title">Change Content</div>-->
                         </paper-toolbar>
                         <paper-menu>
-                            <paper-item class="widget-link" ng-repeat="widget in facade.widgets" ng-click="facade.setCurrent($index)">{{ widget.title }}</paper-item>
+                            <paper-item class="widget-link" ng-repeat="widget in facade.widgets" ng-click="facade.setCurrent($index)" title="{{ widget.title }}">
+                                <paper-item-body two-line>
+                                    <div>{{ widget.title }}</div>
+                                    <!--<div secondary>{{ widget.subTitle }}</div>-->
+                                </paper-item-body>
+                            </paper-item>
                         </paper-menu>
                     </paper-header-panel>
                     <paper-header-panel main>

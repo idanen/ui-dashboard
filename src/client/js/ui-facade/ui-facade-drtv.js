@@ -40,6 +40,12 @@
                 title: 'Useful Links',
                 contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-useful-links-tmpl.html',
                 columns: 12
+            },
+            {
+                title: 'Shout Outs!',
+                subTitle: 'Use \'em wisely',
+                contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-shout-outs-tmpl.html',
+                columns: 12
             }
         ];
 
