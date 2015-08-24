@@ -64,7 +64,7 @@ body {
 
 .push-queue .active {
     transform: scale(1.1);
-    box-shadow: 0 3px 5px rgba(0,0,0,.3);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, .3);
 }
 
 .selectize-dropdown-content {
@@ -73,7 +73,6 @@ body {
 
 .panel-group {
     overflow: auto;
-    max-height: 520px
 }
 
 .new-member-button {
@@ -81,12 +80,11 @@ body {
 }
 
 .member-image {
-    width: 100px;
-    height: 100px
+    max-width: 100px;
 }
 
-.panel-group-member-image{
-    width:25px;
+.panel-group-member-image {
+    width: 25px;
 }
 
 .dynamic-widgets-container {
