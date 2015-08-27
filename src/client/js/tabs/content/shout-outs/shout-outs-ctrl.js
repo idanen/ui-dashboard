@@ -12,7 +12,7 @@
 
     ShoutOutsController.prototype = {
         shout: function () {
-            this.service.shout(this.toShout);
+            this.service.addShout(this.toShout);
             this.toShout = '';
         }
     };

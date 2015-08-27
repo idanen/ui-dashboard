@@ -15,7 +15,7 @@
             svc.shoutouts.$watch(function (event) {
                 if (event.event === 'child_added') {
                     if (svc.shoutouts.length > 0) {
-                        svc.shout();
+                        svc.shout(svc.shoutouts[svc.shoutouts.length - 1].message);
                     }
                 }
             });
@@ -23,6 +23,12 @@
     }
 
     ShoutOutsService.prototype = {
+        addShout: function (messageToShout) {
+            this.shoutouts.$add({
+                message: messageToShout,
+                shoutedAt: Date.now()
+            });
+        },
         shout: function (toShout) {
             this.notifier.notify(toShout, this.title, '/images/shoutout-icon-orange-125x125.png', 'ShoutOutsNotification', 10000);
         }
