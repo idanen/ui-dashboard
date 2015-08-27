@@ -24,10 +24,12 @@
 
     ShoutOutsService.prototype = {
         addShout: function (messageToShout) {
-            this.shoutouts.$add({
-                message: messageToShout,
-                shoutedAt: Date.now()
-            });
+            if (messageToShout) {
+                this.shoutouts.$add({
+                    message: messageToShout,
+                    shoutedAt: Date.now()
+                });
+            }
         },
         shout: function (toShout) {
             this.notifier.notify(toShout, this.title, '/images/shoutout-icon-orange-125x125.png', 'ShoutOutsNotification', 10000);

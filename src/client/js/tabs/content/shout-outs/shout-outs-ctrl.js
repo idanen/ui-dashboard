@@ -12,8 +12,10 @@
 
     ShoutOutsController.prototype = {
         shout: function () {
-            this.service.addShout(this.toShout);
-            this.toShout = '';
+            if (this.toShout) {
+                this.service.addShout(this.toShout);
+                this.toShout = '';
+            }
         }
     };
 })();
