@@ -10,6 +10,7 @@
                 membersRef = ref.child('members'),
                 jobsRef = ref.child('jobs'),
                 linksRef = ref.child('usefulLinks'),
+                shoutoutsRef = ref.child('shoutouts'),
                 masterArrRef = ref.child('master'),
                 boundMasterArr = $firebaseArray(masterArrRef),
                 boundMasterStatus = {};
@@ -28,6 +29,9 @@
                     return $firebaseArray(membersRef).$loaded(function (data) {
                         return data.$getRecord(origRecordKey);
                     });
+                },
+                getShoutOuts: function () {
+                    return $firebaseArray(shoutoutsRef);
                 },
                 getJobs: function () {
                     return $firebaseArray(jobsRef);

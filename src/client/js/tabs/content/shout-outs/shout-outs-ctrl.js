@@ -1,19 +1,18 @@
 (function () {
     'use strict';
 
-    angular.module('tabs').controller('ShoutOutsCtrl', ShoutOutsController).constant('SHOUT_TITLE', 'Shout Out!');
+    angular.module('tabs').controller('ShoutOutsCtrl', ShoutOutsController);
 
-    ShoutOutsController.$inject = ['NotificationService', 'SHOUT_TITLE'];
+    ShoutOutsController.$inject = ['ShoutOutsService'];
 
-    function ShoutOutsController(NotificationService, SHOUT_TITLE) {
+    function ShoutOutsController(ShoutOutsService) {
         this.toShout = '';
-        this.notifier = NotificationService;
-        this.title = SHOUT_TITLE;
+        this.service = ShoutOutsService;
     }
 
     ShoutOutsController.prototype = {
         shout: function () {
-            this.notifier.notify(this.toShout, this.title, '/images/shoutout-icon-orange-125x125.png', 'ShoutOutsNotification', 10000);
+            this.service.shout(this.toShout);
             this.toShout = '';
         }
     };

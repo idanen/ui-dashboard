@@ -4,9 +4,9 @@
     angular.module('tabs')
         .controller('PushQueueCtrl', PushQueueController);
 
-    PushQueueController.$inject = ['PushQueueService', 'TeamMembersService', 'MasterStatusService', 'DATE_FORMAT'];
+    PushQueueController.$inject = ['PushQueueService', 'TeamMembersService', 'MasterStatusService', 'DATE_FORMAT', '$scope'];
 
-    function PushQueueController(PushQueueService, TeamMembersService, MasterStatusService, DATE_FORMAT) {
+    function PushQueueController(PushQueueService, TeamMembersService, MasterStatusService, DATE_FORMAT, $scope) {
         var vm = this;
 
         vm.dateFormat = DATE_FORMAT;
@@ -37,5 +37,10 @@
         vm.updateMergedToMaster = function () {
             MasterStatusService.setUpdated(new Date());
         };
+
+        $scope.$on('$destroy', function () {
+            MasterStatusService.unwatchDataChanges();
+            PushQueueService.unwatchDataChanges();
+        });
     }
 })();

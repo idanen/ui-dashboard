@@ -6,7 +6,8 @@
     PushQueueService.$inject = ['TeamMembersService', 'FirebaseService', 'NotificationService'];
 
     function PushQueueService(TeamMembersService, FirebaseService, NotificationService) {
-        var svc = this;
+        var svc = this,
+            unwatchQueueChanges;
         svc.queue = FirebaseService.getQueue();
 
         svc.addToQueue = addToQueue;
@@ -15,8 +16,9 @@
         svc.getFirstName = getFirstName;
         svc.getMemberByID = getMemberByID;
         svc.fireNotification = fireNotification;
+        svc.unwatchDataChanges = unwatchDataChanges;
 
-        svc.queue.$watch(function (event) {
+        unwatchQueueChanges = svc.queue.$watch(function (event) {
             if (event.event === 'child_removed') {
                 if (svc.queue.length > 0) {
                     svc.fireNotification();
@@ -50,6 +52,13 @@
 
         function fireNotification() {
             NotificationService.notifyQueueChanged(svc.getMemberByID(svc.queue[0].id).fname, svc.getMemberByID(svc.queue[0].id).img);
+        }
+
+        function unwatchDataChanges() {
+            // TODO (idan): just reduce watchers count here, call unwatch when all stopped watching
+            if (typeof unwatchQueueChanges === 'function') {
+                unwatchQueueChanges();
+            }
         }
     }
 })(window.angular);
