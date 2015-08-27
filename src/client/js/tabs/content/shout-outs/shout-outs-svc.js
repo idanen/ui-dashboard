@@ -11,12 +11,14 @@
         svc.notifier = NotificationService;
         svc.title = SHOUT_TITLE;
 
-        svc.shoutouts.$watch(function (event) {
-            if (event.event === 'child_added') {
-                if (svc.shoutouts.length > 0) {
-                    svc.fireNotification();
+        svc.shoutouts.$loaded(function () {
+            svc.shoutouts.$watch(function (event) {
+                if (event.event === 'child_added') {
+                    if (svc.shoutouts.length > 0) {
+                        svc.shout();
+                    }
                 }
-            }
+            });
         });
     }
 
