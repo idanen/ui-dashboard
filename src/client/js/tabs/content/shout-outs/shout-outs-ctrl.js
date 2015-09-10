@@ -8,6 +8,7 @@
     function ShoutOutsController(ShoutOutsService) {
         this.toShout = '';
         this.service = ShoutOutsService;
+        this.shouts = ShoutOutsService.shoutouts;
     }
 
     ShoutOutsController.prototype = {

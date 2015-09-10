@@ -1,13 +1,23 @@
-<div class="row shout-outs-container">
-    <div class="col-xs-9">
-        <paper-input-container>
-            <iron-icon icon="search" prefix></iron-icon>
-            <label>What to shout</label>
-            <input is="iron-input" ng-model="shouter.toShout">
-        </paper-input-container>
+<div class="shout-outs-container">
+    <div class="row">
+        <div class="col-xs-9">
+            <paper-input-container>
+                <iron-icon icon="search" prefix></iron-icon>
+                <label>What to shout</label>
+                <input is="iron-input" ng-model="shouter.toShout">
+            </paper-input-container>
+        </div>
+        <div class="col-xs-3">
+            <paper-fab icon="send" ng-click="shouter.shout()" title="Shout!">
+            </paper-fab>
+        </div>
     </div>
-    <div class="col-xs-3">
-        <paper-fab icon="send" ng-click="shouter.shout()" title="Shout!">
-        </paper-fab>
+
+    <div class="row shout-outs-history">
+        <div class="col-md-9">
+            <ul class="list-group">
+                <li class="list-group-item" ng-repeat="shout in shouter.shouts | orderBy:'shoutedAt':true | limitTo:10">{{::shout.message}}</li>
+            </ul>
+        </div>
     </div>
 </div>
