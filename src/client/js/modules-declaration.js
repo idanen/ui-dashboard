@@ -7,13 +7,8 @@
             PORT: '4000'
         })
         .constant('DATE_FORMAT', 'HH:mm dd/MM/yyyy')
-        .config(['$locationProvider', 'laddaProvider', function ($locationProvider, laddaProvider) {
-            laddaProvider.setOption({
-                style: 'expand-right'
-            });
-
-            $locationProvider.html5Mode(true);
-        }])
+        .config(configApp)
+        .run(initApp);
         /*.config(['$stateProvider', '$locationProvider'/!*, '$urlRouterProvider'*!/, function config($stateProvider, $locationProvider/!*, $urlRouterProvider*!/) {
              $locationProvider.html5Mode(true);
 
@@ -23,4 +18,18 @@
          });
      }])*/;
     angular.module('ui', ['tabs']);
+
+    configApp.$inject = ['$locationProvider', 'laddaProvider'];
+    function configApp($locationProvider, laddaProvider) {
+        laddaProvider.setOption({
+            style: 'expand-right'
+        });
+
+        $locationProvider.html5Mode(true);
+    }
+
+    initApp.$inject = ['ShoutOutsService'];
+    function initApp(shoutOutsService) {
+        shoutOutsService.init();
+    }
 })();
