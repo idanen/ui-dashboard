@@ -8,5 +8,25 @@
         <ul class="list-group">
             <li class="list-group-item" ng-repeat="link in usefulLinksCtrl.links | filter:usefulLinksCtrl.filter"><a target="_blank" ng-href="{{ link.href }}">{{ link.name }}</a></li>
         </ul>
+        <div class="row">
+            <div class="col-xs-12">
+                <paper-input-container>
+                    <label>Name</label>
+                    <input is="iron-input" ng-model="usefulLinksCtrl.newLink.name">
+                </paper-input-container>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10">
+                <paper-input-container>
+                    <label>Url</label>
+                    <input is="iron-input" type="url" ng-model="usefulLinksCtrl.newLink.href">
+                </paper-input-container>
+            </div>
+            <div class="col-md-2">
+                <paper-fab icon="send" ng-click="usefulLinksCtrl.add()" title="Add">
+                </paper-fab>
+            </div>
+        </div>
     </div>
 </div>

@@ -16,7 +16,7 @@
              templateUrl: 'js/tabs/content/team-members/ui-team-members-tmpl.html',
              controller: 'TeamMembersCtrl as teamMembersCtrl'
          });
-     }])*/;
+     }])*/
     angular.module('ui', ['tabs']);
 
     configApp.$inject = ['$locationProvider', 'laddaProvider'];

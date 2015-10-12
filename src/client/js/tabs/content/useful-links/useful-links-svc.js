@@ -12,6 +12,9 @@
     UsefulLinksService.prototype = {
         getLinks: function () {
             return this.links;
+        },
+        addLink: function (toAdd) {
+            this.links.$add(toAdd);
         }
     };
 })(window.angular);
