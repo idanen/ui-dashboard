@@ -101,7 +101,7 @@ exports.UIDashboardController = function () {
     // get the job list from the DB ('filter' unused for now)
     function getJobsFromDatabase(filter) {
         return new Promise(function (resolve, reject) {
-            eRequest.get("http://boiling-inferno-9766.firebaseio.com/allJobs.json", function(error, response, body) {
+            eRequest.get("https://boiling-inferno-9766.firebaseio.com/allJobs.json", function(error, response, body) {
                 var jobsObj = JSON.parse(body),
                     jobsArr = Object.keys(jobsObj).map(function(k) {
                         return jobsObj[k];
