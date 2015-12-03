@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('tabs', ['firebase', 'ngSanitize', 'ui.select', 'angular-ladda'])
+    angular.module('tabs', ['firebase', 'ngSanitize', 'ui.select', 'angular-ladda', 'ngclipboard'])
         .constant('ENV', {
             HOST: 'myd-vm01818.hpswlabs.adapps.hp.com',
             PORT: '4000'

@@ -124,7 +124,10 @@
                                 <td class="col-sm-1">{{member.fname}}</td>
                                 <td class="col-sm-1">{{member.lname}}</td>
                                 <td class="col-sm-2">{{member.email}}</td>
-                                <td class="col-sm-2">{{member.compName}}</td>
+                                <td class="col-sm-2">
+                                    <span>{{member.compName}} </span>
+                                    <span class="glyphicon glyphicon-copy" ngclipboard data-clipboard-text="{{ member.compName }}.emea.hpqcorp.net"></span>
+                                </td>
                                 <td class="col-sm-3">
                                     <img ng-src="{{member.img}}" class="member-image"/>
                                 </td>
