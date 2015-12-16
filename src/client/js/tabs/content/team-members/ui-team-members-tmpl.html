@@ -105,7 +105,7 @@
                  ng-repeat="member in teamMembersCtrl.members | filter: {fname: searchText}">
                 <div class="panel-heading" ng-click="teamMembersCtrl.setEditMember(member)">
                     <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#{{member.memberId}}">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#{{member.memberId}}" onclick="return false;">
                             <div class="row">
                             <span class="col-sm-1">
                                 <img class="panel-group-member-image" ng-src="{{member.img}}"/>

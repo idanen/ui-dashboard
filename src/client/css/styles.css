@@ -132,6 +132,10 @@ body {
     opacity: 1;
 }
 
+[ngclipboard] {
+    cursor: pointer;
+}
+
 #floatingCirclesG {
     position: relative;
     width: 125px;
