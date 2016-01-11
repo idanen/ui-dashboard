@@ -1,22 +1,23 @@
 (function () {
-    'use strict';
+  'use strict';
 
-    angular.module('tabs').controller('ShoutOutsCtrl', ShoutOutsController);
+  angular.module('tabs').controller('ShoutOutsCtrl', ShoutOutsController);
 
-    ShoutOutsController.$inject = ['ShoutOutsService'];
+  ShoutOutsController.$inject = ['ShoutOutsService', 'DATE_FORMAT'];
 
-    function ShoutOutsController(ShoutOutsService) {
+  function ShoutOutsController(ShoutOutsService, DATE_FORMAT) {
+    this.toShout = '';
+    this.service = ShoutOutsService;
+    this.shouts = ShoutOutsService.shoutouts;
+    this.dateFormat = DATE_FORMAT;
+  }
+
+  ShoutOutsController.prototype = {
+    shout: function () {
+      if (this.toShout) {
+        this.service.addShout(this.toShout);
         this.toShout = '';
-        this.service = ShoutOutsService;
-        this.shouts = ShoutOutsService.shoutouts;
+      }
     }
-
-    ShoutOutsController.prototype = {
-        shout: function () {
-            if (this.toShout) {
-                this.service.addShout(this.toShout);
-                this.toShout = '';
-            }
-        }
-    };
+  };
 })();

@@ -71,9 +71,9 @@ exports.UIDashboardController = function () {
 
         updateJob: function (request, res) {
             var job = request.body;
+            delete job.result;
+            delete job.building;
             var tmpJson = JSON.stringify(job);
-            delete tmpJson.result;
-            delete tmpJson.building;
             // using 'patch' to overwrite only required fields
             eRequest.patch({
                 headers: {'content-type': 'application/json'},
