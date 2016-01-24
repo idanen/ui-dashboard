@@ -8,7 +8,7 @@
             var ref = new Firebase("https://boiling-inferno-9766.firebaseio.com/"),
                 queueRef = ref.child('queue'),
                 membersRef = ref.child('members'),
-                jobsRef = ref.child('jobs'),
+                jobsRef = ref.child('allJobs'),
                 linksRef = ref.child('usefulLinks'),
                 shoutoutsRef = ref.child('shoutouts'),
                 masterArrRef = ref.child('master'),
@@ -34,7 +34,7 @@
                     return $firebaseArray(shoutoutsRef);
                 },
                 getJobs: function () {
-                    return $firebaseArray(jobsRef);
+                    return $firebaseObject(jobsRef);
                 },
                 getMaterStatus: function () {
                     if ('lastUpdateTime' in boundMasterStatus) {

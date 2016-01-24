@@ -10,17 +10,32 @@
             return {
                 restrict: 'E',
                 controller: 'ciStatusController',
-                templateUrl: 'js/tabs/content/ci-status/ui-ci-status-tmpl.html'
+                templateUrl: 'js/tabs/content/ci-status/ui-ci-status-tmpl.html',
+                link: function ($scope, $element) {
+                    $element.on('iron-change', 'paper-toggle-button', function (ev) {
+                        var toggle = ev.target,
+                            jobName = toggle.getAttribute('data-job');
+
+                        $scope.$apply(function () {
+                            $scope.freezeState(jobName, toggle.checked);
+                        });
+                    });
+
+                    $element.on('$destroy', function () {
+                        $element.off();
+                    });
+                }
             };
         }])
-        .controller('ciStatusController', ['$scope', '$http', '$interval', 'ENV', function ($scope, $http, $interval, ENV) {
+        .controller('ciStatusController', ['$scope', '$http', '$interval', 'ciStatusService', 'ENV', function ($scope, $http, $interval, ciStatusService, ENV) {
             var serviceUrl = '//' + ENV.HOST + ':' + ENV.PORT;
 
             /*******************************
              ********** Variables **********
              *******************************/
 
-            $scope.listOfJobs = []; // the list of jobs we get from server and use in ng-repeat
+            $scope.listOfJobs = {}; // the list of jobs we get from server and use in ng-repeat
+            ciStatusService.getJobs().$bindTo($scope, 'listOfJobs');
             $scope.animateOnUpdate = "fadeOut"; // ng-class fading for refreshing data
             $scope.loading = false; // when it true , progress bar enabled and job list disabled..
             $scope.dataDismiss = " "; // we change it to keep the modal open until response of the server
@@ -71,26 +86,56 @@
                 );
             };
 
-
             // Load All Jobs From The Server - Push Result Into $scope.listOfJobs array.
             $scope.loadJobs = function () {
                 //    $scope.startProgressBar();
                 $scope.loading = true;
-                $http.get(serviceUrl + '/loadJobs')
-                    .success(function (res) {
-                        $scope.listOfJobs = res;
-                        $scope.animateOnUpdate = "fadeIn";
+                ciStatusService.getJobs().$loaded()
+                    .then(determineInitialFreezeState)
+                    .then(function () {
+                        return $http.get(serviceUrl + '/loadJobs');
+                    })
+                    .then(function (res) {
+                        if (res && res.data) {
+                            res.data.forEach(function (job) {
+                                if (job.name in $scope.listOfJobs) {
+                                    $scope.listOfJobs[job.name].building = job.building;
+                                    $scope.listOfJobs[job.name].result = job.result;
+                                }
+                            });
+                            $scope.animateOnUpdate = "fadeIn";
+                        }
                         //        $scope.stopProgressBar();
-                    }).finally(function () {
+                    })
+                    .finally(function () {
                         $scope.loading = false;
                     });
+
             };
+
+            function determineInitialFreezeState(jobs) {
+                angular.forEach(jobs, function (job, jobName) {
+                    $scope.freezeState(jobName, job.freeze.state);
+                });
+
+                return jobs;
+            }
 
 
             // Refresh Jobs List
             $scope.updateAllJobs = function () {
                 $scope.animateOnUpdate = "fadeOut";
                 $scope.loadJobs();
+            };
+
+
+            /*
+             runs when a toggle button clicked on one of the jobs
+             */
+            $scope.freezeState = function (jobName, state) {
+                if (jobName in $scope.listOfJobs) {
+                    $scope.listOfJobs[jobName].freeze.state = state;
+                }
             };
 
 
@@ -144,7 +189,7 @@
                 if (job.building === true) {
                     return "../images/green_anime.gif";
                 } else {
-                    return "../images/" + (job.result.toLowerCase()) + ".png";
+                    return "../images/" + (job.result && job.result.toLowerCase() || 'unknown') + ".png";
                 }
             };
 
@@ -165,7 +210,7 @@
 
             // update the class value of the table rows , depending on trStatus() and 'animateOnUpdate' to make it fade if reuqired
             $scope.styleJobRow = function (job) {
-                return $scope.trStatus(job) + " " + $scope.animateOnUpdate;
+                return $scope.trStatus(job);
             };
         }]);
 })();

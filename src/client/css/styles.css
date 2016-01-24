@@ -67,6 +67,16 @@ body {
     box-shadow: 0 3px 5px rgba(0, 0, 0, .3);
 }
 
+ui-ci-status .table tbody td {
+    height: 30px;
+    line-height: 30px;
+    width: 30%;
+}
+
+ui-ci-status .table tbody td:first-child {
+    width: 40%;
+}
+
 .selectize-dropdown-content {
     max-height: 400px;
 }

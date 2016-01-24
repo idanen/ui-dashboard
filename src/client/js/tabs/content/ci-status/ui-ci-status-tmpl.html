@@ -25,18 +25,17 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-hide="loading" ng-class="styleJobRow(job)" ng-repeat="job in listOfJobs | unique:'name'">
-                    <td style="height: 30px;line-height: 30px;width:40%;" data-toggle="tooltip" title="{{ job.name }}">
+                <tr ng-class="styleJobRow(job)" ng-repeat="job in listOfJobs | unique:'name'">
+                    <td data-toggle="tooltip" title="{{ job.name }}">
                         <h4><a ng-href="{{'http://mydtbld0021.isr.hp.com:8080/jenkins/job/' + job.name}}" target="_blank">{{ (job.alias || job.name) | limitTo:30 }}</a></h4>
                     </td>
-                    <td style="height: 30px;line-height: 30px;width:30%;">
-                        <img class="statusImg" ng-src="{{ chooseImg(job) }}">
-                        {{ status(job) }}
+                    <td>
+                        <img class="statusImg" ng-src="{{ chooseImg(job) }}" ng-hide="loading">
+                        <span ng-hide="loading">{{ status(job) }}</span>
                     </td>
-                    <td style="height: 30px;line-height: 30px;width:30%;">
+                    <td>
                         <div class="btn-group">
-                            <button ng-click="toggleFreeze(job,'onButton')" class="{{ job.freeze.onStyle }}">On</button>
-                            <button ng-click="toggleFreeze(job,'offButton')" class="{{ job.freeze.offStyle }}">Off</button>
+                            <paper-toggle-button data-job="{{ job.name }}"></paper-toggle-button>
                         </div>
                     </td>
                 </tr>

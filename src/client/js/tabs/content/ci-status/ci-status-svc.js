@@ -12,43 +12,58 @@
      if the key === false then no filtering will be performed
      * @return {array}
      */
-    angular.module('tabs').filter('unique', function () {
+    angular.module('tabs')
+        .filter('unique', function () {
+            return function (items, filterOn) {
 
-        return function (items, filterOn) {
+                if (filterOn === false) {
+                    return items;
+                }
 
-            if (filterOn === false) {
-                return items;
-            }
+                if ((filterOn || angular.isUndefined(filterOn)) && angular.isArray(items)) {
+                    var newItems = [];
 
-            if ((filterOn || angular.isUndefined(filterOn)) && angular.isArray(items)) {
-                var newItems = [];
-
-                var extractValueToCompare = function (item) {
-                    if (angular.isObject(item) && angular.isString(filterOn)) {
-                        return item[filterOn];
-                    } else {
-                        return item;
-                    }
-                };
-
-                angular.forEach(items, function (item) {
-                    var isDuplicate = false;
-
-                    for (var i = 0; i < newItems.length; i++) {
-                        if (angular.equals(extractValueToCompare(newItems[i]), extractValueToCompare(item))) {
-                            isDuplicate = true;
-                            break;
+                    var extractValueToCompare = function (item) {
+                        if (angular.isObject(item) && angular.isString(filterOn)) {
+                            return item[filterOn];
+                        } else {
+                            return item;
                         }
-                    }
-                    if (!isDuplicate) {
-                        newItems.push(item);
-                    }
+                    };
 
-                });
-                items = newItems;
-            }
-            return items;
-        };
-    });
+                    angular.forEach(items, function (item) {
+                        var isDuplicate = false;
+
+                        for (var i = 0; i < newItems.length; i++) {
+                            if (angular.equals(extractValueToCompare(newItems[i]), extractValueToCompare(item))) {
+                                isDuplicate = true;
+                                break;
+                            }
+                        }
+                        if (!isDuplicate) {
+                            newItems.push(item);
+                        }
+
+                    });
+                    items = newItems;
+                }
+                return items;
+            };
+        })
+        .service('ciStatusService', CiStatusService);
+
+    CiStatusService.$inject = ['FirebaseService'];
+    function CiStatusService(FirebaseService) {
+        this._jobsRef = FirebaseService.getJobs();
+    }
+
+    CiStatusService.prototype = {
+        getJobs: function () {
+            return this._jobsRef;
+        },
+        getJobByName: function (jobName) {
+            return this._jobsRef[jobName];
+        }
+    };
 
 })(window.angular);
