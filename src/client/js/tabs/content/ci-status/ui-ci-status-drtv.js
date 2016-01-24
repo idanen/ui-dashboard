@@ -6,40 +6,12 @@
     'use strict';
 
     angular.module('tabs')
-        .directive('uiCiStatus', ['ciStatusService', function (ciStatusService) {
+        .directive('ciFreezeStateToggle', CiFreezeStateToggleDirectiveFactory)
+        .directive('uiCiStatus', [function () {
             return {
                 restrict: 'E',
                 controller: 'ciStatusController',
-                templateUrl: 'js/tabs/content/ci-status/ui-ci-status-tmpl.html',
-                link: function ($scope, $element) {
-                    $element.on('iron-change', 'paper-toggle-button', function (ev) {
-                        var toggle = ev.target,
-                            jobName = toggle.getAttribute('data-job');
-
-                        $scope.$applyAsync(function () {
-                            $scope.freezeState(jobName, toggle.checked);
-                        });
-                    });
-
-                    $element.on('$destroy', function () {
-                        $element.off();
-                    });
-
-                    $scope.$watch('listOfJobs', freezeStateToView, true);
-
-                    ciStatusService.getJobs().$loaded().then(freezeStateToView);
-
-                    function freezeStateToView() {
-                        angular.forEach($scope.listOfJobs, function (job) {
-                            if (job && job.name && job.freeze) {
-                                var toggle = $element.find('paper-toggle-button[data-job=' + job.name + ']');
-                                if (toggle.length) {
-                                    toggle[0].checked = job.freeze.state;
-                                }
-                            }
-                        });
-                    }
-                }
+                templateUrl: 'js/tabs/content/ci-status/ui-ci-status-tmpl.html'
             };
         }])
         .controller('ciStatusController', ['$scope', '$http', '$interval', 'ciStatusService', 'ENV', function ($scope, $http, $interval, ciStatusService, ENV) {
@@ -73,9 +45,7 @@
                 }
                 var newJob = {
                     name: job.name, alias: job.alias, freeze: {
-                        state: false,
-                        onStyle: 'btn btn-default',
-                        offStyle: 'btn btn-primary'
+                        state: false
                     }
                 };
                 $http.post(serviceUrl + '/addJob', newJob) // to check if build exist
@@ -228,4 +198,30 @@
                 return $scope.trStatus(job);
             };
         }]);
+
+    CiFreezeStateToggleDirectiveFactory.$inject = ['$parse'];
+    function CiFreezeStateToggleDirectiveFactory($parse) {
+        var ddo = {
+            restrict: 'A',
+            link: function ($scope, $element, $attrs) {
+                $element.on('iron-change', function (ev) {
+                    $scope.$applyAsync(function () {
+                        $parse($attrs.ciFreezeStateToggle).assign($scope, ev.target.checked);
+                    });
+                });
+
+                $element.on('$destroy', function () {
+                    $element.off();
+                });
+
+                $scope.$watch($attrs.ciFreezeStateToggle, freezeStateToView, true);
+
+                function freezeStateToView(modelValue) {
+                    $element[0].checked = modelValue;
+                }
+            }
+        };
+
+        return ddo;
+    }
 })();
