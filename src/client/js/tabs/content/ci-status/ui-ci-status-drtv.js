@@ -6,7 +6,7 @@
     'use strict';
 
     angular.module('tabs')
-        .directive('uiCiStatus', [function () {
+        .directive('uiCiStatus', ['ciStatusService', function (ciStatusService) {
             return {
                 restrict: 'E',
                 controller: 'ciStatusController',
@@ -16,7 +16,7 @@
                         var toggle = ev.target,
                             jobName = toggle.getAttribute('data-job');
 
-                        $scope.$apply(function () {
+                        $scope.$applyAsync(function () {
                             $scope.freezeState(jobName, toggle.checked);
                         });
                     });
@@ -24,6 +24,21 @@
                     $element.on('$destroy', function () {
                         $element.off();
                     });
+
+                    $scope.$watch('listOfJobs', freezeStateToView, true);
+
+                    ciStatusService.getJobs().$loaded().then(freezeStateToView);
+
+                    function freezeStateToView() {
+                        angular.forEach($scope.listOfJobs, function (job) {
+                            if (job && job.name && job.freeze) {
+                                var toggle = $element.find('paper-toggle-button[data-job=' + job.name + ']');
+                                if (toggle.length) {
+                                    toggle[0].checked = job.freeze.state;
+                                }
+                            }
+                        });
+                    }
                 }
             };
         }])
