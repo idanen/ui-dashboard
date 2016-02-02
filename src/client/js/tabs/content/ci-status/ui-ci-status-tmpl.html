@@ -27,7 +27,7 @@
                 <tbody>
                 <tr ng-class="styleJobRow(job)" ng-repeat="job in listOfJobs | unique:'name'">
                     <td data-toggle="tooltip" title="{{ job.name }}">
-                        <h4><a ng-href="{{'http://mydtbld0021.isr.hp.com:8080/jenkins/job/' + job.name}}" target="_blank">{{ (job.alias || job.name) | limitTo:30 }}</a></h4>
+                        <h4><a ng-href="{{'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/' + job.name}}" target="_blank">{{ (job.alias || job.name) | limitTo:30 }}</a></h4>
                     </td>
                     <td>
                         <img class="statusImg" ng-src="{{ chooseImg(job) }}" ng-hide="loading">

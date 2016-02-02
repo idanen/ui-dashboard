@@ -6,6 +6,9 @@ exports.UIDashboardController = function () {
     var fs = require('fs');
     var dealArr;
     var DATA_LOCATION = 'src/server/resources/test.json';
+    var JENKINS_JOB_URL = 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/';
+    var FIREBASE_URL_CI_JOBS = 'https://boiling-inferno-9766.firebaseio.com/allJobs';
+    var FIREBASE_REST_SUFFIX = '.json';
     return {
 
         save: function (req, res) {
@@ -36,13 +39,13 @@ exports.UIDashboardController = function () {
             var job = request.body;
             var tmpJson = JSON.stringify(job);
             // apply first validation , job name exists in Jenkins
-            eRequest.get("http://mydtbld0021.isr.hp.com:8080/jenkins/job/" + job.name + "/lastBuild/api/json",
+            eRequest.get(JENKINS_JOB_URL + job.name + '/lastBuild/api/json',
                 function(error, response, body) {
                     if(response.statusCode == 404){ // if not exist return error
                         res.send("3");
                     }else{
                         // apply second validation , check if job already exists in the DB
-                        eRequest.get("http://boiling-inferno-9766.firebaseio.com/allJobs.json", function(error, response, body) {
+                        eRequest.get(buildFirebaseURL(), function(error, response, body) {
                             var jobsObj = JSON.parse(body),
                                 jobsArr = Object.keys(jobsObj).map(function(k) {
                                     return jobsObj[k];
@@ -52,7 +55,7 @@ exports.UIDashboardController = function () {
                                 // if its not duplicated , add the job to DB
                                 eRequest.patch({
                                     headers: {'content-type': 'application/json'},
-                                    url: 'https://boiling-inferno-9766.firebaseio.com/allJobs/' + job.name + '.json',
+                                    url: buildFirebaseURL(job.name),
                                     body: tmpJson
                                 }, function (error, response, body) {
                                     if(error){
@@ -77,7 +80,7 @@ exports.UIDashboardController = function () {
             // using 'patch' to overwrite only required fields
             eRequest.patch({
                 headers: {'content-type': 'application/json'},
-                url: 'https://boiling-inferno-9766.firebaseio.com/allJobs/' + job.name + '.json',
+                url: buildFirebaseURL(job.name),
                 body: tmpJson
             }, function (error, response, body) {
                 res.send("success");
@@ -101,7 +104,7 @@ exports.UIDashboardController = function () {
     // get the job list from the DB ('filter' unused for now)
     function getJobsFromDatabase(filter) {
         return new Promise(function (resolve, reject) {
-            eRequest.get("https://boiling-inferno-9766.firebaseio.com/allJobs.json", function(error, response, body) {
+            eRequest.get(buildFirebaseURL(), function(error, response, body) {
                 var jobsObj = JSON.parse(body),
                     jobsArr = Object.keys(jobsObj).map(function(k) {
                         return jobsObj[k];
@@ -124,7 +127,7 @@ exports.UIDashboardController = function () {
             var promises = [];
             jobs.forEach(function (job) {
                 var jobPromise = new Promise(function getJobStatus(resolveJob, rejectJob) {
-                    var jenkinsUrl = "http://mydtbld0021.isr.hp.com:8080/jenkins/job/" + job.name + "/lastBuild/api/json";
+                    var jenkinsUrl = JENKINS_JOB_URL + job.name + '/lastBuild/api/json';
                     eRequest.get(jenkinsUrl, function (error, response, body) {
                         var jsonIt = JSON.parse(body);
                         job.result = jsonIt.result;
@@ -138,21 +141,21 @@ exports.UIDashboardController = function () {
                 resolve(jobsWithStatuses);
             });
         });
-    };
+    }
 
     // adding given job to the database
     function addJobToDB(job){
         return new Promise(function (resolve, reject) {
             eRequest.patch({
                 headers: {'content-type': 'application/json'},
-                url: 'https://boiling-inferno-9766.firebaseio.com/allJobs/' + job.name + '.json',
+                url: buildFirebaseURL(job.name),
                 body: job
             }, function (error, response, body) {
                 res.send("success");
                 resolve("done");
             });
         });
-    };
+    }
 
     /* find if a job exists in jobs array ( for duplication validations)
     jobsArray - array of jobs
@@ -165,6 +168,15 @@ exports.UIDashboardController = function () {
             }
         });
         return true;
-    };
+    }
+
+    /**
+     * Builds a URL to the Firebase REST API
+     * @param {string} [jobName] An optional identifier to get specific job instead the whole list
+     * @return {string} The resource URL
+     */
+    function buildFirebaseURL(jobName) {
+        return FIREBASE_URL_CI_JOBS + (jobName ? '/' + jobName : '') + FIREBASE_REST_SUFFIX;
+    }
 
 };
