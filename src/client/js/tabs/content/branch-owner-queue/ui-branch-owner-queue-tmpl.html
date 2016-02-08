@@ -1,0 +1,68 @@
+<div class="row push-queue-content">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-9">
+            <ui-select ng-model="pushQueueCtrl.selected" theme="selectize">
+              <ui-select-match class="member-selector" placeholder="Select or search a member...">
+                <img class="profile-image" ng-src="{{$select.selected.img}}"/>
+                <span ng-bind-html="$select.selected.fname | highlight: $select.search"></span>
+              </ui-select-match>
+              <ui-select-choices
+                  repeat="member in pushQueueCtrl.members | filter: $select.search">
+                <img class="profile-image" ng-src="{{member.img}}"/>
+                <span ng-bind-html="member.fname | highlight: $select.search"></span>
+              </ui-select-choices>
+            </ui-select>
+          </div>
+          <div class="col-md-3">
+            <paper-button type="button" class="btn-block member-selector push-button" raised
+                          ng-disabled="pushQueueCtrl.selected === undefined"
+                          ng-click="pushQueueCtrl.addToQueue()">Push
+            </paper-button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <span>Last master merge was </span>
+        <span>
+          <time is="time-ago" datetime="{{ pushQueueCtrl.lastMasterMerge() | date:'yyyy-MM-ddTHH:mmZ' }}"
+                title="{{ pushQueueCtrl.lastMasterMerge() | date:pushQueueCtrl.dateFormat }}">
+            {{ pushQueueCtrl.lastMasterMerge() | date:pushQueueCtrl.dateFormat }}
+          </time>
+        </span>
+        <paper-button class="colorful" raised ng-click="pushQueueCtrl.updateMergedToMaster()" title="Click to update to now">
+          <iron-icon icon="refresh"></iron-icon>
+        </paper-button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-10 col-xs-offset-1">
+        <h3 ng-show="pushQueueCtrl.queue.length === 0">Queue is empty</h3>
+        <ul class="list-group push-queue">
+          <li ng-repeat="member in pushQueueCtrl.queue" class="list-group-item"
+              ng-class="{'active': $index === 0}">
+            <div class="row">
+              <div class="col-xs-1">
+                <img ng-src="{{ pushQueueCtrl.getMemberByID(member.id).img }}" alt="Profile image"
+                     class="profile-image"/>
+              </div>
+              <div class="col-xs-8">
+                <span>{{ pushQueueCtrl.getFirstName(member.id)}}</span>
+              </div>
+              <div class="col-xs-3">
+                <button type="button" class="btn btn-info pull-right"
+                        ng-click="pushQueueCtrl.removeFromQueue(member)">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </button>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

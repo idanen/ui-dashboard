@@ -1,14 +1,13 @@
 (function (angular) {
     'use strict';
 
-    angular.module('tabs').service('PushQueueService', PushQueueService);
+    angular.module('tabs').service('BranchOwnerQueueService', BranchOwnerQueueService);
 
-    PushQueueService.$inject = ['TeamMembersService', 'FirebaseService', 'NotificationService'];
-
-    function PushQueueService(TeamMembersService, FirebaseService, NotificationService) {
+    BranchOwnerQueueService.$inject = ['TeamMembersService', 'FirebaseService', 'NotificationService'];
+    function BranchOwnerQueueService(TeamMembersService, FirebaseService, NotificationService) {
         var svc = this,
             unwatchQueueChanges;
-        svc.queue = FirebaseService.getQueue();
+        svc.queue = FirebaseService.getBranchOwnerQ();
 
         svc.addToQueue = addToQueue;
         svc.removeFromQueue = removeFromQueue;
@@ -38,7 +37,7 @@
             });
         }
 
-        function getQueue(){
+        function getQueue() {
             return svc.queue;
         }
 

@@ -1,16 +1,16 @@
-(function (angular, Firebase) {
+(function (angular) {
     'use strict';
 
-    angular.module('tabs').factory('FirebaseService', ['$firebaseArray', '$firebaseObject', '$q',
-        function ($firebaseArray, $firebaseObject, $q) {
+    angular.module('tabs').factory('FirebaseService', ['$firebaseArray', '$firebaseObject', '$q', 'Ref',
+        function ($firebaseArray, $firebaseObject, $q, ref) {
 
             // create a reference to the database where we will store our data
-            var ref = new Firebase("https://boiling-inferno-9766.firebaseio.com/"),
-                queueRef = ref.child('queue'),
+            var queueRef = ref.child('queue'),
                 membersRef = ref.child('members'),
                 jobsRef = ref.child('allJobs'),
                 linksRef = ref.child('usefulLinks'),
                 shoutoutsRef = ref.child('shoutouts'),
+                branchOwnerQRef = ref.child('branchOwnerQ'),
                 masterArrRef = ref.child('master'),
                 boundMasterArr = $firebaseArray(masterArrRef),
                 boundMasterStatus = {};
@@ -18,6 +18,9 @@
             return {
                 getQueue: function () {
                     return $firebaseArray(queueRef);
+                },
+                getBranchOwnerQ: function () {
+                    return $firebaseArray(branchOwnerQRef);
                 },
                 getMembers: function () {
                     return $firebaseArray(membersRef);
@@ -74,4 +77,4 @@
             };
         }
     ]);
-})(window.angular, window.Firebase);
+})(window.angular);

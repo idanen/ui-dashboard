@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('tabs', ['firebase', 'ngSanitize', 'ui.select', 'angular-ladda', 'ngclipboard'])
+    angular.module('tabs', ['firebase', 'ngSanitize', 'ui.router', 'ui.select', 'angular-ladda', 'ngclipboard'])
         .constant('ENV', {
             HOST: 'myd-vm01818.hpswlabs.adapps.hp.com',
             PORT: '4000'
@@ -21,6 +21,7 @@
 
     configApp.$inject = ['$locationProvider', 'laddaProvider'];
     function configApp($locationProvider, laddaProvider) {
+
         laddaProvider.setOption({
             style: 'expand-right'
         });

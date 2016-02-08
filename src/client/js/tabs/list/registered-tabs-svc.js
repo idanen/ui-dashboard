@@ -18,8 +18,13 @@
                 id: 'teamMembers',
                 display: 'Team Members',
                 content: 'js/tabs/list/tabs-content-templates/tab-content-ui-team-members-tmpl.html'
-            }
+            },
+            branchOwnerQueue: {
+                id: 'branchOwnerQueue',
+                display: 'Branch Owners',
+                content: 'js/tabs/list/tabs-content-templates/tab-content-ui-branch-owner-queue-tmpl.html'
 
+            }
         };
 
         this.registerTab = function registerTab(tabHeader, tabTemplateUrl) {
