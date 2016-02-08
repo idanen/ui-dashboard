@@ -38,6 +38,11 @@
                 columns: 12
             },
             {
+                title: 'Branch Owners',
+                contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-branch-owner-queue-tmpl.html',
+                columns: 12
+            },
+            {
                 title: 'Team Members',
                 contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-team-members-tmpl.html',
                 columns: 12

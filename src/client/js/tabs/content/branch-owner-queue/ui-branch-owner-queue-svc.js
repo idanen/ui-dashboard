@@ -3,8 +3,8 @@
 
     angular.module('tabs').service('BranchOwnerQueueService', BranchOwnerQueueService);
 
-    BranchOwnerQueueService.$inject = ['TeamMembersService', 'FirebaseService', 'NotificationService'];
-    function BranchOwnerQueueService(TeamMembersService, FirebaseService, NotificationService) {
+    BranchOwnerQueueService.$inject = ['TeamMembersService', 'FirebaseService', 'NotificationService', 'NotificationTags'];
+    function BranchOwnerQueueService(TeamMembersService, FirebaseService, NotificationService, NotificationTags) {
         var svc = this,
             unwatchQueueChanges;
         svc.queue = FirebaseService.getBranchOwnerQ();
@@ -51,7 +51,7 @@
 
         function fireNotification() {
             var memberByID = svc.getMemberByID(svc.queue[0].id);
-            NotificationService.notifyQueueChanged(memberByID.fname, memberByID.img);
+            NotificationService.notify(memberByID.fname + ', good luck ;)', 'New Branch Owner', memberByID.img, NotificationTags.BRANCH_OWNER_Q, 1000 * 60 * 60 * 30);
         }
 
         function unwatchDataChanges() {

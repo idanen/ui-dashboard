@@ -7,6 +7,10 @@
             PORT: '4000'
         })
         .constant('DATE_FORMAT', 'HH:mm dd/MM/yyyy')
+        .constant('NotificationTags', {
+          PUSH_Q: 'PushQueueNotification',
+          BRANCH_OWNER_Q: 'BranchOwnerNotification'
+        })
         .config(configApp)
         .run(initApp);
         /*.config(['$stateProvider', '$locationProvider'/!*, '$urlRouterProvider'*!/, function config($stateProvider, $locationProvider/!*, $urlRouterProvider*!/) {

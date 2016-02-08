@@ -1,7 +1,7 @@
 (function (angular, Notification) {
     'use strict';
 
-    angular.module('tabs').service('NotificationService', ['$timeout', '$window', function ($timeout, $window) {
+    angular.module('tabs').service('NotificationService', ['$timeout', '$window', 'NotificationTags', function ($timeout, $window, NotificationTags) {
         var noNotificationsNotified = false,
             svc = this;
 
@@ -12,7 +12,7 @@
         });
 
         svc.notifyQueueChanged = function (nextName, nextImg) {
-            return svc.notify(nextName + ' is Next!', 'Push Queue Changed!', nextImg, 'PushQueueNotification');
+            return svc.notify(nextName + ' is Next!', 'Push Queue Changed!', nextImg, NotificationTags.PUSH_Q);
         };
 
         svc.notify = function (message, title, img, tag, closeAfter) {
