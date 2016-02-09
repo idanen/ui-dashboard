@@ -52,9 +52,11 @@
         })
         .service('ciStatusService', CiStatusService);
 
-    CiStatusService.$inject = ['FirebaseService'];
-    function CiStatusService(FirebaseService) {
+    CiStatusService.$inject = ['$http', 'FirebaseService', 'ENV'];
+    function CiStatusService($http, FirebaseService, ENV) {
+        this._jobsUrl = '//' + ENV.HOST + ':' + ENV.PORT;
         this._jobsRef = FirebaseService.getJobs();
+        this.$http = $http;
     }
 
     CiStatusService.prototype = {
@@ -63,6 +65,17 @@
         },
         getJobByName: function (jobName) {
             return this._jobsRef[jobName];
+        },
+        addJob: function (toAdd) {
+            return this.$http.post(this._jobsUrl + '/addJob', toAdd)
+                .then(this._processResponse);
+        },
+        loadJobs: function () {
+            return this.$http.get(this._jobsUrl + '/loadJobs')
+                .then(this._processResponse);
+        },
+        _processResponse: function (response) {
+            return response.data;
         }
     };
 
