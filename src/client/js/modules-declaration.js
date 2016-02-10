@@ -23,8 +23,8 @@
      }])*/
     angular.module('ui', ['tabs']);
 
-    configApp.$inject = ['$locationProvider', '$stateProvider', '$urlRouterProvider', 'laddaProvider'];
-    function configApp($locationProvider, $stateProvider, $urlRouterProvider, laddaProvider) {
+    configApp.$inject = ['$stateProvider', '$urlRouterProvider', 'laddaProvider'];
+    function configApp($stateProvider, $urlRouterProvider, laddaProvider) {
         var home = {
                 name: 'home',
                 url: '/',
