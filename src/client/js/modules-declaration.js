@@ -23,14 +23,41 @@
      }])*/
     angular.module('ui', ['tabs']);
 
-    configApp.$inject = ['$locationProvider', 'laddaProvider'];
-    function configApp($locationProvider, laddaProvider) {
+    configApp.$inject = ['$locationProvider', '$stateProvider', '$urlRouterProvider', 'laddaProvider'];
+    function configApp($locationProvider, $stateProvider, $urlRouterProvider, laddaProvider) {
+        var home = {
+                name: 'home',
+                url: '/',
+                templateUrl: '/js/ui-facade/ui-facade-tmpl.html',
+                controller: 'UiFacadeCtrl',
+                controllerAs: 'facade'
+            },
+            widget = {
+                name: 'widget',
+                url: '/widget/{widgetId:int}',
+                template: '<div ng-include="widgetCtrl.widget.contentUrl"></div>',
+                controller: 'WidgetCtrl',
+                controllerAs: 'widgetCtrl',
+                resolve: {
+                    widget: widgetResolver
+                }
+            };
 
         laddaProvider.setOption({
             style: 'expand-right'
         });
 
-        $locationProvider.html5Mode(true);
+        //$locationProvider.html5Mode(true);
+
+        $stateProvider.state(home);
+        $stateProvider.state(widget);
+
+        $urlRouterProvider.otherwise('/widget/0');
+    }
+
+    widgetResolver.$inject = ['$stateParams', 'UiFacadeService'];
+    function widgetResolver($stateParams, UiFacadeService) {
+        return UiFacadeService.getById($stateParams.widgetId);
     }
 
     initApp.$inject = ['ShoutOutsService'];
