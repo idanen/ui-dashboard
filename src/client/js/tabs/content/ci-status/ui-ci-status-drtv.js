@@ -12,6 +12,7 @@
             return {
                 restrict: 'E',
                 controller: 'ciStatusController',
+                // If you change this, be sure to change also in the controller where we $bind to the controller's property
                 controllerAs: 'ciJobsCtrl',
                 templateUrl: 'js/tabs/content/ci-status/ui-ci-status-tmpl.html'
             };
