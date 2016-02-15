@@ -1,45 +1,77 @@
 (function (angular, Notification) {
-    'use strict';
+  'use strict';
 
-    angular.module('tabs').service('NotificationService', ['$timeout', '$window', 'NotificationTags', function ($timeout, $window, NotificationTags) {
-        var noNotificationsNotified = false,
-            svc = this;
+  angular
+      .module('tabs')
+      .service('NotificationService', NotificationService)
+      .run(runFn);
 
-        $window.document.addEventListener('DOMContentLoaded', function () {
-            if (Notification.permission !== "granted") {
-                Notification.requestPermission();
+  NotificationService.$inject = ['$q', '$timeout', '$window', 'NotificationTags'];
+  function NotificationService($q, $timeout, $window, NotificationTags) {
+    this.$q = $q;
+    this.$timeout = $timeout;
+    this.$window = $window;
+    this.NotificationTags = NotificationTags;
+
+    this.allowedByUser = false;
+    this.noNotificationsNotified = false;
+  }
+
+  NotificationService.prototype = {
+    requestPermission: function () {
+      if (Notification.permission !== "granted") {
+        return Notification.requestPermission()
+            .then((function (permission) {
+              if (permission === 'granted') {
+                this.allowedByUser = true;
+              }
+              return this.allowedByUser;
+            }).bind(this));
+      }
+      return this.$q.when(this.allowedByUser);
+    },
+    notify: function (message, title, img, tag, closeAfter) {
+      if (!Notification && !this.noNotificationsNotified) {
+        this.$window.alert('Desktop notifications not available in your browser. Try Chrome.');
+        this.noNotificationsNotified = true;
+        return false;
+      }
+
+      this.requestPermission()
+          .then(function (allowed) {
+            if (allowed) {
+              var notification = new Notification(title, {
+                icon: img,
+                body: message,
+                tag: tag
+              });
+
+              notification.onclick = function () {
+                $window.focus();
+              };
+
+              $timeout(function () {
+                notification.close();
+              }, closeAfter || 7000, false);
+              // TODO (idan): convert to provider to config default timeout
             }
-        });
 
-        svc.notifyQueueChanged = function (nextName, nextImg) {
-            return svc.notify(nextName + ' is Next!', 'Push Queue Changed!', nextImg, NotificationTags.PUSH_Q);
-        };
+            return allowed;
+          });
 
-        svc.notify = function (message, title, img, tag, closeAfter) {
-            if (!Notification && !noNotificationsNotified) {
-                alert('Desktop notifications not available in your browser. Try Chrome.');
-                noNotificationsNotified = true;
-                return;
-            }
+      if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+      } else {
 
-            if (Notification.permission !== "granted") {
-                Notification.requestPermission();
-            } else {
-                var notification = new Notification(title, {
-                    icon: img,
-                    body: message,
-                    tag: tag
-                });
+      }
+    },
+    notifyQueueChanged: function (nextName, nextImg) {
+      return this.notify(nextName + ' is Next!', 'Push Queue Changed!', nextImg, this.NotificationTags.PUSH_Q);
+    }
+  };
 
-                notification.onclick = function () {
-                    $window.focus();
-                };
-
-                $timeout(function () {
-                    notification.close();
-                }, closeAfter || 7000, false);
-                // TODO (idan): convert to provider to config default timeout
-            }
-        };
-    }]);
+  runFn.$inject = ['NotificationService'];
+  function runFn(NotificationService) {
+    NotificationService.requestPermission();
+  }
 })(window.angular, window.Notification);
