@@ -32,7 +32,7 @@
         this.addJobFormSendBtn = 'btn btn-default'; // 'Add' button style in the 'add job' modal
         this.addJobResultButtonValue = 'Add'; // 'Add' button style in the 'add job' modal
 
-        this.intervalPromise = $interval(this.loadJobs, CiJobsRefreshInterval);
+        this.intervalPromise = $interval(this.loadJobs.bind(this), CiJobsRefreshInterval);
 
         $scope.$on('$destroy', (function () {
             $interval.cancel(this.intervalPromise);

@@ -1,17 +1,32 @@
+html {
+  height: 100%;
+}
 /*
  * This is added to support fixed navbar
  */
 body {
-    padding-top: 70px;
-    padding-bottom: 10px;
+  padding-top: 70px;
+  padding-bottom: 10px;
+  height: 100%;
 }
 
-.dashboard-header {
-    margin-bottom: 20px;
+.ui-facade {
+  display: block;
+  height: 100%;
 }
 
-.main-stage {
-    box-shadow: 0 0 15px 3px rgba(0, 0, 0, .3);
+.container {
+  height: 100%;
+}
+
+.fixed-widgets-container {
+  height: 40%;
+  min-height: 200px;
+}
+
+.dynamic-widgets-container {
+  height: 48%;
+  min-height: 200px;
 }
 
 .tabs-navigation-list {
@@ -103,13 +118,7 @@ ui-ci-status .table tbody td:first-child {
 }
 
 .widget-container {
-    height: 340px;
-}
-
-@media (min-height: 900px) {
-    .widget-container {
-        height: 400px;
-    }
+    height: 100%;
 }
 
 .widget {
