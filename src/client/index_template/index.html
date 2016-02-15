@@ -41,18 +41,19 @@
 
     <!--css-->
     <link href="css/styles.css" rel="stylesheet" type="text/css">
+
+    <script src="components/webcomponentsjs/webcomponents.min.js"></script>
+    <script src="components/vanilla/time-elements.js"></script>
 </head>
 
 <body ng-app="ui">
 <ui-facade></ui-facade>
 
 <!-- build:js scripts/libs.min.js -->
-<script src="components/webcomponentsjs/webcomponents.min.js"></script>
-<script src="components/vanilla/time-elements.js"></script>
 <script src="lib/md5/md5.js"></script>
 <script src="lib/lodash/lodash.js"></script>
 <script src="lib/clipboard/clipboard.js"></script>
-<script src="https://cdn.firebase.com/js/client/2.2.1/firebase.js"></script>
+<script src="lib/firebase/firebase.js"></script>
 <script src="lib/jquery/jquery-2.1.4.min.js"></script>
 <script src="lib/bootstrap/js/bootstrap.min.js"></script>
 <script src="lib/ladda/spin.min.js"></script>
@@ -66,29 +67,13 @@
 <script src="lib/clipboard/ngclipboard.js"></script>
 <script src="lib/ladda/angular-ladda.min.js"></script>
 <script src="lib/select/select.js"></script>
-<script src="https://cdn.firebase.com/libs/angularfire/1.1.2/angularfire.min.js"></script>
+<script src="lib/firebase/angularfire.min.js"></script>
 <!-- endbuild -->
 <!-- inject:js -->
 <!-- endinject -->
 
-<link rel="import" href="components/paper-styles/paper-styles.html"/>
-<link rel="import" href="components/iron-meta/iron-meta.html"/>
-<link rel="import" href="components/iron-iconset-svg/iron-iconset-svg.html"/>
-<link rel="import" href="components/iron-iconset/iron-iconset.html"/>
-<link rel="import" href="components/iron-icons/iron-icons.html"/>
-<link rel="import" href="components/iron-icon/iron-icon.html"/>
-<link rel="import" href="components/paper-input/paper-input.html"/>
-<link rel="import" href="components/paper-fab/paper-fab.html"/>
-<link rel="import" href="components/paper-button/paper-button.html"/>
-<link rel="import" href="components/paper-toggle-button/paper-toggle-button.html"/>
-<link rel="import" href="components/paper-item/paper-item.html"/>
-<link rel="import" href="components/paper-icon-button/paper-icon-button.html"/>
-<link rel="import" href="components/paper-menu/paper-menu.html"/>
-<link rel="import" href="components/paper-menu-button/paper-menu-button.html"/>
-<link rel="import" href="components/paper-drawer-panel/paper-drawer-panel.html"/>
-<link rel="import" href="components/paper-material/paper-material.html"/>
-<link rel="import" href="components/paper-toolbar/paper-toolbar.html"/>
-<link rel="import" href="components/paper-header-panel/paper-header-panel.html"/>
+<!-- Web Components -->
+<link rel="import" href="components/elements.html">
 </body>
 
 </html>
