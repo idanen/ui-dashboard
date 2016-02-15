@@ -103,7 +103,13 @@ ui-ci-status .table tbody td:first-child {
 }
 
 .widget-container {
-    height: 400px;
+    height: 340px;
+}
+
+@media (min-height: 900px) {
+    .widget-container {
+        height: 400px;
+    }
 }
 
 .widget {
