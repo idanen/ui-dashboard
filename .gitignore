@@ -4,5 +4,6 @@ src/client/index.html
 src/server/resources/*.*
 node_modules
 ui-dashboard.iml
+firebase.json
 dist/
 .tmp/

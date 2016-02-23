@@ -38,7 +38,7 @@
       }
 
       this.requestPermission()
-          .then(function (allowed) {
+          .then((function (allowed) {
             if (allowed) {
               var notification = new Notification(title, {
                 icon: img,
@@ -46,23 +46,21 @@
                 tag: tag
               });
 
-              notification.onclick = function () {
-                $window.focus();
-              };
+              notification.onclick = (function () {
+                this.$window.focus();
+              }).bind(this);
 
-              $timeout(function () {
+              this.$timeout(function () {
                 notification.close();
               }, closeAfter || 7000, false);
               // TODO (idan): convert to provider to config default timeout
             }
 
             return allowed;
-          });
+          }).bind(this));
 
       if (Notification.permission !== "granted") {
         Notification.requestPermission();
-      } else {
-
       }
     },
     notifyQueueChanged: function (nextName, nextImg) {

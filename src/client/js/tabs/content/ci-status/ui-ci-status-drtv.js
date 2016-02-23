@@ -80,9 +80,22 @@
                     .then(this.determineInitialFreezeState.bind(this))
                     .then(this.ciStatusService.loadJobs.bind(this.ciStatusService))
                     .then(this.extendResults.bind(this))
+                    .catch(this.networkError.bind(this))
                     .finally((function () {
                         this.loading = false;
                     }).bind(this));
+            }
+        },
+        networkError: function () {
+            if (this.listOfJobs) {
+                angular.forEach(this.listOfJobs, function (job, key) {
+                    if (/^\$/g.test(key)) {
+                        // Ignore $ properties
+                        return;
+                    }
+                    job.building = false;
+                    job.result = 'error';
+                });
             }
         },
         determineInitialFreezeState: function (jobs) {
