@@ -29,6 +29,13 @@ body {
   min-height: 200px;
 }
 
+@media (max-width: 991px) {
+  .fixed-widgets-container,
+  .dynamic-widgets-container {
+    height: 300px;
+  }
+}
+
 .tabs-navigation-list {
     background-color: gainsboro;
     height: 700px;
