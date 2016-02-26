@@ -29,10 +29,33 @@ body {
   min-height: 200px;
 }
 
+.widget-container {
+  height: 100%;
+}
+
+.widget {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.widget-content {
+  padding: 15px 10px;
+}
+
+.widget-link {
+  cursor: pointer;
+}
+
 @media (max-width: 991px) {
   .fixed-widgets-container,
   .dynamic-widgets-container {
-    height: 300px;
+    height: auto;
+    .widget-container {
+      height: 34rem;
+      margin-top: .8rem;
+    }
   }
 }
 
@@ -55,10 +78,6 @@ body {
     padding-top: 10px;
     padding-bottom: 10px;
     height: 700px;
-}
-
-.widget-link {
-    cursor: pointer;
 }
 
 .member-selector,
@@ -122,21 +141,6 @@ ui-ci-status .table tbody td:first-child {
 
 .dynamic-widgets-container {
     margin-top: 10px;
-}
-
-.widget-container {
-    height: 100%;
-}
-
-.widget {
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-    padding: 10px;
-}
-
-.widget-content {
-    padding: 15px 10px;
 }
 
 .head-mark > img {
