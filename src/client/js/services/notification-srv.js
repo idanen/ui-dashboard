@@ -13,13 +13,13 @@
     this.$window = $window;
     this.NotificationTags = NotificationTags;
 
-    this.allowedByUser = false;
+    this.allowedByUser = Notification.permission === 'granted';
     this.noNotificationsNotified = false;
   }
 
   NotificationService.prototype = {
     requestPermission: function () {
-      if (Notification.permission !== "granted") {
+      if (Notification.permission !== 'granted') {
         return Notification.requestPermission()
             .then((function (permission) {
               if (permission === 'granted') {

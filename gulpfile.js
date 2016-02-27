@@ -38,30 +38,30 @@ gulp.task('jshint', function () {
 
 // Optimize images
 gulp.task('images', function () {
-  return gulp.src('src/client/img/**/*')
+  return gulp.src('src/client/images/**/*')
     .pipe($.cache($.imagemin({
       progressive: true,
       interlaced: true
     })))
-    .pipe(gulp.dest('dist/img'))
+    .pipe(gulp.dest('dist/images'))
     .pipe($.size({title: 'images'}));
 });
 
 // Copy all files at the root level (src/client)
 gulp.task('copy', function () {
   return gulp.src([
-    'src/client/*',
+    'src/client/components/**/*.*'/*,
     '!src/client/*.html',
-    'node_modules/apache-server-configs/dist/.htaccess'
+    'node_modules/apache-server-configs/dist/.htaccess'*/
   ], {
     dot: true
-  }).pipe(gulp.dest('dist'))
+  }).pipe(gulp.dest('dist/components'))
     .pipe($.size({title: 'copy'}));
 });
 
 // Copy web fonts to dist
 gulp.task('fonts', function () {
-  return gulp.src(['src/client/fonts/**'])
+  return gulp.src(['src/client/**/fonts/**'])
     .pipe(gulp.dest('dist/fonts'))
     .pipe($.size({title: 'fonts'}));
 });
@@ -70,6 +70,8 @@ gulp.task('fonts', function () {
 gulp.task('styles', function () {
   // For best performance, don't add Sass partials to `gulp.src`
   return gulp.src([
+    'src/client/lib/**/*.scss',
+    'src/client/lib/**/*.css',
     'src/client/css/*.scss',
     'src/client/css/**/*.css'
   ])
@@ -103,9 +105,9 @@ gulp.task('scripts', function () {
       .pipe($.sourcemaps.init())
       .pipe($.babel())
       .pipe($.sourcemaps.write())
-      .pipe(gulp.dest('.tmp/scripts'))
+      .pipe(gulp.dest('dist/scripts'))
       .pipe($.concat('main.min.js'))
-      .pipe($.uglify({preserveComments: 'some'}))
+      //.pipe($.uglify({preserveComments: 'some'}))
     // Output files
       .pipe($.size({title: 'scripts'}))
       .pipe($.sourcemaps.write('.'))
@@ -150,11 +152,21 @@ gulp.task('html', function () {
 // Clean output directory
 gulp.task('clean', del.bind(null, ['.tmp', 'dist/*', '!dist/.git'], {dot: true}));
 
+gulp.task('jslib', function () {
+  return gulp.src(['src/client/lib/**/*.js'])
+      .pipe(gulp.dest('dist/lib'));
+});
+
+gulp.task('templatecopy', function () {
+  return gulp.src(['src/client/js/**/*.html'])
+      .pipe(gulp.dest('dist/js'));
+});
+
 // Inject app *.js files to index.html
-gulp.task('inject', function () {
+gulp.task('inject', ['jslib', 'templatecopy'], function () {
   return gulp.src('src/client/index_template/index.html')
     .pipe(inject(gulp.src('src/client/js/**/*.js', {read: false}), {relative: true}))
-    .pipe(gulp.dest('src/client'));
+    .pipe(gulp.dest('dist'));
 });
 
 gulp.task('nodemon', function (cb) {
@@ -183,7 +195,7 @@ gulp.task('nodemon', function (cb) {
 });
 
 // Watch files for changes & reload
-gulp.task('serve', ['nodemon', 'inject', 'styles'], function () {
+gulp.task('serve', ['nodemon', 'inject', 'styles', 'scripts', 'copy', 'images'], function () {
   browserSync({
     notify: false,
     // Customize the BrowserSync console logging prefix
@@ -192,12 +204,12 @@ gulp.task('serve', ['nodemon', 'inject', 'styles'], function () {
     // Note: this uses an unsigned certificate which on first access
     //       will present a certificate warning in the browser.
     //https: true,
-    server: ['.tmp', 'src/client']
+    server: ['.tmp', 'dist']
   });
 
-  gulp.watch(['src/client/**/*.html'], reload);
+  gulp.watch(['src/client/**/*.html'], ['templatecopy', reload]);
   gulp.watch(['src/client/css/**/*.{scss,css}'], ['styles', reload]);
-  gulp.watch(['src/client/js/**/*.js'], ['jshint', 'inject']);
+  gulp.watch(['src/client/js/**/*.js'], ['jshint', 'inject', 'scripts']);
   gulp.watch(['src/client/img/**/*'], reload);
 });
 
