@@ -12,45 +12,6 @@
         this.$q = $q;
         this.JenkinsBaseUrl = JenkinsBaseUrl;
 
-        function convertTimestampToTime(timestamp) {
-            var date = new Date(timestamp);
-            var hours = date.getHours();
-            var minutes = "0" + date.getMinutes();
-            var seconds = "0" + date.getSeconds();
-            return hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
-        };
-
-        function getStatus(result) {
-            if (result === "SUCCESS") {
-                return 'blue';
-            } else if (result === "FAILED") {
-                return 'red';
-            } else {
-                return 'yellow';
-            }
-        };
-
-        function getDuration(endTimestamp, startTimestamp) {
-            var minutes = (endTimestamp - startTimestamp) / 60000; // convert milliseconds to minutes
-            minutes = Math.round(minutes);
-            var hour = 60, current = 0, hours = 0;
-            while (minutes >= 60) {
-                minutes -= 60;
-                hours++;
-            }
-            if (hours === 0 && minutes === 0) {
-                return 'Just Started';
-            }
-            if (hours === 0) {
-                return minutes + ' Minutes';
-            }
-            if (minutes === 0) {
-                return hours + ' Hours';
-            }
-            return hours + ' Hour/s And ' + minutes + ' Minutes';
-        };
-
-        return dataFactory;
     }
 
     JenkinsService.prototype = {
@@ -58,14 +19,13 @@
             var mastersURL = this.JenkinsBaseUrl + 'job/MaaS-SAW-USB-master/api/json';
             return this.$http.get(mastersURL)
                 .then(this._processResponse)
-                .then(this.getRelevantBuilds.bind(this))
-                .then(this.processBuilds.bind(this));
+                .then(this.getRelevantBuilds.bind(this));
         },
 
         getHealthReport: function () {
             var url = this.JenkinsBaseUrl + 'view/USB-Team-Branches-Currently-Running/api/json';
             return this.$http.get(url)
-                .then(this._getReports);
+                .then(this._getReports.bind(this));
         },
 
         gerCurrentlyRunningBranches: function () {
@@ -88,7 +48,7 @@
             }
             return this.$q.all(promises)
                 .then(function (builds) {
-                    this.processBuilds(builds, masterDetails);
+                    return this.processBuilds(builds, masterDetails);
                 }.bind(this));
         },
         processBuilds: function (builds, parentDetails) {
@@ -98,19 +58,19 @@
                     var master = {};
                     master.name = branchInfo.data.fullDisplayName;
                     master.url = branchInfo.data.url;
-                    if ((branchInfo.data.number === masterDetails.lastBuild.number) && masterDetails.lastBuild.number !== masterDetails.lastCompletedBuild.number) {
+                    if ((branchInfo.data.number === parentDetails.lastBuild.number) && parentDetails.lastBuild.number !== parentDetails.lastCompletedBuild.number) {
                         master.status = parentDetails.color;
                     } else {
-                        master.status = getStatus(result);
+                        master.status = this._getStatus(branchInfo.data.result);
                     }
                     master.result = (branchInfo.data.building === true) ? 'RUNNING' : branchInfo.data.result;
                     if(branchInfo.data.building === true){
-                        master.duration = getDuration(new Date().getTime(),branchInfo.data.timestamp);
+                        master.duration = this._getDuration(new Date().getTime(),branchInfo.data.timestamp);
                     }else{
-                        master.duration = getDuration(new Date().getTime() + branchInfo.data.duration, new Date().getTime());
+                        master.duration = this._getDuration(new Date().getTime() + branchInfo.data.duration, new Date().getTime());
                     }
                     masters.push(master);
-                });
+                }, this);
             }
             return masters;
         },
@@ -121,18 +81,18 @@
             var promises = [];
             var healthReports = [];
             jobs.forEach(function (job) {
-                var urlNow = JenkinsBaseUrl + 'job/' + job.name + '/api/json';
+                var urlNow = this.JenkinsBaseUrl + 'job/' + job.name + '/api/json';
                 promises.push(function (urlNow) {
                     return this._getReportDetailsFromJenkins(urlNow);
-                }(urlNow))
-            });
-            return $q.all(promises).then(function (results) {
+                }.bind(this)(urlNow))
+            } , this);
+            return this.$q.all(promises).then(function (results) {
                 return results;
             });
         },
 
         _getReportDetailsFromJenkins: function(url){
-            return $http.get(url)
+            return this.$http.get(url)
                 .then(this._prepareReport);
         },
 
@@ -157,7 +117,7 @@
                     return this._getRunningBranch(url,color,name).bind(this);
                 }(urlNow, job.color, job.name))
             }.bind(this));
-            return $q.all(promises).then(function (results) {
+            return this.$q.all(promises).then(function (results) {
                 return results;
             }.bind(this));
         },
@@ -171,9 +131,9 @@
                     current.url = result.url;
                     current.build = result.number;
                     current.status = branchColor;
-                    current.eta = convertTimestampToTime(result.estimatedDuration);
-                    current.duration = getDuration(new Date().getTime(), result.timestamp);
-                    current.started = convertTimestampToTime(result.timestamp);
+                    current.eta = this._convertTimestampToTime(result.estimatedDuration);
+                    current.duration = this._getDuration(new Date().getTime(), result.timestamp);
+                    current.started = this._convertTimestampToTime(result.timestamp);
                     console.log(current.started);
                     return current;
                 })
@@ -181,6 +141,45 @@
 
         _processResponse: function (response) {
             return response.data;
+        },
+
+        _convertTimestampToTime: function(timestamp) {
+            var date = new Date(timestamp);
+            var hours = date.getHours();
+            var minutes = "0" + date.getMinutes();
+            var seconds = "0" + date.getSeconds();
+            return hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+        },
+
+        _getStatus: function(result) {
+            if (result === "SUCCESS") {
+                return 'blue';
+            } else if (result === "FAILED") {
+                return 'red';
+            } else {
+                return 'yellow';
+            }
+        },
+
+        _getDuration : function (endTimestamp, startTimestamp) {
+            var minutes = (endTimestamp - startTimestamp) / 60000; // convert milliseconds to minutes
+            minutes = Math.round(minutes);
+            var hour = 60, current = 0, hours = 0;
+            while (minutes >= 60) {
+                minutes -= 60;
+                hours++;
+            }
+            if (hours === 0 && minutes === 0) {
+                return 'Just Started';
+            }
+            if (hours === 0) {
+                return minutes + ' Minutes';
+            }
+            if (minutes === 0) {
+                return hours + ' Hours';
+            }
+            return hours + ' Hour/s And ' + minutes + ' Minutes';
         }
+
     };
 }());

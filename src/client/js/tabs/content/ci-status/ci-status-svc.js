@@ -52,11 +52,12 @@
         })
         .service('ciStatusService', CiStatusService);
 
-    CiStatusService.$inject = ['$http', 'FirebaseService', 'ENV'];
-    function CiStatusService($http, FirebaseService, ENV) {
+    CiStatusService.$inject = ['$http', 'FirebaseService', 'JenkinsService', 'ENV'];
+    function CiStatusService($http, FirebaseService, JenkinsService, ENV) {
         this._jobsUrl = '//' + ENV.HOST + ':' + ENV.PORT;
         this._jobsRef = FirebaseService.getJobs();
         this.$http = $http;
+        this.JenkinsService = JenkinsService;
     }
 
     CiStatusService.prototype = {
@@ -71,8 +72,7 @@
                 .then(this._processResponse);
         },
         loadJobs: function () {
-            return this.$http.get(this._jobsUrl + '/loadJobs')
-                .then(this._processResponse);
+            return this.JenkinsService.getMastersBranches();
         },
         _processResponse: function (response) {
             return response.data;

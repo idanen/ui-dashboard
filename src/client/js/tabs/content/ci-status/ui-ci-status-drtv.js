@@ -24,7 +24,7 @@
         this.ciStatusService = ciStatusService;
         this.listOfJobs = {}; // the list of jobs we get from server and use in ng-repeat
         // This assumes the controller's name is `ciJobsCtrl`
-        this.ciStatusService.getJobs().$bindTo($scope, 'ciJobsCtrl.listOfJobs');
+        this.ciStatusService.getJobs();
         this.animateOnUpdate = 'fadeOut'; // ng-class fading for refreshing data
         this.loading = false; // when it true , progress bar enabled and job list disabled..
         this.dataDismiss = ' '; // we change it to keep the modal open until response of the server
@@ -106,13 +106,9 @@
             return jobs;
         },
         extendResults: function (jobsFromFirebase) {
+            console.log(jobsFromFirebase);
             if (jobsFromFirebase) {
-                jobsFromFirebase.forEach(function (job) {
-                    if (job.name in this.listOfJobs) {
-                        this.listOfJobs[job.name].building = job.building;
-                        this.listOfJobs[job.name].result = job.result;
-                    }
-                }, this);
+                this.listOfJobs = jobsFromFirebase;
                 this.animateOnUpdate = 'fadeIn';
             }
         },
@@ -144,6 +140,14 @@
                 return job.result;
             }
         },
+
+        selectJobImg:function(imgName){
+            if(imgName && imgName.indexOf('anime') > -1){
+                return '../images/' + imgName + '.gif';
+            }
+            return '../images/' + imgName + '.png';
+        },
+
         chooseImg: function (job) {
             if (job.building === true) {
                 return "../images/green_anime.gif";

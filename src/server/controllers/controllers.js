@@ -1,16 +1,19 @@
-var Promise = require('promise');
-var eRequest = require('request');
-exports.UIDashboardController = function () {
-    var resultJobs = [];
-    var currentJob;
+(function () {
+    var Promise = require('promise');
+    var eRequest = require('request');
+
     var fs = require('fs');
-    var dealArr;
     var DATA_LOCATION = 'src/server/resources/test.json';
     var JENKINS_JOB_URL = 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/';
     var FIREBASE_URL_CI_JOBS = 'https://boiling-inferno-9766.firebaseio.com/allJobs';
     var FIREBASE_REST_SUFFIX = '.json';
-    return {
+    var PROGRESS_INTERVAL = 1000 * 60 * 60;
 
+    function UIDashboardController() {
+        this.runningProgressChecks = {};
+    }
+
+    UIDashboardController.prototype = {
         save: function (req, res) {
             var dataToSave = JSON.stringify(req.body);
             fs.writeFile(DATA_LOCATION, dataToSave, 'utf8', function (err) {
@@ -98,29 +101,71 @@ exports.UIDashboardController = function () {
                 .catch(function (err) {
                     res.send(err);
                 });
+        },
+
+        startMonitoring: function (req, res) {
+            return this.getJobsFromDatabase()
+                .then(this.getJobsStatusFromJenkins.bind(this));
+        },
+
+        getJobsStatusFromJenkins: function (jobs) {
+            if (Array.isArray(jobs)) {
+                getJobsStatus(jobs)
+                    .then(function (jobsWithStatus) {
+                        jobsWithStatus.forEach(this.checkRunningAndDeployInterval, this);
+                    });
+            }
+        },
+
+        checkRunningAndDeployInterval: function (job) {
+            if (job.building) {
+                this.fetchBuildStates(job.name, job.number);
+            } else {
+                this.stopFetchingStates(job.name, job.number);
+                this.writeResult(job);
+            }
+        },
+
+        fetchBuildStates: function (jobName, jobNumber) {
+            this.runningProgressChecks[jobName + '#' + jobNumber] = setInterval(function () {
+                this.getProgressFromJenkins(jobName, jobNumber);
+            }.bind(this), PROGRESS_INTERVAL);
+        },
+
+        stopFetchingStates: function (jobName, jobNumber) {
+            clearInterval(this.runningProgressChecks[jobName + '#' + jobNumber]);
+        },
+
+        getProgressFromJenkins: function (jobName, jobNumber) {
+
+        },
+
+        writeResult: function (job) {
+
+        },
+
+        // get the job list from the DB ('filter' unused for now)
+        getJobsFromDatabase: function (filter) {
+            return new Promise(function (resolve, reject) {
+                eRequest.get(buildFirebaseURL(), function(error, response, body) {
+                    var jobsObj = JSON.parse(body),
+                        jobsArr = Object.keys(jobsObj).map(function(k) {
+                            return jobsObj[k];
+                        });
+                    if (filter) {
+                        jobsArr = jobsArr.filter(function (job) {
+                            return RegExp('^' + filter, 'i').test(job.name);
+                        });
+                    }
+                    resolve(jobsArr);
+                });
+            });
         }
     };
 
-    // get the job list from the DB ('filter' unused for now)
-    function getJobsFromDatabase(filter) {
-        return new Promise(function (resolve, reject) {
-            eRequest.get(buildFirebaseURL(), function(error, response, body) {
-                var jobsObj = JSON.parse(body),
-                    jobsArr = Object.keys(jobsObj).map(function(k) {
-                        return jobsObj[k];
-                    });
-                if (filter) {
-                    jobsArr = jobsArr.filter(function (job) {
-                        return RegExp('^' + filter, 'i').test(job.name);
-                    });
-                }
-                resolve(jobsArr);
-            });
-        });
-    }
     /*
-    job status depending on result and building fields , that we always extract them from Jenkins and not from DB,
-    so this function iterate over the jobs list and update their status .
+     job status depending on result and building fields , that we always extract them from Jenkins and not from DB,
+     so this function iterate over the jobs list and update their status .
      */
     function getJobsStatus(jobs) {
         return new Promise(function (resolve, reject) {
@@ -132,18 +177,19 @@ exports.UIDashboardController = function () {
                         var jsonIt = JSON.parse(body);
                         job.result = jsonIt.result;
                         job.building = jsonIt.building;
+                        job.number = jsonIt.number;
                         resolveJob(job);
                     });
                 });
                 promises.push(jobPromise);
-            });
+            }, this);
             Promise.all(promises).then(function (jobsWithStatuses) {
                 resolve(jobsWithStatuses);
-            });
+            }.bind(this));
         });
     }
 
-    // adding given job to the database
+// adding given job to the database
     function addJobToDB(job){
         return new Promise(function (resolve, reject) {
             eRequest.patch({
@@ -158,7 +204,7 @@ exports.UIDashboardController = function () {
     }
 
     /* find if a job exists in jobs array ( for duplication validations)
-    jobsArray - array of jobs
+     jobsArray - array of jobs
      searchedJobName - job name that we search
      */
     function checkJobExistInDB(jobsArray,searchedJobName){
@@ -179,4 +225,5 @@ exports.UIDashboardController = function () {
         return FIREBASE_URL_CI_JOBS + (jobName ? '/' + jobName : '') + FIREBASE_REST_SUFFIX;
     }
 
-};
+    module.exports = UIDashboardController;
+}());

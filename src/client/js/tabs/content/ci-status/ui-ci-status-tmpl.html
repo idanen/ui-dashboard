@@ -21,17 +21,21 @@
                 <tr>
                     <th>Job Name</th>
                     <th>Build Status</th>
+                    <th>Duration</th>
                     <th>Freeze</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-class="ciJobsCtrl.styleJobRow(job)" ng-repeat="job in ciJobsCtrl.listOfJobs | unique:'name'">
                     <td data-toggle="tooltip" title="{{ job.name }}">
-                        <h4><a ng-href="{{'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/' + job.name}}" target="_blank">{{ (job.alias || job.name) | limitTo:30 }}</a></h4>
+                        <h4><a ng-href="{{job.url}}" target="_blank">{{ (job.name) | limitTo:30 }}</a></h4>
                     </td>
                     <td>
-                        <img class="statusImg" ng-src="{{ ciJobsCtrl.chooseImg(job) }}" ng-hide="ciJobsCtrl.loading">
-                        <span ng-hide="ciJobsCtrl.loading">{{ ciJobsCtrl.status(job) }}</span>
+                        <img class="statusImg" ng-src="{{ ciJobsCtrl.selectJobImg(job.status) }}" ng-hide="ciJobsCtrl.loading">
+                        <span ng-hide="ciJobsCtrl.loading">{{ job.result }}</span>
+                    </td>
+                    <td>
+                        {{job.duration}}
                     </td>
                     <td>
                         <div class="btn-group">

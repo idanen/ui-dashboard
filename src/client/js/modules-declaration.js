@@ -3,7 +3,8 @@
 
     angular.module('tabs', ['firebase', 'ngSanitize', 'ui.router', 'ui.select', 'angular-ladda', 'ngclipboard'])
         .constant('ENV', {
-            HOST: 'myd-vm01818.hpswlabs.adapps.hp.com',
+            //HOST: 'myd-vm01818.hpswlabs.adapps.hp.com',
+            HOST: 'localhost',
             PORT: '4000'
         })
         .constant('DATE_FORMAT', 'HH:mm dd/MM/yyyy')
