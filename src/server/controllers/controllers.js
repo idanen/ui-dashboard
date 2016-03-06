@@ -9,6 +9,8 @@ exports.UIDashboardController = function () {
     var JENKINS_JOB_URL = 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/';
     var FIREBASE_URL_CI_JOBS = 'https://boiling-inferno-9766.firebaseio.com/allJobs';
     var FIREBASE_REST_SUFFIX = '.json';
+    var StatusUpdater = require('../services/status-updater.js');
+    var updater = new StatusUpdater(1000 * 10);
     return {
 
         save: function (req, res) {
@@ -98,6 +100,10 @@ exports.UIDashboardController = function () {
                 .catch(function (err) {
                     res.send(err);
                 });
+        },
+
+        startUpdating: function () {
+            updater.getBuildState({name: 'MaaS-SAW-USB-master'});
         }
     };
 

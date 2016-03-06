@@ -13,4 +13,5 @@ module.exports = function(app){
 
     app.get('/loadJobs',controller.getAllJobs);
 
+    app.get('/startUpdating', controller.startUpdating)
 };
