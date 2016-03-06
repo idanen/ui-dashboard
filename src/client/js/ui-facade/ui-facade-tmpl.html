@@ -29,6 +29,14 @@
                     <paper-icon-button icon="stars"></paper-icon-button>
                     <div class="title">{{ widget.title }}</div>
                 </paper-toolbar>
+                <paper-menu>
+                    <paper-item class="widget-link" ng-repeat="widget in facade.mainWidgets" ng-click="facade.gotoState(widget.id)" title="{{ widget.title }}">
+                        <paper-item-body two-line>
+                            <div>{{ widget.title }}</div>
+                            <!--<div secondary>{{ widget.subTitle }}</div>-->
+                        </paper-item-body>
+                    </paper-item>
+                </paper-menu>
                 <div class="widget-content" ng-include="widget.contentUrl"></div>
             </paper-header-panel>
         </paper-material>
