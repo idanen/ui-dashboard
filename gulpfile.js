@@ -153,6 +153,11 @@ gulp.task('html', function () {
     .pipe($.size({title: 'html'}));
 });
 
+// Clear images cache
+gulp.task('clear', function (done) {
+  return $.cache.clearAll(done);
+});
+
 // Clean output directory
 gulp.task('clean', del.bind(null, ['.tmp', 'dist/*', '!dist/.git'], {dot: true}));
 
@@ -199,7 +204,7 @@ gulp.task('nodemon', function (cb) {
 });
 
 // Watch files for changes & reload
-gulp.task('serve', ['nodemon', 'inject', 'styles', 'scripts', 'copy', 'images', 'html'], function () {
+gulp.task('serve', ['nodemon', 'jslib', 'styles', 'scripts', 'copy', 'images', 'html'], function () {
   browserSync({
     notify: false,
     // Customize the BrowserSync console logging prefix
@@ -213,7 +218,7 @@ gulp.task('serve', ['nodemon', 'inject', 'styles', 'scripts', 'copy', 'images', 
 
   gulp.watch(['src/client/**/*.html'], ['templatecopy', reload]);
   gulp.watch(['src/client/css/**/*.{scss,css}'], ['styles', reload]);
-  gulp.watch(['src/client/js/**/*.js'], ['jshint', 'inject', 'scripts']);
+  gulp.watch(['src/client/js/**/*.js'], ['jshint', 'jslib', 'scripts']);
   gulp.watch(['src/client/images/**/*'], reload);
 });
 
@@ -231,8 +236,8 @@ gulp.task('serve:dist', ['default'], function () {
 });
 
 // Build production files, the default task
-gulp.task('default', ['clean'], function (cb) {
-  runSequence('styles', ['jshint', 'html', 'images', 'fonts', 'copy'], 'inject', cb);
+gulp.task('default', ['clear', 'clean'], function (cb) {
+  runSequence('styles', ['jshint', 'html', 'images', 'fonts', 'copy'], 'jslib', cb);
 });
 
 // watch files for changes and reload
