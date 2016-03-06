@@ -70,10 +70,8 @@ gulp.task('fonts', function () {
 gulp.task('styles', function () {
   // For best performance, don't add Sass partials to `gulp.src`
   return gulp.src([
-    'src/client/lib/**/*.scss',
-    'src/client/lib/**/*.css',
-    'src/client/css/*.scss',
-    'src/client/css/**/*.css'
+    'src/client/lib/**/*.{scss,css}',
+    'src/client/css/**/*.{scss,css}'
   ])
     .pipe($.sourcemaps.init())
     .pipe($.changed('.tmp/css', {extension: '.css'}))
@@ -118,7 +116,10 @@ gulp.task('scripts', function () {
 gulp.task('html', function () {
   var assets = $.useref.assets({searchPath: '{.tmp,src/client}'});
 
-  return gulp.src('src/client/**/*.html')
+  return gulp.src([
+    'src/client/**/*.html',
+    'src/client/manifest.json'
+  ])
     .pipe(assets)
     // Concatenate and minify JavaScript
     .pipe($.if('*.js', $.uglify({preserveComments: 'some'})))
@@ -195,7 +196,7 @@ gulp.task('nodemon', function (cb) {
 });
 
 // Watch files for changes & reload
-gulp.task('serve', ['nodemon', 'inject', 'styles', 'scripts', 'copy', 'images'], function () {
+gulp.task('serve', ['nodemon', 'inject', 'styles', 'scripts', 'copy', 'images', 'html'], function () {
   browserSync({
     notify: false,
     // Customize the BrowserSync console logging prefix
@@ -210,7 +211,7 @@ gulp.task('serve', ['nodemon', 'inject', 'styles', 'scripts', 'copy', 'images'],
   gulp.watch(['src/client/**/*.html'], ['templatecopy', reload]);
   gulp.watch(['src/client/css/**/*.{scss,css}'], ['styles', reload]);
   gulp.watch(['src/client/js/**/*.js'], ['jshint', 'inject', 'scripts']);
-  gulp.watch(['src/client/img/**/*'], reload);
+  gulp.watch(['src/client/images/**/*'], reload);
 });
 
 // Build and serve the output from the dist build

@@ -4,8 +4,8 @@ function startServer() {
 
     require('./../src/server/app.js')(app);
 
-    app.use(express.static('src/client'));
-    app.use(express.static('src/client/index'));
+    app.use(express.static('dist'));
+    //app.use(express.static('src/client/index'));
 
     var server = app.listen(4000, function () {
         var host = server.address().address;
