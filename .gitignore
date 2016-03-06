@@ -7,3 +7,4 @@ ui-dashboard.iml
 firebase.json
 dist/
 .tmp/
+npm-debug.log

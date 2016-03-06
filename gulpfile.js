@@ -10,6 +10,7 @@ var pagespeed = require('psi');
 var reload = browserSync.reload;
 var inject = require('gulp-inject');
 var nodemon = require('gulp-nodemon');
+var babel = require('gulp-babel');
 
 // we'd need a slight delay to reload browsers
 // connected to browser-sync after restarting nodemon
@@ -101,7 +102,9 @@ gulp.task('scripts', function () {
   ])
       .pipe($.newer('.tmp/scripts'))
       .pipe($.sourcemaps.init())
-      .pipe($.babel())
+      .pipe($.babel({
+        presets: ['es2015']
+      }))
       .pipe($.sourcemaps.write())
       .pipe(gulp.dest('dist/scripts'))
       .pipe($.concat('main.min.js'))
