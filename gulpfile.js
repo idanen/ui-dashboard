@@ -1,5 +1,3 @@
-
-
 // Include Gulp & tools we'll use
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
@@ -11,6 +9,7 @@ var reload = browserSync.reload;
 var inject = require('gulp-inject');
 var nodemon = require('gulp-nodemon');
 var babel = require('gulp-babel');
+var isProd = require('yargs').argv.state === 'prod';
 
 // we'd need a slight delay to reload browsers
 // connected to browser-sync after restarting nodemon
@@ -107,8 +106,8 @@ gulp.task('scripts', function () {
       }))
       .pipe($.sourcemaps.write())
       .pipe(gulp.dest('dist/scripts'))
-      .pipe($.concat('main.min.js'))
-      //.pipe($.uglify({preserveComments: 'some'}))
+      .pipe($.if(isProd, $.concat('main.min.js')))
+      .pipe($.if(isProd, $.uglify({preserveComments: 'some'})))
     // Output files
       .pipe($.size({title: 'scripts'}))
       .pipe($.sourcemaps.write('.'))
@@ -116,12 +115,13 @@ gulp.task('scripts', function () {
 });
 
 // Scan your HTML for assets & optimize them
-gulp.task('html', function () {
+gulp.task('html', ['scripts'], function () {
   var assets = $.useref.assets({searchPath: '{.tmp,src/client}'});
 
   return gulp.src([
     'src/client/**/*.html',
-    'src/client/manifest.json'
+    'src/client/manifest.json',
+    '!src/client/components/**/*.html'
   ])
     .pipe(assets)
     // Concatenate and minify JavaScript
@@ -146,8 +146,6 @@ gulp.task('html', function () {
     .pipe($.useref())
     // Update production Style Guide paths
     .pipe($.replace('components/components.css', 'components/main.min.css'))
-    // Minify any HTML
-    .pipe($.if('*.html', $.minifyHtml({empty: true})))
     // Output files
     .pipe(gulp.dest('dist'))
     .pipe($.size({title: 'html'}));
@@ -172,9 +170,15 @@ gulp.task('templatecopy', function () {
 });
 
 // Inject app *.js files to index.html
-gulp.task('inject', ['jslib', 'templatecopy'], function () {
-  return gulp.src('src/client/index_template/index.html')
-    .pipe(inject(gulp.src('src/client/js/**/*.js', {read: false}), {relative: true}))
+gulp.task('inject', ['templatecopy', 'html', 'scripts'], function () {
+  return gulp.src('dist/index.html')
+    .pipe(inject(gulp.src('dist/scripts/**/*.js', {read: false}), {relative: true}))
+    //.pipe($.angularFilesort())
+    //// Minify any HTML
+    //.pipe($.htmlmin({
+    //  collapseWhitespace: true,
+    //  removeComments: true
+    //}))
     .pipe(gulp.dest('dist'));
 });
 
@@ -204,7 +208,7 @@ gulp.task('nodemon', function (cb) {
 });
 
 // Watch files for changes & reload
-gulp.task('serve', ['nodemon', 'jslib', 'styles', 'scripts', 'copy', 'images', 'html'], function () {
+gulp.task('serve', ['nodemon', 'jslib', 'styles', 'copy', 'images', 'inject'], function () {
   browserSync({
     notify: false,
     // Customize the BrowserSync console logging prefix

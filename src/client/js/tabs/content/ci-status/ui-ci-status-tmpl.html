@@ -2,11 +2,8 @@
     <div class="row">
         <div class="col-xs-12">
             <!-- Trigger the modal with a button -->
-            <paper-button raised type="button" class="mainBtns" data-toggle="modal" data-target="#newJobModal"
-                          ng-click="ciJobsCtrl.dataDismiss = ' '">
-                <iron-icon icon="add"></iron-icon>
-                <span>Add New Job</span>
-            </paper-button>
+            <paper-fab class=" pull-right" mini icon="add" title="New Job" data-toggle="modal"
+                       data-target="#newJobModal" ng-click="ciJobsCtrl.dataDismiss = ' '"></paper-fab>
             <!-- Refresh The Job List -->
             <paper-button raised class="ladda-button mainBtns" ladda="loading" ng-click="ciJobsCtrl.updateAllJobs()">
                 <iron-icon icon="refresh"></iron-icon>
@@ -43,13 +40,6 @@
             </table>
         </div>
     </div>
-    <div class="row">
-        <div class="col-xs-1 col-xs-offset-11">
-            <paper-fab class=" pull-right" mini icon="add" title="New Job" data-toggle="modal"
-                       data-target="#newJobModal" ng-click="ciJobsCtrl.dataDismiss = ' '"></paper-fab>
-        </div>
-    </div>
-
 
     <!-- Modal -->
     <div id="newJobModal" class="modal fade" role="dialog">

@@ -27,7 +27,7 @@
     function configApp($stateProvider, $urlRouterProvider, laddaProvider) {
         var home = {
                 name: 'home',
-                url: '/',
+                url: '/?:teamId',
                 templateUrl: '/js/ui-facade/ui-facade-tmpl.html',
                 controller: 'UiFacadeCtrl',
                 controllerAs: 'facade'

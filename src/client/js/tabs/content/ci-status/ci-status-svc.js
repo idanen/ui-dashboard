@@ -52,19 +52,31 @@
         })
         .service('ciStatusService', CiStatusService);
 
-    CiStatusService.$inject = ['$http', 'FirebaseService', 'ENV'];
-    function CiStatusService($http, FirebaseService, ENV) {
+    CiStatusService.$inject = ['$http', 'Ref', '$firebaseObject', '$firebaseArray', '$stateParams', 'ENV'];
+    function CiStatusService($http, ref, $firebaseObject, $firebaseArray, $stateParams, ENV) {
         this._jobsUrl = '//' + ENV.HOST + ':' + ENV.PORT;
-        this._jobsRef = FirebaseService.getJobs();
+        this._jobsRef = ref.child('allJobs');
+        this._statusRef = ref.child('ciStatus');
+        this._mastersRef = this._statusRef.child('masters');
+        this._teamsRef = this._statusRef.child('teams');
         this.$http = $http;
+        this.$firebaseObject = $firebaseObject;
+        this.$firebaseArray = $firebaseArray;
     }
 
     CiStatusService.prototype = {
-        getJobs: function () {
-            return this._jobsRef;
+        getJobs: function (group) {
+            return this.$firebaseArray(group ? this._statusRef.child(group) : this._statusRef.child('masters'));
+        },
+        getJob: function (jobId, teamId) {
+            if (teamId) {
+                return this.$firebaseObject(this._teamsRef.child(teamId).child(jobId));
+            }
+
+            return this.$firebaseObject(this._mastersRef.child(jobId));
         },
         getJobByName: function (jobName) {
-            return this._jobsRef[jobName];
+            return this.$firebaseObject(this._jobsRef.child(jobName));
         },
         addJob: function (toAdd) {
             return this.$http.post(this._jobsUrl + '/addJob', toAdd)
