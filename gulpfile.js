@@ -8,7 +8,7 @@ var pagespeed = require('psi');
 var reload = browserSync.reload;
 var inject = require('gulp-inject');
 var nodemon = require('gulp-nodemon');
-var babel = require('gulp-babel');
+var debug = require('gulp-debug');
 var isProd = require('yargs').argv.state === 'prod';
 
 // we'd need a slight delay to reload browsers
@@ -91,7 +91,7 @@ gulp.task('styles', function () {
 // Concatenate and minify JavaScript. Optionally transpiles ES2015 code to ES5.
 // to enables ES2015 support remove the line `"only": "gulpfile.babel.js",` in the
 // `.babelrc` file.
-gulp.task('scripts', function () {
+gulp.task('scripts', function (cb) {
   gulp.src([
     // Note: Since we are not using useref in the scripts build pipeline,
     //       you need to explicitly list your scripts here in the right order
@@ -111,7 +111,8 @@ gulp.task('scripts', function () {
     // Output files
       .pipe($.size({title: 'scripts'}))
       .pipe($.sourcemaps.write('.'))
-      .pipe(gulp.dest('dist/scripts'));
+      .pipe(gulp.dest('dist/scripts'))
+      .on('end', cb);
 });
 
 // Scan your HTML for assets & optimize them
@@ -120,6 +121,7 @@ gulp.task('html', ['scripts'], function () {
 
   return gulp.src([
     'src/client/**/*.html',
+    '!src/client/js/**/*.html',
     'src/client/manifest.json',
     '!src/client/components/**/*.html'
   ])
@@ -170,9 +172,9 @@ gulp.task('templatecopy', function () {
 });
 
 // Inject app *.js files to index.html
-gulp.task('inject', ['templatecopy', 'html', 'scripts'], function () {
+gulp.task('inject', ['templatecopy', 'html'], function () {
   return gulp.src('dist/index.html')
-    .pipe(inject(gulp.src('dist/scripts/**/*.js', {read: false}), {relative: true}))
+    .pipe(inject(gulp.src('dist/scripts/**/*.js', {read: false}).pipe(debug()), {relative: true}))
     //.pipe($.angularFilesort())
     //// Minify any HTML
     //.pipe($.htmlmin({
