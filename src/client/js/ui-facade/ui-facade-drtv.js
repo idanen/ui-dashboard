@@ -2,19 +2,14 @@
     'use strict';
 
     angular.module('ui')
-        .directive('uiFacade', ['RegisteredTabsList', function (RegisteredTabsList) {
-            return {
-                restrict: 'E',
-                templateUrl: '/js/ui-facade/ui-facade-tmpl.html',
-                controller: 'UiFacadeCtrl',
-                controllerAs: 'facade',
-                link: function (scope) {
+        .directive('uiFacade', uiFacadeDirectiveFactory);
 
-                    scope.appplySelectedTabContent = function applySelectedTabContent(tabId) {
-                        var tabUrlContent = RegisteredTabsList.getTabContent(tabId);
-                        scope.selectedTabContent = tabUrlContent;
-                    };
-                }
-            };
-        }]);
+    function uiFacadeDirectiveFactory() {
+        return {
+            restrict: 'E',
+            templateUrl: '/js/ui-facade/ui-facade-tmpl.html',
+            controller: 'UiFacadeCtrl',
+            controllerAs: 'facade'
+        };
+    }
 })(window.angular);

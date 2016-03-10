@@ -15,6 +15,12 @@
     }
 
     JenkinsService.prototype = {
+        getBuildStatus: function (buildName) {
+            var buildURL = `${this.JenkinsBaseUrl}job/${buildName}/api/json`;
+            return this.$http.get(buildURL)
+                .then(this._processResponse)
+                .then(this.getRelevantBuilds.bind(this));
+        },
         getMastersBranches: function () {
             var mastersURL = this.JenkinsBaseUrl + 'job/MaaS-SAW-USB-master/api/json';
             return this.$http.get(mastersURL)
@@ -37,54 +43,53 @@
                 });
         },
 
-        getRelevantBuilds: function (masterDetails) {
+        getRelevantBuilds: function (buildDetails) {
             var promises = [];
-            if (masterDetails.lastBuild.number !== masterDetails.lastCompletedBuild.number) {
-                promises.push(this.$http.get(masterDetails.lastBuild.url + 'api/json'));
+            if (buildDetails.lastBuild.number !== buildDetails.lastCompletedBuild.number) {
+                promises.push(this.$http.get(buildDetails.lastBuild.url + 'api/json'));
             }
-            promises.push(this.$http.get(masterDetails.lastCompletedBuild.url + 'api/json'));
-            if (masterDetails.lastSuccessfulBuild.number !== masterDetails.lastCompletedBuild.number) {
-                promises.push(this.$http.get(masterDetails.lastSuccessfulBuild.url + 'api/json'));
+            promises.push(this.$http.get(buildDetails.lastCompletedBuild.url + 'api/json'));
+            if (buildDetails.lastSuccessfulBuild.number !== buildDetails.lastCompletedBuild.number) {
+                promises.push(this.$http.get(buildDetails.lastSuccessfulBuild.url + 'api/json'));
             }
             return this.$q.all(promises)
                 .then(function (builds) {
-                    return this.processBuilds(builds, masterDetails);
+                    return this.processBuilds(builds, buildDetails);
                 }.bind(this));
         },
         processBuilds: function (builds, parentDetails) {
-            var masters = [];
+            var buildsStatus = [];
             if (builds && Array.isArray(builds)) {
                 builds.forEach(function (branchInfo) {
-                    var master = {};
-                    master.name = branchInfo.data.fullDisplayName;
-                    master.url = branchInfo.data.url;
+                    var buildStatus = {};
+                    buildStatus.name = branchInfo.data.fullDisplayName;
+                    buildStatus.url = branchInfo.data.url;
                     if ((branchInfo.data.number === parentDetails.lastBuild.number) && parentDetails.lastBuild.number !== parentDetails.lastCompletedBuild.number) {
-                        master.status = parentDetails.color;
+                        buildStatus.status = parentDetails.color;
                     } else {
-                        master.status = this._getStatus(branchInfo.data.result);
+                        buildStatus.status = this._getStatus(branchInfo.data.result);
                     }
-                    master.result = (branchInfo.data.building === true) ? 'RUNNING' : branchInfo.data.result;
+                    buildStatus.result = (branchInfo.data.building === true) ? 'RUNNING' : branchInfo.data.result;
                     if(branchInfo.data.building === true){
-                        master.duration = this._getDuration(new Date().getTime(),branchInfo.data.timestamp);
+                        buildStatus.duration = this._getDuration(new Date().getTime(),branchInfo.data.timestamp);
                     }else{
-                        master.duration = this._getDuration(new Date().getTime() + branchInfo.data.duration, new Date().getTime());
+                        buildStatus.duration = this._getDuration(new Date().getTime() + branchInfo.data.duration, new Date().getTime());
                     }
-                    masters.push(master);
+                    buildsStatus.push(buildStatus);
                 }, this);
             }
-            return masters;
+            return buildsStatus;
         },
 
 
         _getReports: function(reports){
             var jobs = reports.data.jobs;
             var promises = [];
-            var healthReports = [];
             jobs.forEach(function (job) {
                 var urlNow = this.JenkinsBaseUrl + 'job/' + job.name + '/api/json';
                 promises.push(function (urlNow) {
                     return this._getReportDetailsFromJenkins(urlNow);
-                }.bind(this)(urlNow))
+                }.bind(this)(urlNow));
             } , this);
             return this.$q.all(promises).then(function (results) {
                 return results;
@@ -110,12 +115,11 @@
         _getRunningBranches: function(branches){
             var jobs = branches.data.jobs;
             var promises = [];
-            var runningBranches = [];
             jobs.forEach(function (job) {
-                var urlNow = JenkinsBaseUrl + 'job/' + job.name + '/lastBuild/api/json?depth=0';
+                var urlNow = this.JenkinsBaseUrl + 'job/' + job.name + '/lastBuild/api/json?depth=0';
                 promises.push(function (urlNow, color, name) {
-                    return this._getRunningBranch(url,color,name).bind(this);
-                }(urlNow, job.color, job.name))
+                    return this._getRunningBranch(urlNow, color, name).bind(this);
+                }(urlNow, job.color, job.name));
             }.bind(this));
             return this.$q.all(promises).then(function (results) {
                 return results;
@@ -136,7 +140,7 @@
                     current.started = this._convertTimestampToTime(result.timestamp);
                     console.log(current.started);
                     return current;
-                })
+                });
         },
 
         _processResponse: function (response) {
@@ -164,7 +168,7 @@
         _getDuration : function (endTimestamp, startTimestamp) {
             var minutes = (endTimestamp - startTimestamp) / 60000; // convert milliseconds to minutes
             minutes = Math.round(minutes);
-            var hour = 60, current = 0, hours = 0;
+            var hours = 0;
             while (minutes >= 60) {
                 minutes -= 60;
                 hours++;

@@ -1,6 +1,6 @@
 module.exports = (function () {
   var JENKINS_JOB_URL = 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/',
-      jsonSuffix = '/api/json',
+      jsonSuffix = 'api/json',
       FIREBASE_URL_CI_JOBS = 'https://boiling-inferno-9766.firebaseio.com/allJobs',
       FIREBASE_REST_SUFFIX = '.json';
 
@@ -20,12 +20,12 @@ module.exports = (function () {
       return this.runningUpdates[jobName + '#' + jobNumber];
     },
     update: function (jobName, jobNumber) {
-      this.rest.fetch(JENKINS_JOB_URL + jobName + '/' + jobNumber + jsonSuffix)
+      this.rest.fetch(JENKINS_JOB_URL + jobName + '/' + jobNumber + '/' + jsonSuffix)
           .then(function (jenkinsJob) {
             if (!jenkinsJob.building) {
               this.stopUpdater(jenkinsJob.name, jenkinsJob.number);
             }
-            return this.rest.update(buildFirebaseURL(jenkinsJob.name), {
+            return this.rest.update(this.buildFirebaseURL(jenkinsJob.name), {
               building: jenkinsJob.building,
               result: jenkinsJob.result,
               duration: jenkinsJob.duration
@@ -33,7 +33,7 @@ module.exports = (function () {
           }.bind(this));
     },
     getBuildState: function (job) {
-      return this.rest.fetch(JENKINS_JOB_URL + job.name + '/lastBuild' + jsonSuffix)
+      return this.rest.fetch(JENKINS_JOB_URL + job.name + '/lastBuild/' + jsonSuffix)
           .then(function (jenkinsJob) {
             if (jenkinsJob.building) {
               this.startUpdater(jenkinsJob.name, jenkinsJob.number);
@@ -45,13 +45,55 @@ module.exports = (function () {
       clearInterval(this.runningUpdates[jobName + '#' + jobNumber]);
       delete this.runningUpdates[jobName + '#' + jobNumber];
     },
+    getBuildStatus: function (buildName) {
+      return this.rest.fetch(JENKINS_JOB_URL + buildName + '/' + jsonSuffix)
+          .then(this.getRelevantBuilds.bind(this));
+    },
+    getRelevantBuilds: function (buildDetails) {
+      var promises = [];
+      if (buildDetails.lastBuild.number !== buildDetails.lastCompletedBuild.number) {
+        promises.push(this.rest.fetch(buildDetails.lastBuild.url + jsonSuffix));
+      }
+      promises.push(this.rest.fetch(buildDetails.lastCompletedBuild.url + 'api/json'));
+      if (buildDetails.lastSuccessfulBuild.number !== buildDetails.lastCompletedBuild.number) {
+        promises.push(this.rest.fetch(buildDetails.lastSuccessfulBuild.url + jsonSuffix));
+      }
+      return this.$q.all(promises)
+          .then(function (builds) {
+            return this.processBuilds(builds, buildDetails);
+          }.bind(this));
+    },
+    processBuilds: function (builds, parentDetails) {
+      var buildsStatus = [];
+      if (builds && Array.isArray(builds)) {
+        builds.forEach(function (branchInfo) {
+          var buildStatus = {};
+          buildStatus.name = branchInfo.data.fullDisplayName;
+          buildStatus.url = branchInfo.data.url;
+          if ((branchInfo.data.number === parentDetails.lastBuild.number) && parentDetails.lastBuild.number !== parentDetails.lastCompletedBuild.number) {
+            buildStatus.status = parentDetails.color;
+          } else {
+            buildStatus.status = this._getStatus(branchInfo.data.result);
+          }
+          buildStatus.result = (branchInfo.data.building === true) ? 'RUNNING' : branchInfo.data.result;
+          if(branchInfo.data.building === true){
+            buildStatus.duration = this._getDuration(new Date().getTime(),branchInfo.data.timestamp);
+          }else{
+            buildStatus.duration = this._getDuration(new Date().getTime() + branchInfo.data.duration, new Date().getTime());
+          }
+          buildsStatus.push(buildStatus);
+        }, this);
+      }
+      return buildsStatus;
+    },
     /**
      * Builds a URL to the Firebase REST API
      * @param {string} [jobName] An optional identifier to get specific job instead the whole list
      * @return {string} The resource URL
      */
     buildFirebaseURL: function (jobName) {
-      return FIREBASE_URL_CI_JOBS + (jobName ? '/' + jobName : '') + FIREBASE_REST_SUFFIX;
+      var jobName = jobName ? '/' + jobName : '';
+      return FIREBASE_URL_CI_JOBS + jobName + FIREBASE_REST_SUFFIX;
     }
   };
 

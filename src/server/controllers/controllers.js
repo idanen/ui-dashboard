@@ -1,9 +1,8 @@
-(function () {
-    var Promise = require('promise');
-    var eRequest = require('request');
+var Promise = require('promise'),
+    eRequest = require('request'),
+    StatusUpdater = require('../services/status-updater');
 
-    var fs = require('fs');
-    var DATA_LOCATION = 'src/server/resources/test.json';
+module.exports = (function () {
     var JENKINS_JOB_URL = 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/';
     var FIREBASE_URL_CI_JOBS = 'https://boiling-inferno-9766.firebaseio.com/allJobs';
     var FIREBASE_REST_SUFFIX = '.json';
@@ -11,33 +10,10 @@
 
     function UIDashboardController() {
         this.runningProgressChecks = {};
+        this.statusUpdater = new StatusUpdater();
     }
 
     UIDashboardController.prototype = {
-        save: function (req, res) {
-            var dataToSave = JSON.stringify(req.body);
-            fs.writeFile(DATA_LOCATION, dataToSave, 'utf8', function (err) {
-                if (err) {
-                    res.send(err);
-                } else {
-                    res.send('OK');
-                }
-            });
-        },
-
-        load: function (req, res) {
-            fs.readFile(DATA_LOCATION, 'utf8', function (err, fileContent) {
-
-                if (err) {
-                    res.send(err);
-                    return console.log("Error controllers 27: " + err);
-                }
-
-                res.send(JSON.parse(fileContent));
-            });
-        },
-
-
         addNewJob: function (request, res) {
             var job = request.body;
             var tmpJson = JSON.stringify(job);
@@ -93,7 +69,7 @@
         },
 
         getAllJobs: function (req, res) {
-            getJobsFromDatabase()
+            this.getJobsFromDatabase()
                 .then(getJobsStatus)
                 .then(function (jobsWithStatuses) {
                     res.send(jobsWithStatuses);
@@ -106,6 +82,16 @@
         startMonitoring: function (req, res) {
             return this.getJobsFromDatabase()
                 .then(this.getJobsStatusFromJenkins.bind(this));
+        },
+
+        getBuildStatus: function (request, response) {
+            return this.statusUpdater.getBuildStatus(request.params.buildName)
+                .then(function (statuses) {
+                    response.send(statuses);
+                })
+                .catch(function (error) {
+                    response.send(error);
+                });
         },
 
         getJobsStatusFromJenkins: function (jobs) {
@@ -225,5 +211,5 @@
         return FIREBASE_URL_CI_JOBS + (jobName ? '/' + jobName : '') + FIREBASE_REST_SUFFIX;
     }
 
-    module.exports = UIDashboardController;
+    return UIDashboardController;
 }());
