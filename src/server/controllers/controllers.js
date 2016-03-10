@@ -1,12 +1,12 @@
 var Promise = require('promise'),
-    eRequest = require('request'),
-    StatusUpdater = require('../services/status-updater');
+    eRequest = require('request');
 
 module.exports = (function () {
     var JENKINS_JOB_URL = 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/';
     var FIREBASE_URL_CI_JOBS = 'https://boiling-inferno-9766.firebaseio.com/allJobs';
     var FIREBASE_REST_SUFFIX = '.json';
     var PROGRESS_INTERVAL = 1000 * 60 * 60;
+    var StatusUpdater = require('../services/status-updater');
 
     function UIDashboardController() {
         this.runningProgressChecks = {};

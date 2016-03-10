@@ -3,13 +3,13 @@ module.exports = function(app){
     var UIDashboardController = require('../controllers/controllers.js');
     var controller = new UIDashboardController();
 
-    app.post('/addJob', controller.addNewJob);
+    app.post('/addJob', controller.addNewJob.bind(controller));
 
-    app.post('/updateJob', controller.updateJob);
+    app.post('/updateJob', controller.updateJob.bind(controller));
 
-    app.get('/loadJobs', controller.getAllJobs);
+    app.get('/loadJobs', controller.getAllJobs.bind(controller));
 
-    app.get('/buildStatus/:buildName', controller.getBuildStatus);
+    app.get('/buildStatus/:buildName', controller.getBuildStatus.bind(controller));
 
-    app.get('/startMonitoring', controller.startMonitoring);
+    app.get('/startMonitoring', controller.startMonitoring.bind(controller));
 };
