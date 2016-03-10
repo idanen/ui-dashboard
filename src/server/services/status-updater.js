@@ -1,3 +1,5 @@
+var Promise = require('Promise');
+
 module.exports = (function () {
   var JENKINS_JOB_URL = 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/',
       jsonSuffix = 'api/json',
@@ -47,7 +49,10 @@ module.exports = (function () {
     },
     getBuildStatus: function (buildName) {
       return this.rest.fetch(JENKINS_JOB_URL + buildName + '/' + jsonSuffix)
-          .then(this.getRelevantBuilds.bind(this));
+          .then(this.getRelevantBuilds.bind(this))
+          .catch(function (error) {
+            return Promise.reject(error);
+          });
     },
     getRelevantBuilds: function (buildDetails) {
       var promises = [];
@@ -58,28 +63,31 @@ module.exports = (function () {
       if (buildDetails.lastSuccessfulBuild.number !== buildDetails.lastCompletedBuild.number) {
         promises.push(this.rest.fetch(buildDetails.lastSuccessfulBuild.url + jsonSuffix));
       }
-      return this.$q.all(promises)
+      return Promise.all(promises)
           .then(function (builds) {
             return this.processBuilds(builds, buildDetails);
-          }.bind(this));
+          }.bind(this))
+          .catch(function (error) {
+            return Promise.reject(error);
+          });
     },
     processBuilds: function (builds, parentDetails) {
       var buildsStatus = [];
       if (builds && Array.isArray(builds)) {
         builds.forEach(function (branchInfo) {
           var buildStatus = {};
-          buildStatus.name = branchInfo.data.fullDisplayName;
-          buildStatus.url = branchInfo.data.url;
-          if ((branchInfo.data.number === parentDetails.lastBuild.number) && parentDetails.lastBuild.number !== parentDetails.lastCompletedBuild.number) {
+          buildStatus.name = branchInfo.fullDisplayName;
+          buildStatus.url = branchInfo.url;
+          if ((branchInfo.number === parentDetails.lastBuild.number) && parentDetails.lastBuild.number !== parentDetails.lastCompletedBuild.number) {
             buildStatus.status = parentDetails.color;
           } else {
-            buildStatus.status = this._getStatus(branchInfo.data.result);
+            buildStatus.status = this._getStatus(branchInfo.result);
           }
-          buildStatus.result = (branchInfo.data.building === true) ? 'RUNNING' : branchInfo.data.result;
-          if(branchInfo.data.building === true){
-            buildStatus.duration = this._getDuration(new Date().getTime(),branchInfo.data.timestamp);
+          buildStatus.result = (branchInfo.building === true) ? 'RUNNING' : branchInfo.result;
+          if(branchInfo.building === true){
+            buildStatus.duration = this._getDuration(new Date().getTime(),branchInfo.timestamp);
           }else{
-            buildStatus.duration = this._getDuration(new Date().getTime() + branchInfo.data.duration, new Date().getTime());
+            buildStatus.duration = this._getDuration(new Date().getTime() + branchInfo.duration, new Date().getTime());
           }
           buildsStatus.push(buildStatus);
         }, this);
