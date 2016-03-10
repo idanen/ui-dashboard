@@ -15,27 +15,27 @@
         <div class="col-xs-12">
             <table class="table">
                 <thead>
-                <tr>
-                    <th>Job Name</th>
-                    <th>Build Status</th>
-                    <th>Freeze</th>
-                </tr>
+                    <tr>
+                        <th>Job Name</th>
+                        <th>Build Status</th>
+                        <th>Freeze</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <tr ng-class="ciJobsCtrl.styleJobRow(job)" ng-repeat="job in ciJobsCtrl.listOfJobs | unique:'name'">
-                    <td data-toggle="tooltip" title="{{ job.name }}">
-                        <h4><a ng-href="{{'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/' + job.name}}" target="_blank">{{ (job.alias || job.name) | limitTo:30 }}</a></h4>
-                    </td>
-                    <td>
-                        <img class="statusImg" ng-src="{{ ciJobsCtrl.chooseImg(job) }}" ng-hide="ciJobsCtrl.loading">
-                        <span ng-hide="ciJobsCtrl.loading">{{ ciJobsCtrl.status(job) }}</span>
-                    </td>
-                    <td>
-                        <div class="btn-group">
-                            <paper-toggle-button data-job="{{ job.name }}" ci-freeze-state-toggle="job.freeze.state"></paper-toggle-button>
-                        </div>
-                    </td>
-                </tr>
+                    <tr ng-class="ciJobsCtrl.styleJobRow(job)" ng-repeat="job in ciJobsCtrl.listOfJobs.masters">
+                        <td data-toggle="tooltip" title="{{ job.name }}">
+                            <h4><a ng-href="{{'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/' + job.name}}" target="_blank">{{ (job.alias || job.name) | limitTo:30 }}</a></h4>
+                        </td>
+                        <td>
+                            <img class="statusImg" ng-src="{{ ciJobsCtrl.chooseImg(job) }}" ng-hide="ciJobsCtrl.loading">
+                            <span ng-hide="ciJobsCtrl.loading">{{ ciJobsCtrl.status(job) }}</span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <paper-toggle-button data-job="{{ job.name }}" ci-freeze-state-toggle="job.freeze.state"></paper-toggle-button>
+                            </div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

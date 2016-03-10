@@ -22,9 +22,12 @@
     CiStatusController.$inject = ['$scope', '$interval', 'ciStatusService', 'CiJobsRefreshInterval'];
     function CiStatusController($scope, $interval, ciStatusService, CiJobsRefreshInterval) {
         this.ciStatusService = ciStatusService;
-        this.listOfJobs = {}; // the list of jobs we get from server and use in ng-repeat
+        this.listOfJobs = {
+            masters: this.ciStatusService.getJobs(),
+            teams: this.ciStatusService.getJobs('teams')
+        };
         // This assumes the controller's name is `ciJobsCtrl`
-        this.ciStatusService.getJobs().$bindTo($scope, 'ciJobsCtrl.listOfJobs');
+        //this.ciStatusService.getJobs().$bindTo($scope, 'ciJobsCtrl.listOfJobs');
         this.animateOnUpdate = 'fadeOut'; // ng-class fading for refreshing data
         this.loading = false; // when it true , progress bar enabled and job list disabled..
         this.dataDismiss = ' '; // we change it to keep the modal open until response of the server

@@ -8,7 +8,6 @@ var pagespeed = require('psi');
 var reload = browserSync.reload;
 var inject = require('gulp-inject');
 var nodemon = require('gulp-nodemon');
-var debug = require('gulp-debug');
 var isProd = require('yargs').argv.state === 'prod';
 
 // we'd need a slight delay to reload browsers
@@ -174,7 +173,7 @@ gulp.task('templatecopy', function () {
 // Inject app *.js files to index.html
 gulp.task('inject', ['templatecopy', 'html'], function () {
   return gulp.src('dist/index.html')
-    .pipe(inject(gulp.src('dist/scripts/**/*.js', {read: false}).pipe(debug()), {relative: true}))
+    .pipe(inject(gulp.src('dist/scripts/**/*.js', {read: false}), {relative: true}))
     //.pipe($.angularFilesort())
     //// Minify any HTML
     //.pipe($.htmlmin({
