@@ -2,8 +2,11 @@
     <div class="row">
         <div class="col-xs-12">
             <!-- Trigger the modal with a button -->
-            <paper-fab class=" pull-right" mini icon="add" title="New Job" data-toggle="modal"
-                       data-target="#newJobModal" ng-click="ciJobsCtrl.dataDismiss = ' '"></paper-fab>
+            <paper-button raised type="button" class="mainBtns" data-toggle="modal" data-target="#newJobModal"
+                          ng-click="ciJobsCtrl.dataDismiss = ' '">
+                <iron-icon icon="add"></iron-icon>
+                <span>Add New Job</span>
+            </paper-button>
             <!-- Refresh The Job List -->
             <paper-button raised class="ladda-button mainBtns" ladda="loading" ng-click="ciJobsCtrl.updateAllJobs()">
                 <iron-icon icon="refresh"></iron-icon>
@@ -15,31 +18,42 @@
         <div class="col-xs-12">
             <table class="table">
                 <thead>
-                    <tr>
-                        <th>Job Name</th>
-                        <th>Build Status</th>
-                        <th>Freeze</th>
-                    </tr>
+                <tr>
+                    <th>Job Name</th>
+                    <th>Build Status</th>
+                    <th>Duration</th>
+                    <th>Freeze</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <tr ng-class="ciJobsCtrl.styleJobRow(job)" ng-repeat="job in ciJobsCtrl.listOfJobs.masters">
-                        <td data-toggle="tooltip" title="{{ job.name }}">
-                            <h4><a ng-href="{{'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/' + job.name}}" target="_blank">{{ (job.alias || job.name) | limitTo:30 }}</a></h4>
-                        </td>
-                        <td>
-                            <img class="statusImg" ng-src="{{ ciJobsCtrl.chooseImg(job) }}" ng-hide="ciJobsCtrl.loading">
-                            <span ng-hide="ciJobsCtrl.loading">{{ ciJobsCtrl.status(job) }}</span>
-                        </td>
-                        <td>
-                            <div class="btn-group">
-                                <paper-toggle-button data-job="{{ job.name }}" ci-freeze-state-toggle="job.freeze.state"></paper-toggle-button>
-                            </div>
-                        </td>
-                    </tr>
+                <tr ng-class="ciJobsCtrl.styleJobRow(job)" ng-repeat="job in ciJobsCtrl.listOfJobs | unique:'name'">
+                    <td data-toggle="tooltip" title="{{ job.name }}">
+                        <h4><a ng-href="{{job.url}}" target="_blank">{{ (job.name) | limitTo:30 }}</a></h4>
+                    </td>
+                    <td>
+                        <img class="statusImg" ng-src="{{ ciJobsCtrl.selectJobImg(job.status) }}" ng-hide="ciJobsCtrl.loading">
+                        <span ng-hide="ciJobsCtrl.loading">{{ job.result }}</span>
+                    </td>
+                    <td>
+                        {{job.duration}}
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <paper-toggle-button data-job="{{ job.name }}" ci-freeze-state-toggle="job.freeze.state"></paper-toggle-button>
+                        </div>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>
     </div>
+    <div class="row">
+        <div class="col-xs-1 col-xs-offset-11">
+            <paper-fab class=" pull-right" mini icon="add" title="New Job" data-toggle="modal"
+                       data-target="#newJobModal" ng-click="ciJobsCtrl.dataDismiss = ' '"></paper-fab>
+        </div>
+    </div>
+
 
     <!-- Modal -->
     <div id="newJobModal" class="modal fade" role="dialog">

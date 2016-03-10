@@ -52,39 +52,27 @@
         })
         .service('ciStatusService', CiStatusService);
 
-    CiStatusService.$inject = ['$http', 'Ref', '$firebaseObject', '$firebaseArray', '$stateParams', 'ENV'];
-    function CiStatusService($http, ref, $firebaseObject, $firebaseArray, $stateParams, ENV) {
+    CiStatusService.$inject = ['$http', 'FirebaseService', 'JenkinsService', 'ENV'];
+    function CiStatusService($http, FirebaseService, JenkinsService, ENV) {
         this._jobsUrl = '//' + ENV.HOST + ':' + ENV.PORT;
-        this._jobsRef = ref.child('allJobs');
-        this._statusRef = ref.child('ciStatus');
-        this._mastersRef = this._statusRef.child('masters');
-        this._teamsRef = this._statusRef.child('teams');
+        this._jobsRef = FirebaseService.getJobs();
         this.$http = $http;
-        this.$firebaseObject = $firebaseObject;
-        this.$firebaseArray = $firebaseArray;
+        this.JenkinsService = JenkinsService;
     }
 
     CiStatusService.prototype = {
-        getJobs: function (group) {
-            return this.$firebaseArray(group ? this._statusRef.child(group) : this._statusRef.child('masters'));
-        },
-        getJob: function (jobId, teamId) {
-            if (teamId) {
-                return this.$firebaseObject(this._teamsRef.child(teamId).child(jobId));
-            }
-
-            return this.$firebaseObject(this._mastersRef.child(jobId));
+        getJobs: function () {
+            return this._jobsRef;
         },
         getJobByName: function (jobName) {
-            return this.$firebaseObject(this._jobsRef.child(jobName));
+            return this._jobsRef[jobName];
         },
         addJob: function (toAdd) {
             return this.$http.post(this._jobsUrl + '/addJob', toAdd)
                 .then(this._processResponse);
         },
         loadJobs: function () {
-            return this.$http.get(this._jobsUrl + '/loadJobs')
-                .then(this._processResponse);
+            return this.JenkinsService.getMastersBranches();
         },
         _processResponse: function (response) {
             return response.data;

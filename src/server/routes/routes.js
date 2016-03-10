@@ -1,7 +1,8 @@
 module.exports = function(app){
 
-    var controllerFactory = require('../controllers/controllers.js').UIDashboardController;
-    var controller = new controllerFactory();
+    var UIDashboardController = require('../controllers/controllers.js');
+    var controller = new UIDashboardController();
+    console.log(UIDashboardController.prototype);
 
     app.post('/save', controller.save);
 
@@ -11,7 +12,9 @@ module.exports = function(app){
 
     app.post('/updateJob', controller.updateJob);
 
-    app.get('/loadJobs',controller.getAllJobs);
+    app.get('/loadJobs', controller.getAllJobs);
+
+    app.get('/startMonitoring', controller.startMonitoring);
 
     app.get('/startUpdating', controller.startUpdating)
 };
