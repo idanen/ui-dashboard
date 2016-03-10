@@ -1,4 +1,5 @@
-var Promise = require('Promise');
+var Promise = require('Promise'),
+    moment = require('moment');
 
 module.exports = (function () {
   var JENKINS_JOB_URL = 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/',
@@ -75,7 +76,8 @@ module.exports = (function () {
       var buildsStatus = [];
       if (builds && Array.isArray(builds)) {
         builds.forEach(function (branchInfo) {
-          var buildStatus = {};
+          var buildStatus = {},
+              duration, durationMoment;
           buildStatus.name = branchInfo.fullDisplayName;
           buildStatus.url = branchInfo.url;
           if ((branchInfo.number === parentDetails.lastBuild.number) && parentDetails.lastBuild.number !== parentDetails.lastCompletedBuild.number) {
@@ -84,15 +86,22 @@ module.exports = (function () {
             buildStatus.status = this._getStatus(branchInfo.result);
           }
           buildStatus.result = (branchInfo.building === true) ? 'RUNNING' : branchInfo.result;
-          if(branchInfo.building === true){
-            buildStatus.duration = this._getDuration(new Date().getTime(),branchInfo.timestamp);
-          }else{
-            buildStatus.duration = this._getDuration(new Date().getTime() + branchInfo.duration, new Date().getTime());
-          }
+          duration = branchInfo.building ? Date.now() - branchInfo.timestamp : branchInfo.duration;
+          durationMoment = moment.duration(duration);
+          buildStatus.duration = durationMoment.hours() + ':' + durationMoment.minutes() + ':' + durationMoment.seconds();
           buildsStatus.push(buildStatus);
         }, this);
       }
       return buildsStatus;
+    },
+    _getStatus: function(result) {
+      if (result === "SUCCESS") {
+        return 'blue';
+      } else if (result === "FAILED") {
+        return 'red';
+      } else {
+        return 'yellow';
+      }
     },
     /**
      * Builds a URL to the Firebase REST API

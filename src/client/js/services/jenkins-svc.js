@@ -182,7 +182,7 @@
             if (minutes === 0) {
                 return hours + ' Hours';
             }
-            return hours + ' Hour/s And ' + minutes + ' Minutes';
+            return hours + ' Hour(s) And ' + minutes + ' Minutes';
         }
 
     };
