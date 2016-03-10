@@ -30,6 +30,12 @@
                 title: 'Useful Links',
                 contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-useful-links-tmpl.html',
                 columns: 12
+            },
+            {
+                id: 4,
+                title: 'Health Report',
+                contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-health-report-tmpl.html',
+                columns: 12
             }
         ];
 

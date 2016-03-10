@@ -21,40 +21,25 @@
 </nav>
 <div class="container">
     <div class="row fixed-widgets-container">
-        <div class="widget-container col-md-12">
-            <paper-material class="widget" elevation="1">
-                <!--<paper-header-panel class="content fit" mode="standard">-->
-                    <!--<paper-toolbar>-->
-                        <!--<paper-icon-button icon="stars"></paper-icon-button>-->
-                        <!--<div class="title">{{ widget.title }}</div>-->
-                    <!--</paper-toolbar>-->
-                    <!--<div class="widget-content" ng-include="widget.contentUrl"></div>-->
-                <!--</paper-header-panel>-->
-                <paper-drawer-panel>
-                    <paper-header-panel drawer>
-                        <paper-toolbar>
-                            <paper-icon-button icon="stars"></paper-icon-button>
-                        </paper-toolbar>
-                        <paper-menu>
-                            <paper-item class="widget-link" ng-repeat="widget in facade.mainWidgets" ng-click="facade.setMainWidget($index)" title="{{ widget.title }}">
-                                <paper-item-body two-line>
-                                    <div>{{ widget.title }}</div>
-                                    <!--<div secondary>{{ widget.subTitle }}</div>-->
-                                </paper-item-body>
-                            </paper-item>
-                        </paper-menu>
-                    </paper-header-panel>
-                    <paper-header-panel main>
-                        <paper-toolbar>
-                            <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
-                            <div class="title">{{ facade.currentWidget.title }}</div>
-                        </paper-toolbar>
-                        <div class="main-panel-container">
-                            <div class="widget-content" ng-include="facade.currentWidget.contentUrl"></div>
-                        </div>
-                    </paper-header-panel>
-                </paper-drawer-panel>
-            </paper-material>
+        <div class="widget-container" ng-repeat="widget in facade.mainWidgets"
+             ng-class="('col-md-' + (12 / facade.mainWidgets.length))">
+        <paper-material class="widget" elevation="1">
+            <paper-header-panel class="content fit" mode="standard">
+                <paper-toolbar>
+                    <paper-icon-button icon="stars"></paper-icon-button>
+                    <div class="title">{{ widget.title }}</div>
+                </paper-toolbar>
+                <paper-menu>
+                    <paper-item class="widget-link" ng-repeat="widget in facade.mainWidgets" ng-click="facade.gotoState(widget.id)" title="{{ widget.title }}">
+                        <paper-item-body two-line>
+                            <div>{{ widget.title }}</div>
+                            <!--<div secondary>{{ widget.subTitle }}</div>-->
+                        </paper-item-body>
+                    </paper-item>
+                </paper-menu>
+                <div class="widget-content" ng-include="widget.contentUrl"></div>
+            </paper-header-panel>
+        </paper-material>
         </div>
     </div>
     <div class="row dynamic-widgets-container">
@@ -77,7 +62,7 @@
                     <paper-header-panel main>
                         <paper-toolbar>
                             <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
-                            <div class="title">{{ facade.currentStateWidget.title }}</div>
+                            <div class="title">{{ facade.currentWidget.title }}</div>
                         </paper-toolbar>
                         <div class="main-panel-container">
                             <div class="widget-content" ui-view></div>
