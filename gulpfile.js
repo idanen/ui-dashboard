@@ -209,7 +209,7 @@ gulp.task('nodemon', function (cb) {
 });
 
 // Watch files for changes & reload
-gulp.task('serve', ['nodemon', 'jslib', 'styles', 'copy', 'images', 'inject'], function () {
+gulp.task('serve', ['jslib', 'styles', 'copy', 'images', 'inject'], function () {
   browserSync({
     notify: false,
     // Customize the BrowserSync console logging prefix

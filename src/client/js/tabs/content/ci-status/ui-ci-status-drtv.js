@@ -6,7 +6,7 @@
     'use strict';
 
     angular.module('tabs')
-        .constant('CiJobsRefreshInterval', 1000 * 60 * 10)
+        .constant('CiJobsRefreshInterval', 1000 * 60 * 5)
         .directive('ciFreezeStateToggle', CiFreezeStateToggleDirectiveFactory)
         .directive('uiCiStatus', [function () {
             return {
@@ -24,7 +24,7 @@
         this.ciStatusService = ciStatusService;
         this.listOfJobs = {}; // the list of jobs we get from server and use in ng-repeat
         // This assumes the controller's name is `ciJobsCtrl`
-        this.ciStatusService.getJobs();
+        this.ciStatusService.getJobs().$bindTo($scope, 'ciJobsCtrl.listOfJobs');
         this.animateOnUpdate = 'fadeOut'; // ng-class fading for refreshing data
         this.loading = false; // when it true , progress bar enabled and job list disabled..
         this.dataDismiss = ' '; // we change it to keep the modal open until response of the server
@@ -55,20 +55,20 @@
             this.ciStatusService.addJob(newJob)
                 .then((function (res) {
                     // handle response from server
-                    if (res === "3") {
+                    if (res === '3') {
                         this.validateForm = true;
-                        this.validationErrorMessage = "Invalid name: Job name required as in Jenkins";
-                    } else if (res === "2") {
+                        this.validationErrorMessage = 'Invalid name: Job name required as in Jenkins';
+                    } else if (res === '2') {
                         this.validateForm = true;
-                        this.validationErrorMessage = "Job Already Exists..";
-                    } else if (res === "1") {
+                        this.validationErrorMessage = 'Job Already Exists..';
+                    } else if (res === '1') {
                         this.validateForm = true;
-                        this.validationErrorMessage = "Connection Problem , please try again..";
+                        this.validationErrorMessage = 'Connection Problem , please try again..';
                     } else {
                         this.validateForm = false;
-                        this.dataDismiss = "modal";
-                        this.addJobFormSendBtn = "btn btn-success";
-                        this.addJobResultButtonValue = "Done";
+                        this.dataDismiss = 'modal';
+                        this.addJobFormSendBtn = 'btn btn-success';
+                        this.addJobResultButtonValue = 'Done';
                         this.updateAllJobs();
                     }
                 }).bind(this));
@@ -76,9 +76,9 @@
         loadJobs: function () {
             if (!this.loading) {
                 this.loading = true;
-                this.ciStatusService.getJobs().$loaded()
+                this.ciStatusService.getJobs('masters').$loaded()
                     .then(this.determineInitialFreezeState.bind(this))
-                    .then(this.ciStatusService.loadJobs.bind(this.ciStatusService))
+                    .then(this.ciStatusService.getBuildStatus.bind(this.ciStatusService, 'MaaS-SAW-USB-master'))
                     .then(this.extendResults.bind(this))
                     .catch(this.networkError.bind(this))
                     .finally((function () {
@@ -99,8 +99,8 @@
             }
         },
         determineInitialFreezeState: function (jobs) {
-            angular.forEach(jobs, (function (job, jobName) {
-                this.freezeState(jobName, job.freeze.state);
+            angular.forEach(jobs, (function (job, jobId) {
+                this.freezeState(jobId, job.freeze.state);
             }).bind(this));
 
             return jobs;
@@ -108,7 +108,7 @@
         extendResults: function (jobsFromFirebase) {
             console.log(jobsFromFirebase);
             if (jobsFromFirebase) {
-                this.listOfJobs = jobsFromFirebase;
+                //this.listOfJobs = jobsFromFirebase;
                 this.animateOnUpdate = 'fadeIn';
             }
         },
@@ -118,7 +118,7 @@
         },
         freezeState: function (jobName, state) {
             if (jobName in this.listOfJobs) {
-                this.listOfJobs[jobName].freeze.state = state;
+                this.listOfJobs[jobName].freeze = state;
             }
         },
         /**

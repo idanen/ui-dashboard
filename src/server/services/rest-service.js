@@ -19,7 +19,7 @@ module.exports = (function () {
     },
     update: function (url, data) {
       return new Promise(function (resolve, reject) {
-        request.patch({
+        request.put({
           headers: {'content-type': 'application/json'},
           url: url,
           body: JSON.stringify(data)

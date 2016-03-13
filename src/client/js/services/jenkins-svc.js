@@ -11,7 +11,6 @@
         this.$http = $http;
         this.$q = $q;
         this.JenkinsBaseUrl = JenkinsBaseUrl;
-
     }
 
     JenkinsService.prototype = {

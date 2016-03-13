@@ -80,6 +80,7 @@
     "yui"           : false,
 
     "globals"       : {
-      "angular": false
+      "angular": false,
+      "moment": false
     }
 }
