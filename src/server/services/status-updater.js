@@ -1,6 +1,4 @@
-var Promise = require('Promise'),
-    moment = require('moment');
-require("moment-duration-format");
+var Promise = require('Promise');
 
 module.exports = (function () {
   var JENKINS_JOB_URL = 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/',
@@ -87,6 +85,7 @@ module.exports = (function () {
           var buildStatus = {};
           buildStatus.name = parentDetails.displayName;
           buildStatus.url = branchInfo.url;
+          buildStatus.number = branchInfo.number;
           if ((branchInfo.number === parentDetails.lastBuild.number) && parentDetails.lastBuild.number !== parentDetails.lastCompletedBuild.number) {
             buildStatus.status = parentDetails.color;
           } else {
@@ -100,38 +99,21 @@ module.exports = (function () {
       return buildsStatus;
     },
     writeToDB: function (builds) {
-      var buildsObj = this.buildsArrayToObject(builds);
-      return this.rest.fetch(FIREBASE_URL_CI_STATUS + '/masters' + FIREBASE_REST_SUFFIX)
-          .then(function (masterBuilds) {
-            if (masterBuilds) {
-              Object.keys(masterBuilds).forEach(function (buildStateId) {
-                var masterBuild = masterBuilds[buildStateId];
-                var updatedBuild = buildsObj[masterBuild.name];
-                if (updatedBuild) {
-                  masterBuild.status = updatedBuild.status;
-                  masterBuild.result = updatedBuild.result;
-                  masterBuild.duration = updatedBuild.duration;
-                  masterBuild.status = updatedBuild.status;
-                  masterBuild.lastUpdate = Date.now();
-                }
-              });
-            }
-            return masterBuilds;
-          }.bind(this))
-          .then(function (updatedBuilds) {
-            var updatePromises;
-
-            if (!updatedBuilds) {
-              return updatedBuilds;
-            }
-
-            updatePromises = [];
-            Object.keys(updatedBuilds).forEach(function (buildStateId) {
-              updatePromises.push(this.rest.update(FIREBASE_URL_CI_STATUS + '/masters/' + buildStateId + FIREBASE_REST_SUFFIX, updatedBuilds[buildStateId]));
-            }.bind(this));
-
-            return Promise.all(updatePromises);
-          }.bind(this));
+      var updatePromises = builds.length && [];
+      builds.forEach(function (build) {
+        updatePromises.push(this.rest.update(FIREBASE_URL_CI_STATUS + '/masters/' + build.name + '/builds/' + build.number + FIREBASE_REST_SUFFIX, {
+          icon: build.status,
+          result: build.result,
+          running: build.building,
+          duration: build.duration,
+          lastUpdate: Date.now()
+        }));
+      }, this);
+      // Update lastUpdated field
+      if (builds && builds.length) {
+        updatePromises.push(this.rest.update(FIREBASE_URL_CI_STATUS + '/masters/' + builds[0].name + '/lastUpdate' + FIREBASE_REST_SUFFIX, Date.now()));
+      }
+      return Promise.all(updatePromises);
     },
     buildsArrayToObject: function (buildsArray) {
       var result = {};

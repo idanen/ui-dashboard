@@ -33,7 +33,9 @@
         this.addJobFormSendBtn = 'btn btn-default'; // 'Add' button style in the 'add job' modal
         this.addJobResultButtonValue = 'Add'; // 'Add' button style in the 'add job' modal
 
-        this.intervalPromise = $interval(this.loadJobs.bind(this), CiJobsRefreshInterval);
+        //this.intervalPromise = $interval(this.loadJobs.bind(this), CiJobsRefreshInterval);
+        this.ciStatusService.getJobs().$loaded()
+            .then(this.determineInitialFreezeState.bind(this));
 
         $scope.$on('$destroy', (function () {
             $interval.cancel(this.intervalPromise);
@@ -78,7 +80,7 @@
                 this.loading = true;
                 this.ciStatusService.getJobs('masters').$loaded()
                     .then(this.determineInitialFreezeState.bind(this))
-                    .then(this.ciStatusService.getBuildStatus.bind(this.ciStatusService, 'MaaS-SAW-USB-master'))
+                    //.then(this.ciStatusService.getBuildStatus.bind(this.ciStatusService, 'MaaS-SAW-USB-master'))
                     .then(this.extendResults.bind(this))
                     .catch(this.networkError.bind(this))
                     .finally((function () {
@@ -100,7 +102,10 @@
         },
         determineInitialFreezeState: function (jobs) {
             angular.forEach(jobs, (function (job, jobId) {
-                this.freezeState(jobId, job.freeze.state);
+                if (/^\$/.test(jobId)) {
+                    return;
+                }
+                this.freezeState(jobId, job.freeze);
             }).bind(this));
 
             return jobs;

@@ -90,8 +90,14 @@ module.exports = (function () {
                     response.send(statuses);
                 })
                 .catch(function (error) {
+                    console.error(error);
                     response.send(error);
                 });
+        },
+
+        updateStatus: function (request, response) {
+            console.log(JSON.stringify(request.body));
+            response.send('thanks');
         },
 
         getJobsStatusFromJenkins: function (jobs) {

@@ -3,7 +3,7 @@
 
     angular
         .module('tabs')
-        .constant('JenkinsBaseUrl', 'http://mydtbld0021.hpeswlab.net:8080/jenkins/')
+        .constant('JenkinsBaseUrl', 'http://mydtbld0022.hpeswlab.net:8080/jenkins/')
         .service('JenkinsService', JenkinsService);
 
     JenkinsService.$inject = ['$http', '$q', 'JenkinsBaseUrl'];

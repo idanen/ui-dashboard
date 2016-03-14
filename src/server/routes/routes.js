@@ -12,4 +12,6 @@ module.exports = function(app){
     app.get('/buildStatus/:buildName', controller.getBuildStatus.bind(controller));
 
     app.get('/startMonitoring', controller.startMonitoring.bind(controller));
+
+    app.post('/updateStatus', controller.updateStatus.bind(controller));
 };
