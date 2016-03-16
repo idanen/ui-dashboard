@@ -1,17 +1,13 @@
-var Promise = require('Promise');
+var Promise = require('Promise'),
+    Firebase = require('firebase'),
+    consts = require('../config/consts.js'),
+    JenkinsService = require('./jenkins-service.js');
 
 module.exports = (function () {
-  var JENKINS_JOB_URL = 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/',
-      jsonSuffix = 'api/json',
-      FIREBASE_URL_CI_JOBS = 'https://boiling-inferno-9766.firebaseio.com/allJobs',
-      FIREBASE_URL_CI_STATUS = 'https://boiling-inferno-9766.firebaseio.com/ciStatus',
-      FIREBASE_REST_SUFFIX = '.json';
-
   function StatusUpdater(interval) {
-    var RestService = require('./rest-service.js');
-    this.rest = new RestService();
+    this.jenkins = new JenkinsService();
     this.interval = interval || 1000 * 60 * 60;
-    this.runningUpdates = {};
+    this.firebaseRef = new Firebase(consts.FIREBASE_URL_CI_STATUS);
     this.statusToColor = {
       SUCCESS: 'blue',
       FAILED: 'red',
@@ -20,41 +16,8 @@ module.exports = (function () {
   }
 
   StatusUpdater.prototype = {
-    startUpdater: function (jobName, jobNumber) {
-      if (this.runningUpdates[jobName + '#' + jobNumber]) {
-        this.stopUpdater(jobName, jobNumber);
-      }
-      this.runningUpdates[jobName + '#' + jobNumber] = setInterval(this.update(jobName, jobNumber).bind(this), this.interval);
-      return this.runningUpdates[jobName + '#' + jobNumber];
-    },
-    update: function (jobName, jobNumber) {
-      this.rest.fetch(JENKINS_JOB_URL + jobName + '/' + jobNumber + '/' + jsonSuffix)
-          .then(function (jenkinsJob) {
-            if (!jenkinsJob.building) {
-              this.stopUpdater(jenkinsJob.name, jenkinsJob.number);
-            }
-            return this.rest.update(this.buildFirebaseURL(jenkinsJob.name), {
-              building: jenkinsJob.building,
-              result: jenkinsJob.result,
-              duration: jenkinsJob.duration
-            });
-          }.bind(this));
-    },
-    getBuildState: function (job) {
-      return this.rest.fetch(JENKINS_JOB_URL + job.name + '/lastBuild/' + jsonSuffix)
-          .then(function (jenkinsJob) {
-            if (jenkinsJob.building) {
-              this.startUpdater(jenkinsJob.name, jenkinsJob.number);
-            }
-            return jenkinsJob;
-          }.bind(this));
-    },
-    stopUpdater: function (jobName, jobNumber) {
-      clearInterval(this.runningUpdates[jobName + '#' + jobNumber]);
-      delete this.runningUpdates[jobName + '#' + jobNumber];
-    },
     getBuildStatus: function (buildName) {
-      return this.rest.fetch(JENKINS_JOB_URL + buildName + '/' + jsonSuffix)
+      return this.jenkins.getBuild(buildName)
           .then(this.getRelevantBuilds.bind(this))
           .then(this.writeToDB.bind(this))
           .catch(function (error) {
@@ -63,12 +26,12 @@ module.exports = (function () {
     },
     getRelevantBuilds: function (buildDetails) {
       var promises = [];
-      if (buildDetails.lastBuild.number !== buildDetails.lastCompletedBuild.number) {
-        promises.push(this.rest.fetch(buildDetails.lastBuild.url + jsonSuffix));
+      promises.push(this.jenkins.getBuildType(buildDetails.name, JenkinsService.BuildTypes.lastCompleted));
+      if (buildDetails[JenkinsService.BuildTypes.last].number !== buildDetails[JenkinsService.BuildTypes.lastCompleted].number) {
+        promises.push(this.jenkins.getBuildType(buildDetails.name, JenkinsService.BuildTypes.last));
       }
-      promises.push(this.rest.fetch(buildDetails.lastCompletedBuild.url + jsonSuffix));
-      if (buildDetails.lastSuccessfulBuild.number !== buildDetails.lastCompletedBuild.number) {
-        promises.push(this.rest.fetch(buildDetails.lastSuccessfulBuild.url + jsonSuffix));
+      if (buildDetails[JenkinsService.BuildTypes.lastSuccessful].number !== buildDetails[JenkinsService.BuildTypes.lastCompleted].number) {
+        promises.push(this.jenkins.getBuildType(buildDetails.name, JenkinsService.BuildTypes.lastSuccessful));
       }
       return Promise.all(promises)
           .then(function (builds) {
@@ -86,7 +49,7 @@ module.exports = (function () {
           buildStatus.name = parentDetails.displayName;
           buildStatus.url = branchInfo.url;
           buildStatus.number = branchInfo.number;
-          if ((branchInfo.number === parentDetails.lastBuild.number) && parentDetails.lastBuild.number !== parentDetails.lastCompletedBuild.number) {
+          if ((branchInfo.number === parentDetails[JenkinsService.BuildTypes.last].number) && parentDetails[JenkinsService.BuildTypes.last].number !== parentDetails[JenkinsService.BuildTypes.lastCompleted].number) {
             buildStatus.status = parentDetails.color;
           } else {
             buildStatus.status = this.statusToColor[branchInfo.result] || this.statusToColor.default;
@@ -99,45 +62,37 @@ module.exports = (function () {
       return buildsStatus;
     },
     writeToDB: function (builds) {
-      var updatePromises = builds.length && [];
-      builds.forEach(function (build) {
-        updatePromises.push(this.rest.update(FIREBASE_URL_CI_STATUS + '/masters/' + build.name + '/builds/' + build.number + FIREBASE_REST_SUFFIX, {
-          icon: build.status,
-          result: build.result,
-          running: build.building,
-          duration: build.duration,
-          lastUpdate: Date.now()
-        }));
-      }, this);
-      // Update lastUpdated field
-      if (builds && builds.length) {
-        updatePromises.push(this.rest.update(FIREBASE_URL_CI_STATUS + '/masters/' + builds[0].name + '/lastUpdate' + FIREBASE_REST_SUFFIX, Date.now()));
-      }
-      return Promise.all(updatePromises);
-    },
-    buildsArrayToObject: function (buildsArray) {
-      var result = {};
-      buildsArray.forEach(function (build) {
-        result[build.name] = build;
-      });
-      return result;
-    },
-    _formatTime: function (aMoment) {
-      function prefixWithZero(value) {
-        var prefix = value < 10 ? '0' : '';
-        return prefix + value
+      var mastersRef = this.firebaseRef.child('masters'),
+          updateTime = Date.now(),
+          updatePromises, buildRef;
+
+      if (!builds || !builds.length) {
+        return;
       }
 
-      return prefixWithZero(aMoment.hours()) + ':' + prefixWithZero(aMoment.minutes()) + ':' + prefixWithZero(aMoment.seconds());
-    },
-    /**
-     * Builds a URL to the Firebase REST API
-     * @param {string} [jobName] An optional identifier to get specific job instead the whole list
-     * @return {string} The resource URL
-     */
-    buildFirebaseURL: function (jobName) {
-      var jobName = jobName ? '/' + jobName : '';
-      return FIREBASE_URL_CI_JOBS + jobName + FIREBASE_REST_SUFFIX;
+      updatePromises = [];
+      buildRef = mastersRef.child(builds[0].name);
+      builds.forEach(function (build) {
+        var buildForDB = {
+          icon: build.status,
+          result: build.result,
+          running: build.building || false,
+          duration: build.duration,
+          lastUpdate: updateTime
+        };
+        var updatePromise = buildRef.child('builds').child(build.number).set(buildForDB)
+          .then(function (error) {
+            if (error) {
+              return Promise.reject(error);
+            }
+            return buildForDB;
+          });
+
+        updatePromises.push(updatePromise);
+      }, this);
+      // Update lastUpdated field
+      updatePromises.push(buildRef.child('lastUpdate').set(updateTime));
+      return Promise.all(updatePromises);
     }
   };
 

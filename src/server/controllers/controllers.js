@@ -79,11 +79,6 @@ module.exports = (function () {
                 });
         },
 
-        startMonitoring: function (req, res) {
-            return this.getJobsFromDatabase()
-                .then(this.getJobsStatusFromJenkins.bind(this));
-        },
-
         getBuildStatus: function (request, response) {
             return this.statusUpdater.getBuildStatus(request.params.buildName)
                 .then(function (statuses) {
@@ -98,42 +93,6 @@ module.exports = (function () {
         updateStatus: function (request, response) {
             console.log(JSON.stringify(request.body));
             response.send('thanks');
-        },
-
-        getJobsStatusFromJenkins: function (jobs) {
-            if (Array.isArray(jobs)) {
-                getJobsStatus(jobs)
-                    .then(function (jobsWithStatus) {
-                        jobsWithStatus.forEach(this.checkRunningAndDeployInterval, this);
-                    });
-            }
-        },
-
-        checkRunningAndDeployInterval: function (job) {
-            if (job.building) {
-                this.fetchBuildStates(job.name, job.number);
-            } else {
-                this.stopFetchingStates(job.name, job.number);
-                this.writeResult(job);
-            }
-        },
-
-        fetchBuildStates: function (jobName, jobNumber) {
-            this.runningProgressChecks[jobName + '#' + jobNumber] = setInterval(function () {
-                this.getProgressFromJenkins(jobName, jobNumber);
-            }.bind(this), PROGRESS_INTERVAL);
-        },
-
-        stopFetchingStates: function (jobName, jobNumber) {
-            clearInterval(this.runningProgressChecks[jobName + '#' + jobNumber]);
-        },
-
-        getProgressFromJenkins: function (jobName, jobNumber) {
-
-        },
-
-        writeResult: function (job) {
-
         },
 
         // get the job list from the DB ('filter' unused for now)
