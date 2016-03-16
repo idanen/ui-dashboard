@@ -91,6 +91,7 @@ module.exports = (function () {
         },
 
         updateStatus: function (request, response) {
+            var group = request.params.group;
             console.log(JSON.stringify(request.body));
             response.send('thanks');
         },

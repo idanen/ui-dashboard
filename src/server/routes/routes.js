@@ -11,5 +11,5 @@ module.exports = function(app){
 
     app.get('/buildStatus/:buildName', controller.getBuildStatus.bind(controller));
 
-    app.post('/updateStatus', controller.updateStatus.bind(controller));
+    app.post('/updateStatus/:group', controller.updateStatus.bind(controller));
 };

@@ -16,8 +16,8 @@ module.exports = (function () {
   }
 
   StatusUpdater.prototype = {
-    getBuildStatus: function (buildName) {
-      return this.jenkins.getBuild(buildName)
+    getBuildStatus: function (buildName, buildNumber) {
+      return this.jenkins.getBuild(buildName, buildNumber)
           .then(this.getRelevantBuilds.bind(this))
           .then(this.writeToDB.bind(this))
           .catch(function (error) {
