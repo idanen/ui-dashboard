@@ -1,8 +1,0 @@
-{
-    "name": "start-server",
-    "version": "0.1.0",
-    "devDependencies": {
-        "grunt-contrib-watch": "^0.6.1",
-        "grunt-execute" : "^0.2.2"
-	}
-}
