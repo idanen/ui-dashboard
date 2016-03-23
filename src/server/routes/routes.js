@@ -1,4 +1,5 @@
-module.exports = function(app){
+module.exports = function (app) {
+    'use strict';
 
     var UIDashboardController = require('../controllers/controllers.js');
     var controller = new UIDashboardController();
@@ -12,4 +13,6 @@ module.exports = function(app){
     app.get('/buildStatus/:buildName', controller.getBuildStatus.bind(controller));
 
     app.post('/updateStatus/:group', controller.updateStatus.bind(controller));
+
+    controller.init();
 };

@@ -1,12 +1,16 @@
 var Promise = require('Promise'),
     Firebase = require('firebase'),
     consts = require('../config/consts.js'),
-    JenkinsService = require('./jenkins-service.js');
+    JenkinsService = require('./jenkins-service.js'),
+    RestService = require('./rest-service.js');
 
 module.exports = (function () {
+  'use strict';
+
   function StatusUpdater(interval) {
     this.jenkins = new JenkinsService();
     this.interval = interval || 1000 * 60 * 60;
+    this.rest = new RestService();
     this.firebaseRef = new Firebase(consts.FIREBASE_URL_CI_STATUS);
     this.statusToColor = {
       SUCCESS: 'blue',
@@ -16,6 +20,11 @@ module.exports = (function () {
   }
 
   StatusUpdater.prototype = {
+    getAvailableGroups: function () {
+      return this.rest.fetch(consts.FIREBASE_URL_CI_STATUS + consts.FIREBASE_REST_SUFFIX).then(function (data) {
+        return Object.keys(data);
+      });
+    },
     getBuildStatus: function (buildName, buildNumber) {
       return this.jenkins.getBuild(buildName, buildNumber)
           .then(this.getRelevantBuilds.bind(this))
@@ -23,6 +32,31 @@ module.exports = (function () {
           .catch(function (error) {
             return Promise.reject(error);
           });
+    },
+    validateGroup: function (group) {
+      return this.getAvailableGroups()
+          .then(function (groups) {
+            if (groups.indexOf(group) < 0) {
+              return Promise.reject('Group "' + group + '" is not tracked');
+            }
+            return groups;
+          });
+    },
+    updateBuildStatus: function (group, jobStatus) {
+      console.log('group: ' + group);
+      console.log('jobStatus: ' + jobStatus);
+      if (!group) {
+        return Promise.reject('No group was supplied');
+      }
+      return this.validateGroup(group)
+          .then(function () {
+            console.log(groups);
+            if (groups.indexOf(group) < 0) {
+              return Promise.reject('Group "' + group + '" is not tracked');
+            }
+            return groups;
+          })
+          .then();
     },
     getRelevantBuilds: function (buildDetails) {
       var promises = [];
@@ -60,6 +94,12 @@ module.exports = (function () {
         }, this);
       }
       return buildsStatus;
+    },
+    updateStatusInDB: function (group, status) {
+      var groupRef = this.firebaseRef.child(group),
+          updateTime = Date.now();
+
+
     },
     writeToDB: function (builds) {
       var mastersRef = this.firebaseRef.child('masters'),

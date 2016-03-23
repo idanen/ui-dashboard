@@ -1,12 +1,13 @@
 var Promise = require('promise'),
-    eRequest = require('request');
+    eRequest = require('request'),
+    StatusUpdater = require('../services/status-updater');
 
 module.exports = (function () {
+    'use strict';
+
     var JENKINS_JOB_URL = 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/';
     var FIREBASE_URL_CI_JOBS = 'https://boiling-inferno-9766.firebaseio.com/allJobs';
     var FIREBASE_REST_SUFFIX = '.json';
-    var PROGRESS_INTERVAL = 1000 * 60 * 60;
-    var StatusUpdater = require('../services/status-updater');
 
     function UIDashboardController() {
         this.runningProgressChecks = {};
@@ -91,9 +92,14 @@ module.exports = (function () {
         },
 
         updateStatus: function (request, response) {
-            var group = request.params.group;
-            console.log(JSON.stringify(request.body));
-            response.send('thanks');
+            return this.statusUpdater.updateBuildStatus(request.params.group, JSON.stringify(request.body))
+                .then(function () {
+                    response.send('thanks');
+                })
+                .catch(function (error) {
+                    console.error(error);
+                    response.send(error);
+                });
         },
 
         // get the job list from the DB ('filter' unused for now)
