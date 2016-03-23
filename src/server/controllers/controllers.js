@@ -10,7 +10,6 @@ module.exports = (function () {
     var FIREBASE_REST_SUFFIX = '.json';
 
     function UIDashboardController() {
-        this.runningProgressChecks = {};
         this.statusUpdater = new StatusUpdater();
     }
 
@@ -98,7 +97,7 @@ module.exports = (function () {
                 })
                 .catch(function (error) {
                     console.error(error);
-                    response.send(error);
+                    response.status(404).send(error.message);
                 });
         },
 

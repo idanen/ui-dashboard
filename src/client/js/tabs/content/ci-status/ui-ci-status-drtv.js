@@ -81,7 +81,7 @@
                 this.ciStatusService.getJobs('masters').$loaded()
                     .then(this.determineInitialFreezeState.bind(this))
                     //.then(this.ciStatusService.getBuildStatus.bind(this.ciStatusService, 'MaaS-SAW-USB-master'))
-                    .then(this.extendResults.bind(this))
+                    //.then(this.extendResults.bind(this))
                     .catch(this.networkError.bind(this))
                     .finally((function () {
                         this.loading = false;

@@ -4,20 +4,31 @@ module.exports = (function () {
   var Promise = require('promise'),
       request = require('request');
 
-  function RestService() {
+  function RestService(credentials) {
+    this.credentials = credentials;
   }
 
   RestService.prototype = {
     fetch: function (url) {
       return new Promise(function (resolve, reject) {
-        request.get(url, function (error, response, body) {
+        var options = {
+          url: url
+        };
+        if (this.credentials) {
+          options.headers = {
+            Authorization: 'Basic ' + this.credentials
+          };
+        }
+        request.get(options, handleResponse);
+
+        function handleResponse(error, response, body) {
           if (error) {
             reject(error);
           } else {
             resolve(JSON.parse(body));
           }
-        });
-      });
+        }
+      }.bind(this));
     },
     update: function (url, data) {
       return new Promise(function (resolve, reject) {

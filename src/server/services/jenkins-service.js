@@ -3,7 +3,7 @@ module.exports = (function () {
       consts = require('../config/consts.js');
 
   function JenkinsService() {
-    this.rest = new RestService();
+    this.rest = new RestService('aWRhbi5lbnRpbkBocGUuY29tOjJ3c3gjRURD');
   }
 
   JenkinsService.prototype = {

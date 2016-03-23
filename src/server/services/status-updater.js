@@ -1,16 +1,13 @@
 var Promise = require('Promise'),
     Firebase = require('firebase'),
     consts = require('../config/consts.js'),
-    JenkinsService = require('./jenkins-service.js'),
-    RestService = require('./rest-service.js');
+    JenkinsService = require('./jenkins-service.js');
 
 module.exports = (function () {
   'use strict';
 
-  function StatusUpdater(interval) {
+  function StatusUpdater() {
     this.jenkins = new JenkinsService();
-    this.interval = interval || 1000 * 60 * 60;
-    this.rest = new RestService();
     this.firebaseRef = new Firebase(consts.FIREBASE_URL_CI_STATUS);
     this.statusToColor = {
       SUCCESS: 'blue',
@@ -21,9 +18,18 @@ module.exports = (function () {
 
   StatusUpdater.prototype = {
     getAvailableGroups: function () {
-      return this.rest.fetch(consts.FIREBASE_URL_CI_STATUS + consts.FIREBASE_REST_SUFFIX).then(function (data) {
-        return Object.keys(data);
-      });
+      return new Promise(function (resolve, reject) {
+        this.firebaseRef.once('value', function (snap) {
+          var data = snap.val();
+          if (data) {
+            resolve(Object.keys(snap.val()));
+          }
+
+          resolve([]);
+        }, function (error) {
+          reject(error);
+        });
+      }.bind(this));
     },
     getBuildStatus: function (buildName, buildNumber) {
       return this.jenkins.getBuild(buildName, buildNumber)
@@ -37,26 +43,28 @@ module.exports = (function () {
       return this.getAvailableGroups()
           .then(function (groups) {
             if (groups.indexOf(group) < 0) {
-              return Promise.reject('Group "' + group + '" is not tracked');
+              return Promise.reject(new Error('Group "' + group + '" is not tracked'));
             }
-            return groups;
+            return true;
           });
     },
-    updateBuildStatus: function (group, jobStatus) {
+    updateBuildStatus: function (group, jobDetails) {
       console.log('group: ' + group);
-      console.log('jobStatus: ' + jobStatus);
+      console.log('jobDetails: ' + jobDetails);
       if (!group) {
-        return Promise.reject('No group was supplied');
+        return Promise.reject(new Error('No group was supplied'));
       }
       return this.validateGroup(group)
-          .then(function () {
-            console.log(groups);
-            if (groups.indexOf(group) < 0) {
-              return Promise.reject('Group "' + group + '" is not tracked');
+          .then(function (valid) {
+            console.log(valid);
+            if (!valid) {
+              return Promise.reject(new Error('Group "' + group + '" is not tracked'));
             }
-            return groups;
+            return group;
           })
-          .then();
+          .then(function () {
+            return jobDetails;
+          });
     },
     getRelevantBuilds: function (buildDetails) {
       var promises = [];
