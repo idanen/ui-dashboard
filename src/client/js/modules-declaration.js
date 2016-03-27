@@ -27,13 +27,22 @@
             },
             widget = {
                 name: 'widget',
-                url: '/widget/{widgetId:int}',
+                parent: home,
+                url: '^/widget/{widgetId:int}',
                 template: '<div ng-include="widgetCtrl.widget.contentUrl"></div>',
                 controller: 'WidgetCtrl',
                 controllerAs: 'widgetCtrl',
                 resolve: {
+                    //user: userResolver,
                     widget: widgetResolver
                 }
+            },
+            login = {
+                name: 'login',
+                url: '/login',
+                templateUrl: '/js/auth/login-tmpl.html',
+                controller: 'LoginCtrl',
+                controllerAs: 'login'
             };
 
         laddaProvider.setOption({
@@ -44,6 +53,7 @@
 
         $stateProvider.state(home);
         $stateProvider.state(widget);
+        $stateProvider.state(login);
 
         $urlRouterProvider.otherwise('/widget/0');
     }
@@ -53,8 +63,21 @@
         return UiFacadeService.getById($stateParams.widgetId);
     }
 
-    initApp.$inject = ['ShoutOutsService'];
-    function initApp(shoutOutsService) {
+    userResolver.$inject = ['$firebaseAuth', 'Ref'];
+    function userResolver($firebaseAuth, Ref) {
+        return $firebaseAuth(Ref).requireAuth();
+    }
+
+    initApp.$inject = ['$rootScope', '$state', 'ShoutOutsService'];
+    function initApp($rootScope, $state, shoutOutsService) {
         shoutOutsService.init();
+
+        $rootScope.$on('$routeChangeError', function (event, next, previous, error) {
+            console.log(error);
+            //event.preventDefault();
+            //if (error === 'AUTH_REQUIRED') {
+            //    $state.go('login');
+            //}
+        });
     }
 })();
