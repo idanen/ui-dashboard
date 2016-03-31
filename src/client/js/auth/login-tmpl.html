@@ -1,16 +1,14 @@
-<div class="container">
-  <form class="form-signin">
-    <h2 class="form-signin-heading">Please sign in</h2>
-    <label for="inputEmail" class="sr-only">Email address</label>
-    <input class="form-control" type="email" id="inputEmail" ng-model="login.email" placeholder="Email address" required autofocus>
-    <label for="inputPassword" class="sr-only">Password</label>
-    <input class="form-control" type="password" id="inputPassword" ng-model="login.email" placeholder="Password" required>
-    <!--<div class="checkbox">-->
-      <!--<label>-->
-        <!--<input type="checkbox" value="remember-me"> Remember me-->
-      <!--</label>-->
-    <!--</div>-->
-    <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="login.login()">Sign in</button>
-    <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="login.loginWithProvider('google')">Sign in with Google</button>
-  </form>
-</div>
+<form class="form-signin">
+  <h2 class="form-signin-heading">Please sign in</h2>
+  <label for="inputEmail" class="sr-only">Email address</label>
+  <input class="form-control" type="email" id="inputEmail" ng-model="login.email" placeholder="Email address" required autofocus>
+  <label for="inputPassword" class="sr-only">Password</label>
+  <input class="form-control" type="password" id="inputPassword" ng-model="login.password" placeholder="Password" required>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" ng-model="login.remember"> Remember me
+    </label>
+  </div>
+  <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="login.login()">Sign in</button>
+  <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="login.loginWithProvider('google')">Sign in with Google</button>
+</form>

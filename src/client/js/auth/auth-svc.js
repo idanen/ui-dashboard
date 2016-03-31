@@ -29,6 +29,12 @@
     },
     saveUser: function (authUserData) {
       return this.userService.saveUser(authUserData);
+    },
+    logout: function () {
+      return this.authObj.$unauth();
+    },
+    getLoggedUser: function () {
+      return this.authObj.$getAuth();
     }
   };
 }());

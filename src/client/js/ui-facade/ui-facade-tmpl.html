@@ -16,6 +16,7 @@
             <ul class="nav navbar-nav">
                 <li ui-sref-active="active" ng-repeat="widget in facade.widgets"><a ui-sref="widget({widgetId: widget.id})">{{ widget.title }}</a></li>
             </ul>
+            <p class="navbar-text navbar-right"><login-btn></login-btn></p>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
