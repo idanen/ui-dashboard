@@ -14,7 +14,13 @@
         </div>
       `,
       controller: 'LoginBtnCtrl',
-      controllerAs: 'loginBtn'
+      controllerAs: 'loginBtn',
+      link: function ($scope, $element) {
+        var parentNavbar =  $element.closest('.navbar');
+        if (parentNavbar.length) {
+          $element.find('btn').addClass('navbar-btn');
+        }
+      }
     };
   }
 
