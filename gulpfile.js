@@ -172,7 +172,7 @@ gulp.task('templatecopy', function () {
 
 // Inject app *.js files to index.html
 gulp.task('inject', ['templatecopy', 'html'], function () {
-  var scriptsSrc = 'dist/scripts/' + (isProd ? 'msin.min.js' : '**/*.js');
+  var scriptsSrc = 'dist/scripts/' + (isProd ? 'main.min.js' : '**/*.js');
   return gulp.src('dist/index.html')
     .pipe(inject(gulp.src(scriptsSrc, {read: false}), {relative: true}))
     //.pipe($.angularFilesort())
