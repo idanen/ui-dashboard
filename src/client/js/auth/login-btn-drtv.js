@@ -18,9 +18,9 @@
       controller: 'LoginBtnCtrl',
       controllerAs: 'loginBtn',
       link: function ($scope, $element) {
-        var parentNavbar =  $element.closest('.navbar');
+        var parentNavbar = $element.closest('.navbar');
         if (parentNavbar.length) {
-          $element.find('btn').addClass('navbar-btn');
+          $element.find('.btn').addClass('navbar-btn');
         }
       }
     };
