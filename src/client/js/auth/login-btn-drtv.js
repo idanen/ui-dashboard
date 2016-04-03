@@ -1,4 +1,6 @@
 (function () {
+  'use strict';
+
   angular.module('tabs')
     .directive('loginBtn', loginBtnDirectiveFactory)
     .controller('LoginBtnCtrl', LoginBtnController);

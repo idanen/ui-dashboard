@@ -1,4 +1,6 @@
 (function () {
+  'use strict';
+
   angular.module('tabs')
     .service('userService', UserService);
 
@@ -15,7 +17,7 @@
      * @returns {Promise} A promise which resolves with the existence result (boolean value)
      */
     exists: function (email) {
-      return $q(function (resolve, reject) {
+      return this.$q(function (resolve, reject) {
         this.usersRef.orderByChild('email').equalTo(email).once('value', function (snap) {
           resolve(snap.val() !== null);
         }, function (error) {
@@ -40,6 +42,7 @@
         }
         if (!committed) {
           // TODO: decide what to do when user already exists.
+          console.log(`User with uid "${authData.uid}" already exists`);
         }
         return this.$q.when(committed);
       }.bind(this));

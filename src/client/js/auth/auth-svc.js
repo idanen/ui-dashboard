@@ -1,4 +1,6 @@
 (function () {
+  'use strict';
+
   angular.module('tabs')
     .service('authService', AuthService);
 
@@ -16,15 +18,13 @@
         case 'twitter':
           return this.authObj.$authWithOAuthPopup(provider)
               .then(this.saveUser.bind(this));
-          break;
         case 'password':
           return this.authObj.$authWithPassword({
             email: user,
             password: password
           });
-          break;
         default:
-          break;
+          return this.authObj.$authAnonymously();
       }
     },
     saveUser: function (authUserData) {

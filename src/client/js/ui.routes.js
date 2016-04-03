@@ -1,4 +1,6 @@
 (function () {
+  'use strict';
+
   angular.module('tabs')
     .config(configRoutes);
 
@@ -60,7 +62,7 @@
       controllerAs: 'login',
       bindToController: true
     }).result
-      .then(function (user) {
+      .then(function (/*user*/) {
           $state.go('widget', {widgetId: 0});
         });
   }
