@@ -1,7 +1,6 @@
 {
     "maxerr"        : 50,
 
-    "esnext": true,
     "esversion": 6,
 
     "bitwise"       : true,
@@ -36,7 +35,6 @@
     "boss"          : false,
     "debug"         : false,
     "eqnull"        : false,
-    "es5"           : false,
     "moz"           : false,
 
     "evil"          : false,
