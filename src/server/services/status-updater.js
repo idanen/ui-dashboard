@@ -1,4 +1,4 @@
-var Promise = require('Promise'),
+var Promise = require('promise'),
     Firebase = require('firebase'),
     consts = require('../config/consts.js'),
     JenkinsService = require('./jenkins-service.js');

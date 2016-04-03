@@ -19,8 +19,8 @@
         }])
         .controller('ciStatusController', CiStatusController);
 
-    CiStatusController.$inject = ['$scope', '$interval', 'ciStatusService', 'CiJobsRefreshInterval'];
-    function CiStatusController($scope, $interval, ciStatusService, CiJobsRefreshInterval) {
+    CiStatusController.$inject = ['$scope', '$interval', 'ciStatusService'];
+    function CiStatusController($scope, $interval, ciStatusService) {
         this.ciStatusService = ciStatusService;
         this.listOfJobs = {}; // the list of jobs we get from server and use in ng-repeat
         // This assumes the controller's name is `ciJobsCtrl`
@@ -33,13 +33,8 @@
         this.addJobFormSendBtn = 'btn btn-default'; // 'Add' button style in the 'add job' modal
         this.addJobResultButtonValue = 'Add'; // 'Add' button style in the 'add job' modal
 
-        //this.intervalPromise = $interval(this.loadJobs.bind(this), CiJobsRefreshInterval);
         this.ciStatusService.getJobs().$loaded()
             .then(this.determineInitialFreezeState.bind(this));
-
-        $scope.$on('$destroy', (function () {
-            $interval.cancel(this.intervalPromise);
-        }).bind(this));
     }
 
     CiStatusController.prototype = {
