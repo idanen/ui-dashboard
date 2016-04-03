@@ -26,9 +26,7 @@ module.exports = (function () {
           }
 
           resolve([]);
-        }, function (error) {
-          reject(error);
-        });
+        }, reject);
       }.bind(this));
     },
     getBuildStatus: function (buildName, buildNumber) {
@@ -62,9 +60,8 @@ module.exports = (function () {
             }
             return group;
           })
-          .then(function () {
-            return jobDetails;
-          });
+          .then(this.determineRefToUpdate.bind(this, group, jobDetails))
+          .then(this.updateStatusInDB.bind(this));
     },
     getRelevantBuilds: function (buildDetails) {
       var promises = [];
@@ -103,11 +100,55 @@ module.exports = (function () {
       }
       return buildsStatus;
     },
-    updateStatusInDB: function (group, status) {
-      var groupRef = this.firebaseRef.child(group),
+    determineRefToUpdate: function (group, buildStatus) {
+      var buildName = buildStatus.name,
+          buildParams = buildStatus.build.parameters,
+          parentName, parentNumber;
+
+      if (buildParams) {
+        parentName = buildParams.PARENT_NAME;
+        parentNumber = buildParams.PARENT_NUMBER;
+        return {
+          ref: group + '/' + parentName + '/builds/' + parentNumber + '/subBuilds/' + buildName,
+          phase: buildStatus.build.phase,
+          result: buildStatus.build.status
+        };
+      }
+
+      return {
+        ref: group + '/' + buildName,
+        phase: buildStatus.build.phase,
+        result: buildStatus.build.status
+      };
+    },
+    updateStatusInDB: function (toUpdate) {
+      var firebaseRef = toUpdate.ref,
           updateTime = Date.now();
 
+      delete toUpdate.ref;
+      toUpdate.lastUpdate = updateTime;
 
+      if (toUpdate.phase === 'COMPLETED') {
+        return toUpdate;
+      }
+
+      if (toUpdate.phase === 'STARTED') {
+        return firebaseRef.set(toUpdate);
+      }
+
+      return firebaseRef.child('lastUpdate').set(updateTime)
+          .then(function (error) {
+            if (error) {
+              return Promise.reject(error);
+            }
+            return firebaseRef.child('result').set(toUpdate.result);
+          })
+          .then(function (error) {
+            if (error) {
+              return Promise.reject(error);
+            }
+            return toUpdate;
+          });
     },
     writeToDB: function (builds) {
       var mastersRef = this.firebaseRef.child('masters'),
