@@ -65,7 +65,7 @@ module.exports = (function () {
     },
     updateBuildStatus: function (group, jobDetails) {
       console.log('group: ' + group);
-      console.log('jobDetails: ' + jobDetails);
+      console.log('jobDetails: ' + JSON.stringify(jobDetails));
       if (!group) {
         return Promise.reject(new Error('No group was supplied'));
       }
@@ -85,9 +85,11 @@ module.exports = (function () {
           buildParams = buildStatus.build.parameters,
           parentName, parentNumber;
 
+      console.log('Updating ref of build named "' + buildName + '"');
       if (buildParams) {
         parentName = buildParams.HEAD_JOB_NAME;
         parentNumber = buildParams.HEAD_BUILD_NUMBER;
+        console.log('with parent build named "' + parentName + '" and number "' + parentNumber + '"');
         return {
           ref: group + '/' + parentName + '/builds/' + parentNumber + '/subBuilds/' + buildName,
           phase: buildStatus.build.phase,
@@ -95,6 +97,7 @@ module.exports = (function () {
         };
       }
 
+      console.log('No parent -> updating "' + group + '/' + buildName + '"');
       return {
         ref: group + '/' + buildName,
         phase: buildStatus.build.phase,
@@ -105,6 +108,7 @@ module.exports = (function () {
       var firebaseRef = this.firebaseRef.child(toUpdate.ref),
           updateTime = Date.now();
 
+      console.log('Updating ref "' + toUpdate.ref + '"');
       delete toUpdate.ref;
       toUpdate.lastUpdate = updateTime;
 
@@ -166,8 +170,10 @@ module.exports = (function () {
     },
     getAvailableGroups: function () {
       return new Promise(function (resolve, reject) {
+        console.log('Getting available groups');
         this.firebaseRef.once('value', function (snap) {
           var data = snap.val();
+          console.log('Fetched available groups: ' + JSON.stringify(data));
           if (data) {
             resolve(Object.keys(snap.val()));
           }
