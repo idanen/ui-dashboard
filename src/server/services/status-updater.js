@@ -106,8 +106,8 @@ module.exports = (function () {
           parentName, parentNumber;
 
       if (buildParams) {
-        parentName = buildParams.PARENT_NAME;
-        parentNumber = buildParams.PARENT_NUMBER;
+        parentName = buildParams.HEAD_JOB_NAME;
+        parentNumber = buildParams.HEAD_BUILD_NUMBER;
         return {
           ref: group + '/' + parentName + '/builds/' + parentNumber + '/subBuilds/' + buildName,
           phase: buildStatus.build.phase,
