@@ -122,7 +122,7 @@ module.exports = (function () {
       };
     },
     updateStatusInDB: function (toUpdate) {
-      var firebaseRef = toUpdate.ref,
+      var firebaseRef = this.firebaseRef.child(toUpdate.ref),
           updateTime = Date.now();
 
       delete toUpdate.ref;

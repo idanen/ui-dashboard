@@ -91,7 +91,7 @@ module.exports = (function () {
         },
 
         updateStatus: function (request, response) {
-            return this.statusUpdater.updateBuildStatus(request.params.group, JSON.stringify(request.body))
+            return this.statusUpdater.updateBuildStatus(request.params.group, request.body)
                 .then(function () {
                     response.send('thanks');
                 })
