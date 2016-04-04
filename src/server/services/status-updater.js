@@ -14,7 +14,13 @@ module.exports = (function () {
       FAILED: 'red',
       'default': 'yellow'
     };
-    this.firebaseRef.authWithCustomToken(consts.FIREBASE_AUTH_TOKEN);
+    this.firebaseRef.authWithCustomToken(consts.FIREBASE_AUTH_TOKEN).then(function (error, authData) {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log('Auth success: ' + authData);
+      }
+    });
   }
 
   StatusUpdater.prototype = {
@@ -176,9 +182,9 @@ module.exports = (function () {
           console.log('Fetched available groups: ' + JSON.stringify(data));
           if (data) {
             resolve(Object.keys(snap.val()));
+          } else {
+            resolve([]);
           }
-
-          resolve([]);
         }, reject);
       }.bind(this));
     },
