@@ -14,21 +14,10 @@ module.exports = (function () {
       FAILED: 'red',
       'default': 'yellow'
     };
+    this.firebaseRef.authWithCustomToken(consts.FIREBASE_AUTH_TOKEN);
   }
 
   StatusUpdater.prototype = {
-    getAvailableGroups: function () {
-      return new Promise(function (resolve, reject) {
-        this.firebaseRef.once('value', function (snap) {
-          var data = snap.val();
-          if (data) {
-            resolve(Object.keys(snap.val()));
-          }
-
-          resolve([]);
-        }, reject);
-      }.bind(this));
-    },
     getBuildStatus: function (buildName, buildNumber) {
       return this.jenkins.getBuild(buildName, buildNumber)
           .then(this.getRelevantBuilds.bind(this))
@@ -36,32 +25,6 @@ module.exports = (function () {
           .catch(function (error) {
             return Promise.reject(error);
           });
-    },
-    validateGroup: function (group) {
-      return this.getAvailableGroups()
-          .then(function (groups) {
-            if (groups.indexOf(group) < 0) {
-              return Promise.reject(new Error('Group "' + group + '" is not tracked'));
-            }
-            return true;
-          });
-    },
-    updateBuildStatus: function (group, jobDetails) {
-      console.log('group: ' + group);
-      console.log('jobDetails: ' + jobDetails);
-      if (!group) {
-        return Promise.reject(new Error('No group was supplied'));
-      }
-      return this.validateGroup(group)
-          .then(function (valid) {
-            console.log(valid);
-            if (!valid) {
-              return Promise.reject(new Error('Group "' + group + '" is not tracked'));
-            }
-            return group;
-          })
-          .then(this.determineRefToUpdate.bind(this, group, jobDetails))
-          .then(this.updateStatusInDB.bind(this));
     },
     getRelevantBuilds: function (buildDetails) {
       var promises = [];
@@ -100,6 +63,23 @@ module.exports = (function () {
       }
       return buildsStatus;
     },
+    updateBuildStatus: function (group, jobDetails) {
+      console.log('group: ' + group);
+      console.log('jobDetails: ' + jobDetails);
+      if (!group) {
+        return Promise.reject(new Error('No group was supplied'));
+      }
+      return this.validateGroup(group)
+          .then(function (valid) {
+            console.log(valid);
+            if (!valid) {
+              return Promise.reject(new Error('Group "' + group + '" is not tracked'));
+            }
+            return group;
+          })
+          .then(this.determineRefToUpdate.bind(this, group, jobDetails))
+          .then(this.updateStatusInDB.bind(this));
+    },
     determineRefToUpdate: function (group, buildStatus) {
       var buildName = buildStatus.name,
           buildParams = buildStatus.build.parameters,
@@ -133,6 +113,7 @@ module.exports = (function () {
       }
 
       if (toUpdate.phase === 'STARTED') {
+        toUpdate.result = 'running';
         return firebaseRef.set(toUpdate);
       }
 
@@ -182,6 +163,27 @@ module.exports = (function () {
       // Update lastUpdated field
       updatePromises.push(buildRef.child('lastUpdate').set(updateTime));
       return Promise.all(updatePromises);
+    },
+    getAvailableGroups: function () {
+      return new Promise(function (resolve, reject) {
+        this.firebaseRef.once('value', function (snap) {
+          var data = snap.val();
+          if (data) {
+            resolve(Object.keys(snap.val()));
+          }
+
+          resolve([]);
+        }, reject);
+      }.bind(this));
+    },
+    validateGroup: function (group) {
+      return this.getAvailableGroups()
+          .then(function (groups) {
+            if (groups.indexOf(group) < 0) {
+              return Promise.reject(new Error('Group "' + group + '" is not tracked'));
+            }
+            return true;
+          });
     }
   };
 
