@@ -1,5 +1,6 @@
 var Promise = require('promise'),
     Firebase = require('firebase'),
+    FirebaseService = require('./firebase-service.js'),
     consts = require('../config/consts.js'),
     JenkinsService = require('./jenkins-service.js');
 
@@ -14,13 +15,14 @@ module.exports = (function () {
       FAILED: 'red',
       'default': 'yellow'
     };
-    this.firebaseRef.authWithCustomToken(consts.FIREBASE_AUTH_TOKEN).then(function (error, authData) {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log('Auth success: ' + authData);
-      }
-    });
+    this.firebase = new FirebaseService();
+    //this.firebaseRef.authWithCustomToken(consts.FIREBASE_AUTH_TOKEN).then(function (error, authData) {
+    //  if (error) {
+    //    console.error(error);
+    //  } else {
+    //    console.log('Auth success: ' + authData);
+    //  }
+    //});
   }
 
   StatusUpdater.prototype = {
@@ -112,6 +114,7 @@ module.exports = (function () {
     },
     updateStatusInDB: function (toUpdate) {
       var firebaseRef = this.firebaseRef.child(toUpdate.ref),
+          updateUri = toUpdate.ref,
           updateTime = Date.now();
 
       console.log('Updating ref "' + toUpdate.ref + '"');
@@ -124,6 +127,7 @@ module.exports = (function () {
 
       if (toUpdate.phase === 'STARTED') {
         toUpdate.result = 'running';
+        return this.firebase.save();
         return firebaseRef.set(toUpdate);
       }
 
@@ -175,18 +179,10 @@ module.exports = (function () {
       return Promise.all(updatePromises);
     },
     getAvailableGroups: function () {
-      return new Promise(function (resolve, reject) {
-        console.log('Getting available groups');
-        this.firebaseRef.once('value', function (snap) {
-          var data = snap.val();
-          console.log('Fetched available groups: ' + JSON.stringify(data));
-          if (data) {
-            resolve(Object.keys(snap.val()));
-          } else {
-            resolve([]);
-          }
-        }, reject);
-      }.bind(this));
+      return this.firebase.fetch()
+          .then(function (groups) {
+            return Object.keys(groups);
+          });
     },
     validateGroup: function (group) {
       return this.getAvailableGroups()

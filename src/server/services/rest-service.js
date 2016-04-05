@@ -2,48 +2,34 @@ module.exports = (function () {
   'use strict';
 
   var Promise = require('promise'),
-      request = require('request');
+      request = require('request-promise');
 
-  function RestService(credentials) {
-    this.credentials = credentials;
+  function RestService(pOptions) {
+    var options = {
+      baseUrl: '',
+      params: {},
+      headers: {},
+      json: true
+    };
+    this.options = _.extend(options, pOptions);
   }
 
   RestService.prototype = {
-    fetch: function (url) {
-      return new Promise(function (resolve, reject) {
-        var options = {
-          url: url
-        };
-        if (this.credentials) {
-          options.headers = {
-            Authorization: 'Basic ' + this.credentials
-          };
-        }
-        request.get(options, handleResponse);
+    fetch: function (uri) {
+      var options = _.extend({}, this.options);
+      options.uri = this.options.baseUrl + uri;
+      options.qs = this.options.params;
 
-        function handleResponse(error, response, body) {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(JSON.parse(body));
-          }
-        }
-      }.bind(this));
+      return request(options);
     },
-    update: function (url, data) {
-      return new Promise(function (resolve, reject) {
-        request.put({
-          headers: {'content-type': 'application/json'},
-          url: url,
-          body: JSON.stringify(data)
-        }, function (error, response, body) {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(JSON.parse(body));
-          }
-        });
-      });
+    save: function (uri, data, newObject) {
+      var options = _.extend({}, this.options);
+      options.method = newObject ? 'POST' : 'PUT';
+      options.uri = this.options.baseUrl + uri;
+      options.qs = this.options.params;
+      options.body = data;
+
+      return request(options);
     }
   };
 

@@ -3,16 +3,21 @@ module.exports = (function () {
       consts = require('../config/consts.js');
 
   function JenkinsService() {
-    this.rest = new RestService('aWRhbi5lbnRpbkBocGUuY29tOjJ3c3gjRURD');
+    this.rest = new RestService({
+      baseUrl: consts.JENKINS_JOB_URL,
+      headers: {
+        Authorization: 'Basic ' + consts.JENKINS_CREDENTIALS
+      }
+    });
   }
 
   JenkinsService.prototype = {
     getBuild: function (buildName, buildNumber) {
-      var url = consts.JENKINS_JOB_URL + buildName + (buildNumber ? '/' + buildNumber : '') + '/' + consts.JENKINS_JSON_SUFFIX;
+      var url = buildName + (buildNumber ? '/' + buildNumber : '') + '/' + consts.JENKINS_JSON_SUFFIX;
       return this.rest.fetch(url);
     },
     getBuildType: function (buildName, buildType) {
-      var url = consts.JENKINS_JOB_URL + buildName + '/' + buildType + '/' + consts.JENKINS_JSON_SUFFIX;
+      var url = buildName + '/' + buildType + '/' + consts.JENKINS_JSON_SUFFIX;
       return this.rest.fetch(url);
     }
   };
