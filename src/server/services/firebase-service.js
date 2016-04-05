@@ -4,7 +4,7 @@ module.exports = (function () {
 
   function FirebaseService() {
     this.rest = new RestService({
-      baseUrl: consts.FIREBASE_URL_CI_STATUS,
+      baseUrl: consts.FIREBASE_URL_CI_STATUS + '/',
       params: {
         auth: consts.FIREBASE_AUTH_TOKEN
       }
@@ -13,10 +13,10 @@ module.exports = (function () {
 
   FirebaseService.prototype = {
     fetch: function (ref) {
-      return this.rest.fetch(ref);
+      return this.rest.fetch((ref || '') + consts.FIREBASE_REST_SUFFIX);
     },
     update: function (ref, data) {
-      return this.rest.save(ref, data);
+      return this.rest.save((ref || '') + consts.FIREBASE_REST_SUFFIX, data, RestService.WriteMethods.PATCH);
     }
   };
 

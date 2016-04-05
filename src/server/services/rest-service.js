@@ -2,7 +2,8 @@ module.exports = (function () {
   'use strict';
 
   var Promise = require('promise'),
-      request = require('request-promise');
+      request = require('request-promise'),
+      _ = require('lodash');
 
   function RestService(pOptions) {
     var options = {
@@ -20,17 +21,27 @@ module.exports = (function () {
       options.uri = this.options.baseUrl + uri;
       options.qs = this.options.params;
 
+      delete options.baseUrl;
+
       return request(options);
     },
-    save: function (uri, data, newObject) {
+    save: function (uri, data, method) {
       var options = _.extend({}, this.options);
-      options.method = newObject ? 'POST' : 'PUT';
+      options.method = RestService.WriteMethods[method.toUpperCase()] || 'PUT';
       options.uri = this.options.baseUrl + uri;
       options.qs = this.options.params;
       options.body = data;
 
+      delete options.baseUrl;
+
       return request(options);
     }
+  };
+
+  RestService.WriteMethods = {
+    PUT: 'PUT',
+    PATCH: 'PATCH',
+    POST: 'POST'
   };
 
   return RestService;

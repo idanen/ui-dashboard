@@ -113,13 +113,11 @@ module.exports = (function () {
       };
     },
     updateStatusInDB: function (toUpdate) {
-      var firebaseRef = this.firebaseRef.child(toUpdate.ref),
-          updateUri = toUpdate.ref,
-          updateTime = Date.now();
+      var // firebaseRef = this.firebaseRef.child(toUpdate.ref),
+          updateUri = toUpdate.ref;
 
-      console.log('Updating ref "' + toUpdate.ref + '"');
       delete toUpdate.ref;
-      toUpdate.lastUpdate = updateTime;
+      toUpdate.lastUpdate = Date.now();
 
       if (toUpdate.phase === 'COMPLETED') {
         return toUpdate;
@@ -127,23 +125,17 @@ module.exports = (function () {
 
       if (toUpdate.phase === 'STARTED') {
         toUpdate.result = 'running';
-        return this.firebase.save();
-        return firebaseRef.set(toUpdate);
       }
 
-      return firebaseRef.child('lastUpdate').set(updateTime)
-          .then(function (error) {
-            if (error) {
-              return Promise.reject(error);
-            }
-            return firebaseRef.child('result').set(toUpdate.result);
-          })
-          .then(function (error) {
-            if (error) {
-              return Promise.reject(error);
-            }
-            return toUpdate;
-          });
+      console.log('Updating ref "' + updateUri + '" with data ' + JSON.stringify(toUpdate));
+      return this.firebase.update(updateUri, toUpdate);
+      //return firebaseRef.update(toUpdate)
+      //    .then(function (error) {
+      //      if (error) {
+      //        return Promise.reject(error);
+      //      }
+      //      return toUpdate;
+      //    });
     },
     writeToDB: function (builds) {
       var mastersRef = this.firebaseRef.child('masters'),
