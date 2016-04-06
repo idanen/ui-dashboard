@@ -90,7 +90,7 @@ gulp.task('styles', function () {
 // Concatenate and minify JavaScript. Optionally transpiles ES2015 code to ES5.
 // to enables ES2015 support remove the line `"only": "gulpfile.babel.js",` in the
 // `.babelrc` file.
-gulp.task('scripts', function (cb) {
+gulp.task('scripts', ['jshint'], function (cb) {
   gulp.src([
     // Note: Since we are not using useref in the scripts build pipeline,
     //       you need to explicitly list your scripts here in the right order

@@ -107,7 +107,7 @@ module.exports = (function () {
 
       console.log('No parent -> updating "' + group + '/' + buildName + '"');
       return {
-        ref: group + '/' + buildName,
+        ref: group + '/' + buildName + '/' + buildStatus.build.number,
         phase: buildStatus.build.phase,
         result: buildStatus.build.status
       };
