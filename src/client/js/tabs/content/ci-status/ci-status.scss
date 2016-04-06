@@ -1,0 +1,37 @@
+build-progress,
+.build-progress {
+  display: inline-block;
+  width: 200px;
+  height: 100%;
+  .build-progress {
+    .sub-build {
+      width: 10%;
+      height: 15px;
+      display: inline-block;
+      color: #ccc;
+      &::before,
+      &::after {
+        content: '';
+        height: 50%;
+        width: 100%;
+        display: block;
+        position: relative;
+        bottom: 0;
+        left: 0;
+        background-color: currentColor;
+      }
+      &::before {
+        transform: skewX(45deg);
+      }
+      &::after {
+        transform: skewX(-45deg);
+      }
+      &:not(:first-child) {
+        &::before,
+        &::after {
+          border-left: 1px solid black;
+        }
+      }
+    }
+  }
+}

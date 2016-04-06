@@ -70,7 +70,8 @@ gulp.task('styles', function () {
   // For best performance, don't add Sass partials to `gulp.src`
   return gulp.src([
     'src/client/lib/**/*.{scss,css}',
-    'src/client/css/**/*.{scss,css}'
+    'src/client/css/**/*.{scss,css}',
+    'src/client/js/**/*.{scss,css}'
   ])
     .pipe($.sourcemaps.init())
     .pipe($.changed('.tmp/css', {extension: '.css'}))
@@ -224,7 +225,7 @@ gulp.task('serve', ['jslib', 'styles', 'copy', 'images', 'inject'], function () 
 
   gulp.watch(['src/client/**/*.html'], ['templatecopy', reload]);
   gulp.watch(['src/client/css/**/*.{scss,css}'], ['styles', reload]);
-  gulp.watch(['src/client/js/**/*.js'], ['jshint', 'jslib', 'scripts']);
+  gulp.watch(['src/client/js/**/*.js'], ['jshint', 'jslib', 'scripts'], reload);
   gulp.watch(['src/client/images/**/*'], reload);
 });
 

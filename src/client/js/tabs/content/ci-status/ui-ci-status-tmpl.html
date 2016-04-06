@@ -13,6 +13,18 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
+            <div ng-repeat="(jobName, job) in ciJobsCtrl.listOfJobs">
+                <h3>{{ job.alias }}</h3>
+                <builds-list parent-name="jobName" builds="job.builds"></builds-list>
+              <!--
+                <ul>
+                    <li ng-repeat="(jobNumber, results) in job.builds">
+                        <h4>{{jobNumber}}</h4>
+                        <div ng-repeat="(subBuildName, subBuild) in job.builds[jobNumber].subBuilds"></div>
+                    </li>
+                </ul>
+                -->
+            </div>
             <table class="table">
                 <thead>
                     <tr>
