@@ -26,8 +26,15 @@
     };
   }
 
-  function BuildsListController() {
+  BuildsListController.$inject = ['$scope', 'ciStatusService'];
+  function BuildsListController($scope, ciStatusService) {
     this.displayBuilds = [];
+    this.$scope = $scope;
+    this.ciStatusService = ciStatusService;
+
+    $scope.$watch(() => {
+      return this.builds;
+    }, this.init.bind(this));
   }
 
   BuildsListController.prototype = {

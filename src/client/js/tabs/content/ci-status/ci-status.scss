@@ -5,8 +5,8 @@ build-progress,
   height: 100%;
   .build-progress {
     .sub-build {
-      width: 10%;
-      height: 15px;
+      width: 20%;
+      height: 20px;
       display: inline-block;
       color: #ccc;
       &::before,
@@ -31,6 +31,23 @@ build-progress,
         &::after {
           border-left: 1px solid black;
         }
+      }
+    }
+    .sub-build {
+      &.build-state-success {
+        color: #0fd74a;
+      }
+      &.build-state-unstable {
+        color: #f7f10c;
+      }
+      &.build-state-failure {
+        color: #d13422;
+      }
+      &.build-state-aborted {
+        color: #a1a1a1;
+      }
+      &.build-state-unknown {
+        color: #a13094;
       }
     }
   }
