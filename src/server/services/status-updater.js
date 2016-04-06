@@ -114,10 +114,13 @@ module.exports = (function () {
     },
     updateStatusInDB: function (toUpdate) {
       var // firebaseRef = this.firebaseRef.child(toUpdate.ref),
-          updateUri = toUpdate.ref;
+          updateUri = toUpdate.ref,
+          rootBuildUpdate, rootBuildUri;
 
       delete toUpdate.ref;
       toUpdate.lastUpdate = Date.now();
+
+      rootBuildUpdate = Promise.resolve(toUpdate);
 
       if (toUpdate.phase === 'COMPLETED') {
         return toUpdate;
@@ -127,8 +130,18 @@ module.exports = (function () {
         toUpdate.result = 'running';
       }
 
+      // When updating the parent build also update the result in the build's root
+      if (!/subBuilds/i.test(updateUri)) {
+        rootBuildUri = updateUri.replace(/\/\d+\/?$/, '');
+        rootBuildUpdate = this.firebase.update(rootBuildUri, {
+          lastUpdate: toUpdate.lastUpdate,
+          result: toUpdate.result
+        });
+      }
+
       console.log('Updating ref "' + updateUri + '" with data ' + JSON.stringify(toUpdate));
-      return this.firebase.update(updateUri, toUpdate);
+      return rootBuildUpdate
+        .then(this.firebase.update.bind(this, updateUri, toUpdate));
       //return firebaseRef.update(toUpdate)
       //    .then(function (error) {
       //      if (error) {
