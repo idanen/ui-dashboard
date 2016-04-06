@@ -132,7 +132,7 @@ module.exports = (function () {
 
       // When updating the parent build also update the result in the build's root
       if (!/subBuilds/i.test(updateUri)) {
-        rootBuildUri = updateUri.replace(/\/\d+\/?$/, '');
+        rootBuildUri = updateUri.replace(/\/builds\/\d+\/?$/, '');
         rootBuildUpdate = this.firebase.update(rootBuildUri, {
           lastUpdate: toUpdate.lastUpdate,
           result: toUpdate.result
