@@ -141,7 +141,7 @@ module.exports = (function () {
 
       console.log('Updating ref "' + updateUri + '" with data ' + JSON.stringify(toUpdate));
       return rootBuildUpdate
-        .then(this.firebase.update.bind(this, updateUri, toUpdate));
+        .then(this.firebase.update.bind(this.firebase, updateUri, toUpdate));
       //return firebaseRef.update(toUpdate)
       //    .then(function (error) {
       //      if (error) {
