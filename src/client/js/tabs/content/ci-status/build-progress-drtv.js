@@ -24,18 +24,19 @@
     };
   }
 
-  BuildProgressController.$inject = ['ciStatusService'];
-  function BuildProgressController(ciStatusService) {
+  BuildProgressController.$inject = ['ciStatusService', '$scope'];
+  function BuildProgressController(ciStatusService, $scope) {
     this.statusService = ciStatusService;
+
+    $scope.$watch(() => {
+      return this.buildName;
+    }, this.getSubBuilds.bind(this));
   }
 
   BuildProgressController.prototype = {
     getSubBuilds: function () {
       if (this.buildName && this.buildNumber) {
-        this.statusService.getJob(this.buildName, this.teamId)
-            .then((parentBuild) => {
-              this.subBuilds = parentBuild.builds[this.buildNumber].subBuilds;
-            });
+        this.subBuilds = this.statusService.getJobSubBuilds(this.buildName, this.buildNumber, this.teamId);
       }
     },
     determineClass: function (subBuild) {

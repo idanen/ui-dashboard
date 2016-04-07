@@ -7,6 +7,7 @@
             //HOST: 'localhost',
             PORT: '4000'
         })
+        .constant('JENKINS_BASE_URL', 'http://mydtbld0022.hpeswlab.net:8080/jenkins/job/')
         .constant('DATE_FORMAT', 'HH:mm dd/MM/yyyy')
         .constant('NotificationTags', {
           PUSH_Q: 'PushQueueNotification',

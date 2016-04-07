@@ -19,9 +19,10 @@
         }])
         .controller('ciStatusController', CiStatusController);
 
-    CiStatusController.$inject = ['$scope', '$interval', 'ciStatusService'];
-    function CiStatusController($scope, $interval, ciStatusService) {
+    CiStatusController.$inject = ['$scope', 'ciStatusService', 'JENKINS_BASE_URL'];
+    function CiStatusController($scope, ciStatusService, JENKINS_BASE_URL) {
         this.ciStatusService = ciStatusService;
+        this.JENKINS_BASE_URL = JENKINS_BASE_URL;
         this.listOfJobs = {}; // the list of jobs we get from server and use in ng-repeat
         // This assumes the controller's name is `ciJobsCtrl`
         this.ciStatusService.getJobs().$bindTo($scope, 'ciJobsCtrl.listOfJobs');
@@ -140,7 +141,9 @@
                 return job.result;
             }
         },
-
+        buildLink: function (jobName, jobNumber) {
+            return `${this.JENKINS_BASE_URL}${jobName}/${jobNumber}`;
+        },
         selectJobImg:function(imgName){
             if(imgName && imgName.indexOf('anime') > -1){
                 return '../images/' + imgName + '.gif';

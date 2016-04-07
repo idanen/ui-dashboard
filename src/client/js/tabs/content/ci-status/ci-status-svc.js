@@ -83,6 +83,16 @@
 
             return this.$firebaseObject(this._mastersRef.child(jobId));
         },
+        getJobBuilds: function (jobId, teamId) {
+            var startRef = this._getRef(jobId, teamId);
+
+            return this.$firebaseObject(startRef.child('builds'));
+        },
+        getJobSubBuilds: function (jobId, jobNumber, teamId) {
+            var startRef = this._getRef(jobId, teamId);
+
+            return this.$firebaseObject(startRef.child('builds').child(jobNumber).child('subBuilds'));
+        },
         getJobByName: function (jobName) {
             return this.$firebaseObject(this._jobsRef.child(jobName));
         },
@@ -100,6 +110,13 @@
         },
         _processResponse: function (response) {
             return response.data;
+        },
+        _getRef: function (jobId, teamId) {
+            if (teamId) {
+                return this._teamsRef.child(teamId).child(jobId);
+            }
+
+            return this._mastersRef.child(jobId);
         }
     };
 

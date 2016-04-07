@@ -21,15 +21,15 @@ build-progress,
         background-color: currentColor;
       }
       &::before {
-        transform: skewX(35deg);
+        transform: skewX(25deg);
       }
       &::after {
-        transform: skewX(-35deg);
+        transform: skewX(-25deg);
       }
       &:not(:first-child) {
         &::before,
         &::after {
-          border-left: 1px solid black;
+          border-left: 1px solid #747474;
         }
       }
     }

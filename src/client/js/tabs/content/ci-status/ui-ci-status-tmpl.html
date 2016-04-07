@@ -13,62 +13,57 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <div ng-repeat="(jobName, job) in ciJobsCtrl.listOfJobs">
-                <h3>{{ job.alias }}</h3>
-                <builds-list parent-name="jobName" builds="job.builds"></builds-list>
-              <!--
-                <ul>
-                    <li ng-repeat="(jobNumber, results) in job.builds">
-                        <h4>{{jobNumber}}</h4>
-                        <div ng-repeat="(subBuildName, subBuild) in job.builds[jobNumber].subBuilds"></div>
-                    </li>
-                </ul>
-                -->
-            </div>
             <table class="table">
                 <thead>
                     <tr>
-                        <th colspan="4">Master Branches</th>
+                        <th colspan="5">Master Branches</th>
                     </tr>
                     <tr>
                         <th>Job Name</th>
                         <th>Build Status</th>
-                        <th>Duration</th>
+                        <th>Last update</th>
+                        <th>Progress</th>
                         <th>Freeze</th>
                     </tr>
                 </thead>
-                <tbody ng-repeat="(jobName, job) in ciJobsCtrl.listOfJobs">
+                <tbody class="builds-group" ng-repeat="(jobName, job) in ciJobsCtrl.listOfJobs">
                 <tr>
-                    <td data-toggle="tooltip" title="{{ job.alias }}">
-                        <a ng-href="{{job.url}}" target="_blank">{{ job.alias }}</a>
-                    </td>
-                    <td>
+                    <th data-toggle="tooltip" title="{{ job.alias }}">
+                        {{ job.alias }}
+                    </th>
+                    <th>
                         <img class="statusImg" ng-src="{{ ciJobsCtrl.selectJobImg(job.result) }}">
                         <span>{{ job.result }}</span>
-                    </td>
-                    <td>
+                    </th>
+                    <th colspan="2">
                         <time is="time-ago" datetime="{{ job.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
                               title="{{ job.lastUpdate | date }}">
                             {{ job.lastUpdate | date }}
                         </time>
-                    </td>
-                    <td>
+                    </th>
+                    <th>
                         <div class="btn-group">
                             <paper-toggle-button ci-freeze-state-toggle="job.freeze"></paper-toggle-button>
                         </div>
-                    </td>
+                    </th>
                 </tr>
                 <tr ng-class="ciJobsCtrl.styleJobRow(results)" ng-repeat="(jobNumber, results) in job.builds">
-                    <td>
-                        {{ jobNumber }}
-                    </td>
-                    <td>
-                        <img class="statusImg" ng-src="{{ ciJobsCtrl.selectJobImg(results.result) }}">
-                        <span>{{ results.result }}</span>
-                    </td>
-                    <td colspan="2">
-                        {{ results.duration | duration }}
-                    </td>
+                  <td>
+                    <a ng-href="{{ ciJobsCtrl.buildLink(jobName, jobNumber) }}" target="_blank">{{ jobNumber }}</a>
+                  </td>
+                  <td>
+                      <img class="statusImg" ng-src="{{ ciJobsCtrl.selectJobImg(results.result) }}">
+                      <span>{{ results.result }}</span>
+                  </td>
+                  <td>
+                      <time is="time-ago" datetime="{{ results.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
+                            title="{{ results.lastUpdate | date }}">
+                          {{ results.lastUpdate | date }}
+                      </time>
+                  </td>
+                  <td colspan="2">
+                    <build-progress build-name="jobName" build-number="jobNumber" sub-builds="build.subBuilds"></build-progress>
+                  </td>
                 </tr>
                 </tbody>
             </table>
