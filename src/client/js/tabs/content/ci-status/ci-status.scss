@@ -21,10 +21,10 @@ build-progress,
         background-color: currentColor;
       }
       &::before {
-        transform: skewX(45deg);
+        transform: skewX(35deg);
       }
       &::after {
-        transform: skewX(-45deg);
+        transform: skewX(-35deg);
       }
       &:not(:first-child) {
         &::before,
