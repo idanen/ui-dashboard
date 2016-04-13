@@ -54,15 +54,16 @@
     return $firebaseAuth(Ref).requireAuth();
   }
 
-  loginModal.$inject = ['$state', '$uibModal'];
-  function loginModal($state, $uibModal) {
-    $uibModal.open({
-      templateUrl: '/js/auth/login-tmpl.html',
-      controller: 'LoginCtrl',
-      controllerAs: 'login',
-      bindToController: true
+  loginModal.$inject = ['$state', 'modalService'];
+  function loginModal($state, modalService) {
+    modalService.open({
+      controller: 'LoginCtrl'
     }).result
       .then(function (/*user*/) {
+          $state.go('widget', {widgetId: 0});
+        })
+      .catch(function (reason) {
+          console.log('Login dismissed with reason: ' + reason);
           $state.go('widget', {widgetId: 0});
         });
   }

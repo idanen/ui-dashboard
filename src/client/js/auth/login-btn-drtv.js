@@ -12,7 +12,10 @@
       template: `
         <div>
           <a class="btn btn-default" ui-sref="login" ng-hide="loginBtn.authData">Login</a>
-          <a class="btn btn-link" ng-click="loginBtn.logout()" ng-show="loginBtn.authData">Hi, {{ loginBtn.authData.name }}! | Logout</a>
+          <span ng-show="loginBtn.authData">
+            <img class="profile-image img-circle" ng-src="{{loginBtn.extra.profileImageURL}}" alt="profile image">
+            <a class="btn btn-link" ng-click="loginBtn.logout()">Hi, {{ loginBtn.extra.displayName }}! | Logout</a>
+          </span>
         </div>
       `,
       controller: 'LoginBtnCtrl',
@@ -40,6 +43,7 @@
     },
     updateAuthState: function (authData) {
       this.authData = authData;
+      this.extra = angular.extend({}, authData[authData.provider]);
     }
   };
 }());

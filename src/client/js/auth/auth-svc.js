@@ -11,17 +11,19 @@
   }
 
   AuthService.prototype = {
-    login: function (provider, user, password) {
+    login: function (provider, remember, user, password, displayName) {
       switch (provider) {
         case 'google':
         case 'facebook':
         case 'twitter':
-          return this.authObj.$authWithOAuthPopup(provider)
+          return this.authObj.$authWithOAuthPopup(provider, remember ? 'default' : 'sessionOnly')
               .then(this.saveUser.bind(this));
         case 'password':
           return this.authObj.$authWithPassword({
+            displayName: displayName || user,
             email: user,
-            password: password
+            password: password,
+            remember: remember ? 'default' : 'sessionOnly'
           });
         default:
           return this.authObj.$authAnonymously();

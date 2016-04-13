@@ -4,16 +4,17 @@
   angular.module('ui')
     .controller('LoginCtrl', LoginController);
 
-  LoginController.$inject = ['$state', '$uibModalInstance', 'authService'];
-  function LoginController($state, $uibModalInstance, authService) {
-    this.$state = $state;
+  LoginController.$inject = ['$uibModalInstance', 'authService'];
+  function LoginController($uibModalInstance, authService) {
     this.$uibModalInstance = $uibModalInstance;
     this.auth = authService;
+    this.innerTemplateUrl = '/js/auth/login-tmpl.html';
+    this.title = 'Please login';
   }
 
   LoginController.prototype = {
     login: function () {
-      return this.auth.login('password', this.email, this.password)
+      return this.auth.login('password', this.remember, this.email, this.password, this.displayName)
         .then(this.postLogin.bind(this))
         .catch(function (error) {
           console.error(error);
@@ -21,7 +22,7 @@
         }.bind(this));
     },
     loginWithProvider: function (provider) {
-      return this.auth.login(provider)
+      return this.auth.login(provider, this.remember)
         .then(this.postLogin.bind(this))
         .catch(function (error) {
           console.error(error);
@@ -29,7 +30,14 @@
         }.bind(this));
     },
     postLogin: function (user) {
-      this.$uibModalInstance.close(user);
+      this.model = angular.extend({}, user, {displayName: this.displayName});
+      this.$uibModalInstance.close(this.model);
+    },
+    cancel: function () {
+      this.$uibModalInstance.dismiss('cancel');
+    },
+    close: function () {
+      this.$uibModalInstance.close(this.model);
     }
   };
 }());
