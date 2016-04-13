@@ -95,7 +95,14 @@ body {
 
 .profile-image {
     width: 30px;
+    margin-right: 20px;
     height: auto;
+}
+
+login-btn {
+    .profile-image {
+        margin: auto;
+    }
 }
 
 .push-queue {
