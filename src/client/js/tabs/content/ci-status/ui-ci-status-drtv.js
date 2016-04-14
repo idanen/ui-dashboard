@@ -19,23 +19,24 @@
         }])
         .controller('ciStatusController', CiStatusController);
 
-    CiStatusController.$inject = ['$scope', 'ciStatusService', 'JENKINS_BASE_URL'];
-    function CiStatusController($scope, ciStatusService, JENKINS_BASE_URL) {
-        this.ciStatusService = ciStatusService;
-        this.JENKINS_BASE_URL = JENKINS_BASE_URL;
-        this.listOfJobs = {}; // the list of jobs we get from server and use in ng-repeat
-        // This assumes the controller's name is `ciJobsCtrl`
-        this.ciStatusService.getJobs().$bindTo($scope, 'ciJobsCtrl.listOfJobs');
-        this.animateOnUpdate = 'fadeOut'; // ng-class fading for refreshing data
-        this.loading = false; // when it true , progress bar enabled and job list disabled..
-        this.dataDismiss = ' '; // we change it to keep the modal open until response of the server
-        this.validateForm = false; // control visibility of the Error Message in the modal
-        this.validationErrorMessage = ''; // Error Message to show in the modal if input is invalid
-        this.addJobFormSendBtn = 'btn btn-default'; // 'Add' button style in the 'add job' modal
-        this.addJobResultButtonValue = 'Add'; // 'Add' button style in the 'add job' modal
+    CiStatusController.$inject = ['$scope', '$state', 'ciStatusService', 'JENKINS_BASE_URL'];
+    function CiStatusController($scope, $state, ciStatusService, JENKINS_BASE_URL) {
+      this.$state = $state;
+      this.ciStatusService = ciStatusService;
+      this.JENKINS_BASE_URL = JENKINS_BASE_URL;
+      this.listOfJobs = {}; // the list of jobs we get from server and use in ng-repeat
+      // This assumes the controller's name is `ciJobsCtrl`
+      this.ciStatusService.getJobs().$bindTo($scope, 'ciJobsCtrl.listOfJobs');
+      this.animateOnUpdate = 'fadeOut'; // ng-class fading for refreshing data
+      this.loading = false; // when it true , progress bar enabled and job list disabled..
+      this.dataDismiss = ' '; // we change it to keep the modal open until response of the server
+      this.validateForm = false; // control visibility of the Error Message in the modal
+      this.validationErrorMessage = ''; // Error Message to show in the modal if input is invalid
+      this.addJobFormSendBtn = 'btn btn-default'; // 'Add' button style in the 'add job' modal
+      this.addJobResultButtonValue = 'Add'; // 'Add' button style in the 'add job' modal
 
-        this.ciStatusService.getJobs().$loaded()
-            .then(this.determineInitialFreezeState.bind(this));
+      this.ciStatusService.getJobs().$loaded()
+          .then(this.determineInitialFreezeState.bind(this));
     }
 
     CiStatusController.prototype = {
@@ -141,8 +142,11 @@
                 return job.result;
             }
         },
-        buildLink: function (jobName, jobNumber) {
+        buildJenkinsLink: function (jobName, jobNumber) {
             return `${this.JENKINS_BASE_URL}${jobName}/${jobNumber}`;
+        },
+        buildCompareLink: function (jobName, jobNumber) {
+          return this.$state.href('compare', {buildName: jobName, buildNumber: jobNumber});
         },
         selectJobImg:function(imgName){
             if(imgName && imgName.indexOf('anime') > -1){

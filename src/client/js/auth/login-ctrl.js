@@ -4,10 +4,11 @@
   angular.module('ui')
     .controller('LoginCtrl', LoginController);
 
-  LoginController.$inject = ['$uibModalInstance', 'authService'];
-  function LoginController($uibModalInstance, authService) {
+  LoginController.$inject = ['$uibModalInstance', 'authService', 'userService'];
+  function LoginController($uibModalInstance, authService, userService) {
     this.$uibModalInstance = $uibModalInstance;
     this.auth = authService;
+    this.userService = userService;
     this.innerTemplateUrl = '/js/auth/login-tmpl.html';
     this.title = 'Please login';
   }
@@ -31,7 +32,8 @@
     },
     postLogin: function (user) {
       this.model = angular.extend({}, user, {displayName: this.displayName});
-      this.$uibModalInstance.close(this.model);
+      return this.userService.saveUser(this.model)
+        .then(this.close.bind(this));
     },
     cancel: function () {
       this.$uibModalInstance.dismiss('cancel');

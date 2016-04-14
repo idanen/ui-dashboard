@@ -49,7 +49,10 @@
                 </tr>
                 <tr ng-class="ciJobsCtrl.styleJobRow(results)" ng-repeat="(jobNumber, results) in job.builds">
                   <td>
-                    <a ng-href="{{ ciJobsCtrl.buildLink(jobName, jobNumber) }}" target="_blank">{{ jobNumber }}</a>
+                    <a ng-href="{{ ciJobsCtrl.buildCompareLink(jobName, jobNumber) }}" title="Compare this build to another">{{ jobNumber }}</a>
+                    <a ng-href="{{ ciJobsCtrl.buildJenkinsLink(jobName, jobNumber) }}" target="_blank">
+                      <iron-icon icon="open-in-new"></iron-icon>
+                    </a>
                   </td>
                   <td>
                       <img class="statusImg" ng-src="{{ ciJobsCtrl.selectJobImg(results.result) }}">

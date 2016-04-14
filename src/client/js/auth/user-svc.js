@@ -4,10 +4,11 @@
   angular.module('tabs')
     .service('userService', UserService);
 
-  UserService.$inject = ['Ref', '$q'];
-  function UserService(Ref, $q) {
+  UserService.$inject = ['Ref', '$q', '$firebaseObject'];
+  function UserService(Ref, $q, $firebaseObject) {
     this.usersRef = Ref.child('users');
     this.$q = $q;
+    this.$firebaseObject = $firebaseObject;
   }
 
   UserService.prototype = {
@@ -32,11 +33,11 @@
      */
     saveUser: function (authData) {
       var userId = authData.uid;
-      this.usersRef.child(userId).transaction(function(currentUserData) {
+      this.usersRef.child(userId).transaction((currentUserData) => {
         if (currentUserData === null) {
           return authData;
         }
-      }.bind(this), function(error, committed) {
+      }, (error, committed) => {
         if (error) {
           return this.$q.reject(error);
         }
@@ -45,8 +46,16 @@
           console.log(`User with uid "${authData.uid}" already exists`);
         }
         return this.$q.when(committed);
-      }.bind(this));
+      });
       return this.$q.when(this.usersRef.set(authData));
+    },
+    /**
+     * Gets user's data
+     * @param {string} uid The user's identifier
+     * @returns {Object} User's data
+     */
+    getUser: function (uid) {
+      return this.$firebaseObject(this.usersRef.child(uid));
     }
   };
 }());
