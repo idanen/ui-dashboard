@@ -10,11 +10,12 @@
         <div class="row">
           <div class="col-md-9">
             <ui-select ng-model="pushQueueCtrl.selected" theme="selectize">
-              <ui-select-match class="member-selector" placeholder="Select or search a member...">
+              <ui-select-match class="member-selector ui-select-match" placeholder="Select or search a member...">
                 <img class="profile-image" ng-src="{{$select.selected.img}}"/>
                 <span ng-bind-html="$select.selected.fname | highlight: $select.search"></span>
               </ui-select-match>
               <ui-select-choices
+                  class="ui-select-choices"
                   repeat="member in pushQueueCtrl.members | filter: $select.search">
                 <img class="profile-image" ng-src="{{member.img}}"/>
                 <span ng-bind-html="member.fname | highlight: $select.search"></span>

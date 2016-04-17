@@ -16,7 +16,7 @@
         widget = {
           name: 'widget',
           parent: home,
-          url: '^/widget/{widgetId:int}',
+          url: '^/:widgetId',
           template: '<div ng-include="widgetCtrl.widget.contentUrl"></div>',
           controller: 'WidgetCtrl',
           controllerAs: 'widgetCtrl',
@@ -63,7 +63,7 @@
     $stateProvider.state(login);
     $stateProvider.state(compare);
 
-    $urlRouterProvider.otherwise('/widget/0');
+    $urlRouterProvider.otherwise('/cistatus');
   }
 
   widgetResolver.$inject = ['$stateParams', 'UiFacadeService'];

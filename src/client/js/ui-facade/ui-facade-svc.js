@@ -7,34 +7,40 @@
     function UiFacadeService() {
         this.widgets = [
             {
-                id: 0,
+                id: 'cistatus',
+                title: 'CI/CD Status',
+                contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-ci-status-tmpl.html',
+                columns: 12
+            },
+            {
+                id: 'pushqueue',
+                title: 'Push Queue',
+                contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-push-queue-tmpl.html',
+                columns: 12
+            },
+            {
+                id: 'shouts',
                 title: 'Shout Outs!',
                 subTitle: 'Use \'em wisely',
                 contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-shout-outs-tmpl.html',
                 columns: 12
             },
             {
-                id: 1,
+                id: 'branchowners',
                 title: 'Branch Owners',
                 contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-branch-owner-queue-tmpl.html',
                 columns: 12
             },
             {
-                id: 2,
+                id: 'members',
                 title: 'Team Members',
                 contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-team-members-tmpl.html',
                 columns: 12
             },
             {
-                id: 3,
+                id: 'usefullinks',
                 title: 'Useful Links',
                 contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-useful-links-tmpl.html',
-                columns: 12
-            },
-            {
-                id: 4,
-                title: 'Health Report',
-                contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-health-report-tmpl.html',
                 columns: 12
             }
         ];
