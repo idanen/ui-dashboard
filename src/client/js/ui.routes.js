@@ -35,8 +35,9 @@
         },
         compare = {
           name: 'compare',
-          url: '/:buildName/:buildNumber?',
-          templateUrl: '/js/compare/compare-tmpl.html',
+          parent: home,
+          url: '^/compare/:buildName/:buildNumber?',
+          templateUrl: '/js/tabs/content/compare/compare-tmpl.html',
           controller: 'CompareCtrl',
           controllerAs: 'compare',
           resolve: {

@@ -2,50 +2,52 @@
   'use strict';
 
   angular.module('tabs')
-      .directive('buildsList', buildsListFactory)
-      .controller('BuildsListCtrl', BuildsListController);
+      .directive('buildSelector', buildSelectorFactory)
+      .controller('BuildSelectorCtrl', BuildSelectorController);
 
-  function buildsListFactory() {
+  function buildSelectorFactory() {
     return {
       restrict: 'E',
       scope: {},
       bindToController: {
-        parentName: '<',
-        builds: '<'
+        builds: '<',
+        selected: '<',
+        onChange: '&'
       },
-      controller: 'BuildsListCtrl',
-      controllerAs: 'buildsList',
+      controller: 'BuildSelectorCtrl',
+      controllerAs: 'buildSelector',
+      link: linkFn,
       template: `
-        <ul class="builds-list" ng-init="buildsList.init()">
-          <li ng-repeat="build in buildsList.displayBuilds">
-            <a ng-href="http://mydtbld0022.hpeswlab.net:8080/jenkins/job/MaaS-SAW-USB-master-SingleNode-Mock/{{build.buildNumber}}/" target="_blank">{{build.buildNumber}}</a>
-            <build-progress build-name="buildsList.parentName" build-number="build.buildNumber" sub-builds="build.subBuilds"></build-progress>
-          </li>
-        </ul>
+        <div>
+          <label>Select build and number</label>
+          <select name="selectedBuildName" ng-model="buildSelector.selected.name" ng-options="buildId as buildId for (buildId, build) in buildSelector.builds track by buildId" ng-change="buildSelector.onChange(buildSelector.selected)"></select>
+          <span>#</span>
+          <select name="selectedBuildName" ng-model="buildSelector.selected.number" ng-options="buildNumber as buildNumber for (buildNumber, buildResult) in buildSelector.builds[buildSelector.selected.name].builds" ng-change="buildSelector.onChange(buildSelector.selected)"></select>
+        </div>
       `
     };
+
+    function linkFn($scope, $element, $attrs, $ctrl) {
+      $element.find('paper-listbox').on('iron-select', function (evt) {
+        var currentElement = evt.target;
+        if (evt.target.classList.contains('build-name-selector')) {
+          $ctrl.selectedName = currentElement.selectedItem;
+        } else if (evt.target.classList.contains('build-number-selector')) {
+          $ctrl.selectedBuild = $ctrl.builds[$ctrl.selectedName].builds[currentElement.selectedItem];
+        }
+      });
+    }
   }
 
-  BuildsListController.$inject = ['$scope', 'ciStatusService'];
-  function BuildsListController($scope, ciStatusService) {
+  BuildSelectorController.$inject = ['ciStatusService'];
+  function BuildSelectorController(ciStatusService) {
     this.displayBuilds = [];
-    this.$scope = $scope;
     this.ciStatusService = ciStatusService;
-
-    $scope.$watch(() => {
-      return this.builds;
-    }, this.init.bind(this));
   }
 
-  BuildsListController.prototype = {
+  BuildSelectorController.prototype = {
     init: function () {
-      if (this.builds) {
-        this.displayBuilds = [];
-        _.forEach(this.builds, (build, buildNumber) => {
-          this.displayBuilds.push(_.extend({}, build, {buildNumber: buildNumber}));
-        });
-        this.displayBuilds = _.sortByOrder(this.displayBuilds, ['buildNumber'], ['desc']);
-      }
+
     }
   };
 }());

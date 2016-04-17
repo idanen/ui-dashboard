@@ -14,6 +14,7 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
+                <li ui-sref-active="active"><a ui-sref="compare({buildName: 'master', buildNumber: '1118'})">Compare</a></li>
                 <li ui-sref-active="active" ng-repeat="widget in facade.widgets"><a ui-sref="widget({widgetId: widget.id})">{{ widget.title }}</a></li>
             </ul>
             <span class="navbar-right"><login-btn></login-btn></span>
