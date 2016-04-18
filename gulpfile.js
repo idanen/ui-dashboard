@@ -8,7 +8,7 @@ var pagespeed = require('psi');
 var reload = browserSync.reload;
 var inject = require('gulp-inject');
 var nodemon = require('gulp-nodemon');
-var isProd = require('yargs').argv.state === 'prod';
+var isProd = require('yargs').argv.stage === 'prod';
 
 // we'd need a slight delay to reload browsers
 // connected to browser-sync after restarting nodemon
@@ -70,8 +70,7 @@ gulp.task('styles', function () {
   // For best performance, don't add Sass partials to `gulp.src`
   return gulp.src([
     'src/client/lib/**/*.{scss,css}',
-    'src/client/css/**/*.{scss,css}',
-    'src/client/js/**/*.{scss,css}'
+    'src/client/css/**/*.{scss,css}'
   ])
     .pipe($.sourcemaps.init())
     .pipe($.changed('.tmp/css', {extension: '.css'}))
