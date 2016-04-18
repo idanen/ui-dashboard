@@ -2,52 +2,53 @@
   'use strict';
 
   angular.module('tabs')
-      .directive('buildSelector', buildSelectorFactory)
-      .controller('BuildSelectorCtrl', BuildSelectorController);
-
-  function buildSelectorFactory() {
-    return {
-      restrict: 'E',
-      scope: {},
-      bindToController: {
-        builds: '<',
-        selected: '<',
-        onChange: '&'
-      },
-      controller: 'BuildSelectorCtrl',
-      controllerAs: 'buildSelector',
-      link: linkFn,
-      template: `
-        <div>
-          <label>Select build and number</label>
-          <select name="selectedBuildName" ng-model="buildSelector.selected.name" ng-options="buildId as buildId for (buildId, build) in buildSelector.builds track by buildId" ng-change="buildSelector.onChange(buildSelector.selected)"></select>
-          <span>#</span>
-          <select name="selectedBuildName" ng-model="buildSelector.selected.number" ng-options="buildNumber as buildNumber for (buildNumber, buildResult) in buildSelector.builds[buildSelector.selected.name].builds" ng-change="buildSelector.onChange(buildSelector.selected)"></select>
-        </div>
-      `
-    };
-
-    function linkFn($scope, $element, $attrs, $ctrl) {
-      $element.find('paper-listbox').on('iron-select', function (evt) {
-        var currentElement = evt.target;
-        if (evt.target.classList.contains('build-name-selector')) {
-          $ctrl.selectedName = currentElement.selectedItem;
-        } else if (evt.target.classList.contains('build-number-selector')) {
-          $ctrl.selectedBuild = $ctrl.builds[$ctrl.selectedName].builds[currentElement.selectedItem];
-        }
+      .component('buildSelector', {
+        controller: BuildSelectorController,
+        bindings: {
+          builds: '<',
+          selected: '<',
+          onChange: '&'
+        },
+        template: `
+          <div>
+            <label>Select build and number</label>
+            <select name="selectedBuildName"
+                    ng-model="$ctrl.name"
+                    ng-change="$ctrl.onChange({prop: 'name', value: $ctrl.name})">
+              <option ng-repeat="(buildId, build) in $ctrl.builds track by buildId" value="{{ buildId }}" ng-bind="buildId"></option>
+            </select>
+            <span>#</span>
+            <select name="selectedBuildNumber"
+                    ng-model="$ctrl.number"
+                    ng-change="$ctrl.onChange({prop: 'number', value: $ctrl.number})">
+              <option ng-repeat="(buildNumber, buildResult) in $ctrl.builds[$ctrl.selected.name].builds track by buildNumber" value="{{ buildNumber }}" ng-bind="buildNumber"></option>
+            </select>
+          </div>
+        `
       });
-    }
-  }
 
-  BuildSelectorController.$inject = ['ciStatusService'];
-  function BuildSelectorController(ciStatusService) {
-    this.displayBuilds = [];
-    this.ciStatusService = ciStatusService;
+  BuildSelectorController.$inject = [];
+  function BuildSelectorController() {
   }
 
   BuildSelectorController.prototype = {
-    init: function () {
-
+    $onInit: function () {
+      this.name = this.selected.name;
+      this.number = this.selected.number;
+    },
+    $onChanges: function (changes) {
+      if (changes.selected && changes.selected.currentValue.name) {
+        this.name = changes.selected.currentValue.name;
+      }
+      if (changes.selected && changes.selected.currentValue.number) {
+        this.number = changes.selected.currentValue.number;
+      }
+      if (changes.builds && changes.builds.currentValue) {
+        let buildId = Object.keys(changes.builds.currentValue)[0],
+            buildNumber = Object.keys(changes.builds.currentValue[buildId].builds)[0];
+        this.name = buildId;
+        this.number = buildNumber;
+      }
     }
   };
 }());

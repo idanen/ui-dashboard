@@ -1,10 +1,11 @@
 <div class="row compare-content">
   <div class="col-md-6">
+    <button ng-click="compare.triggerChange()">Change</button>
     <build-selector builds="compare.availableBuilds.masters" selected="compare.selectedLeft"
-                    on-change="compare.leftSelectionChanged(compare.selectedLeft)"></build-selector>
+                    on-change="compare.leftSelectionChanged(prop, value)"></build-selector>
   </div>
   <div class="col-md-6">
     <build-selector builds="compare.availableBuilds.masters" selected="compare.selectedRight"
-                    on-change="compare.rightSelectionChanged(compare.selectedRight)"></build-selector>
+                    on-change="compare.rightSelectionChanged(prop, value)"></build-selector>
   </div>
 </div>
