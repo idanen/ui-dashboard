@@ -1,4 +1,4 @@
-<div class="bs-example" ng-app="tabs" ng-init="ciJobsCtrl.loadJobs()">
+<div class="ci-status" ng-app="tabs" ng-init="ciJobsCtrl.loadJobs()">
     <div class="row">
         <div class="col-xs-12">
             <!-- Trigger the modal with a button -->
@@ -32,8 +32,8 @@
                         {{ job.alias }}
                     </th>
                     <th>
-                        <img class="statusImg" ng-src="{{ ciJobsCtrl.selectJobImg(job.result) }}">
-                        <span>{{ job.result }}</span>
+                      <iron-icon class="job-result-icon" icon="{{ ciJobsCtrl.resultToIconName(job.result) }}" ng-class="'job-result-icon-' + ciJobsCtrl.resultToIconName(job.result)"></iron-icon>
+                      <span>{{ job.result }}</span>
                     </th>
                     <th colspan="2">
                         <time is="time-ago" datetime="{{ job.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
@@ -55,8 +55,8 @@
                     </a>
                   </td>
                   <td>
-                      <img class="statusImg" ng-src="{{ ciJobsCtrl.selectJobImg(results.result) }}">
-                      <span>{{ results.result }}</span>
+                    <iron-icon class="job-result-icon" icon="{{ ciJobsCtrl.resultToIconName(results.result) }}" ng-class="'job-result-icon-' + ciJobsCtrl.resultToIconName(results.result)"></iron-icon>
+                    <span>{{ results.result }}</span>
                   </td>
                   <td>
                       <time is="time-ago" datetime="{{ results.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"

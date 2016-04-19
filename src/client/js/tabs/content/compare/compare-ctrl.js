@@ -15,6 +15,9 @@
     };
     this.selectedLeft = {};
     this.selectedRight = {};
+
+    this.availableBuilds.masters.$loaded()
+      .then(this.selectFirstOptions.bind(this));
   }
 
   CompareController.prototype = {
@@ -28,8 +31,19 @@
       this.selectedRight[prop] = value;
       console.log('right selection after update: ', this.selectedRight[prop]);
     },
-    triggerChange: function () {
-      this.selectedLeft = {name: 'MaaS-SAW-USB-master-SingleNode-Mock', number: '30'};
+    selectFirstOptions: function () {
+      if (this.build) {
+        this.selectedLeft = {
+          name: this.build.name,
+          number: this.build.number
+        };
+      }
+      if (this.toBuild) {
+        this.selectedRight = {
+          name: this.toBuild.name,
+          number: this.toBuild.number
+        };
+      }
     }
   };
 }());

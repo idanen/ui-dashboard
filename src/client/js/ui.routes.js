@@ -41,10 +41,10 @@
           controller: 'CompareCtrl',
           controllerAs: 'compare',
           resolve: {
-            build: ['$state', function ($state) {
+            build: ['$stateParams', ($stateParams) => {
               return {
-                name: $state.params.buildName,
-                number: $state.params.buildNumber
+                name: $stateParams.buildName,
+                number: $stateParams.buildNumber
               };
             }],
             toBuild: function () {

@@ -1,53 +1,69 @@
-build-progress,
-.build-progress {
-  display: inline-block;
-  width: 200px;
-  height: 100%;
+.ci-status {
+  .job-result-icon {
+    &.job-result-icon-done {
+      color: darkgreen;
+    }
+    &.job-result-icon-warning {
+      color: gold;
+    }
+    &.job-result-icon-error {
+      color: darkred;
+    }
+    &.job-result-icon-block {
+      color: silver;
+    }
+  }
+  build-progress,
   .build-progress {
-    .sub-build {
-      width: 20%;
-      height: 20px;
-      display: inline-block;
-      color: #ccc;
-      &::before,
-      &::after {
-        content: '';
-        height: 50%;
-        width: 100%;
-        display: block;
-        position: relative;
-        bottom: 0;
-        left: 0;
-        background-color: currentColor;
-      }
-      &::before {
-        transform: skewX(25deg);
-      }
-      &::after {
-        transform: skewX(-25deg);
-      }
-      &:not(:first-child) {
+    display: inline-block;
+    width: 200px;
+    height: 100%;
+    .build-progress {
+      .sub-build {
+        width: 20%;
+        height: 20px;
+        display: inline-block;
+        color: #ccc;
         &::before,
         &::after {
-          border-left: 1px solid #747474;
+          content: '';
+          height: 50%;
+          width: 100%;
+          display: block;
+          position: relative;
+          bottom: 0;
+          left: 0;
+          background-color: currentColor;
+        }
+        &::before {
+          transform: skewX(25deg);
+        }
+        &::after {
+          transform: skewX(-25deg);
+        }
+        &:not(:first-child) {
+          &::before,
+          &::after {
+            border-left: 1px solid #747474;
+          }
         }
       }
-    }
-    .sub-build {
-      &.build-state-success {
-        color: #0fd74a;
-      }
-      &.build-state-unstable {
-        color: #f7f10c;
-      }
-      &.build-state-failure {
-        color: #d13422;
-      }
-      &.build-state-aborted {
-        color: #a1a1a1;
-      }
-      &.build-state-unknown {
-        color: #a13094;
+      .sub-build {
+        &.build-state-success {
+          color: #0fd74a;
+        }
+        &.build-state-unstable {
+          color: #f7f10c;
+        }
+        &.build-state-failure {
+          color: #d13422;
+        }
+        &.build-state-aborted {
+          color: #a1a1a1;
+        }
+        &.build-state-unknown {
+          color: #a13094;
+        }
       }
     }
   }

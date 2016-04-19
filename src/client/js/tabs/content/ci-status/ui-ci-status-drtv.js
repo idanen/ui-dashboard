@@ -7,6 +7,13 @@
 
     angular.module('tabs')
         .constant('CiJobsRefreshInterval', 1000 * 60 * 5)
+        .constant('ResultsToIconNames', {
+          SUCCESS: 'done',
+          FAILURE: 'error',
+          UNSTABLE: 'warning',
+          ABORTED: 'block',
+          UNKNOWN: 'help-outline'
+        })
         .directive('ciFreezeStateToggle', CiFreezeStateToggleDirectiveFactory)
         .directive('uiCiStatus', [function () {
             return {
@@ -19,11 +26,12 @@
         }])
         .controller('ciStatusController', CiStatusController);
 
-    CiStatusController.$inject = ['$scope', '$state', 'ciStatusService', 'JENKINS_BASE_URL'];
-    function CiStatusController($scope, $state, ciStatusService, JENKINS_BASE_URL) {
+    CiStatusController.$inject = ['$scope', '$state', 'ciStatusService', 'JENKINS_BASE_URL', 'ResultsToIconNames'];
+    function CiStatusController($scope, $state, ciStatusService, JENKINS_BASE_URL, ResultsToIconNames) {
       this.$state = $state;
       this.ciStatusService = ciStatusService;
       this.JENKINS_BASE_URL = JENKINS_BASE_URL;
+      this.ResultsToIconNames = ResultsToIconNames;
       this.listOfJobs = {}; // the list of jobs we get from server and use in ng-repeat
       // This assumes the controller's name is `ciJobsCtrl`
       this.ciStatusService.getJobs().$bindTo($scope, 'ciJobsCtrl.listOfJobs');
@@ -174,6 +182,9 @@
                     return "warning";
                 }
             }
+        },
+        resultToIconName: function (buildResult) {
+          return this.ResultsToIconNames[buildResult] || '';
         },
         /**
          * update the class value of the table rows , depending on trStatus() and 'animateOnUpdate' to make it fade if reuqired
