@@ -1,6 +1,8 @@
 var Promise = require('promise'),
     eRequest = require('request'),
-    StatusUpdater = require('../services/status-updater');
+    StatusUpdater = require('../services/status-updater'),
+    consts = require('../config/consts'),
+    TestsRetriever = require('../services/tests-retriever');
 
 module.exports = (function () {
     'use strict';
@@ -11,6 +13,7 @@ module.exports = (function () {
 
     function UIDashboardController() {
         this.statusUpdater = new StatusUpdater();
+        this.testsRetriever = new TestsRetriever(consts.TESTS_MONGO_CONNECTION);
     }
 
     UIDashboardController.prototype = {
@@ -98,6 +101,16 @@ module.exports = (function () {
                 .catch(function (error) {
                     console.error(error);
                     response.status(404).send(error.message);
+                });
+        },
+
+        getBuildTests: function (request, response) {
+            this.testsRetriever.fetchFailed(request.params.buildName, request.params.buildNumber)
+                .then(function (tests) {
+                    response.send(tests);
+                })
+                .catch(function (error) {
+                    response.status(500).send(error.message);
                 });
         },
 

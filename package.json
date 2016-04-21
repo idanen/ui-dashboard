@@ -57,6 +57,7 @@
     "firebase": "^2.4.1",
     "gulp-vulcanize": "^6.1.0",
     "lodash": "^4.8.2",
+    "mongoose": "^4.4.12",
     "request-promise": "^2.0.1",
     "yargs": "^4.2.0"
   }
