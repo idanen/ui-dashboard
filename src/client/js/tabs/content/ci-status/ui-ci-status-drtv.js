@@ -11,7 +11,7 @@
           SUCCESS: 'done',
           FAILURE: 'error',
           UNSTABLE: 'warning',
-          ABORTED: 'block',
+          ABORTED: 'remove-circle-outline',
           UNKNOWN: 'help-outline'
         })
         .directive('ciFreezeStateToggle', CiFreezeStateToggleDirectiveFactory)

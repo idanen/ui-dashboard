@@ -6,16 +6,46 @@
     <div class="col-md-6">
       <build-selector builds="compare.availableBuilds.masters" selected="compare.selectedLeft"
                       on-change="compare.leftSelectionChanged(prop, value)"></build-selector>
-      <ul class="list-group">
-        <li class="list-group-item" ng-repeat="test in compare.leftTests | orderBy:'insertionTime':true">{{ test.testClassName | className }}#{{ test.testName | className }}</li>
-      </ul>
+      <uib-accordion close-others="false">
+        <uib-accordion-group ng-repeat="test in compare.leftTests | orderBy:'insertionTime':true">
+          <uib-accordion-heading>
+            <iron-icon icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'"></iron-icon>
+            <span> {{ test.testClassName | className }}</span>
+            <em>
+              <time is="time-ago" datetime="{{ test.insertionTime | date:'yyyy-MM-ddTHH:mmZ' }}"
+                    title="{{ test.insertionTime | date }}">
+                {{ test.insertionTime | date }}
+              </time>
+            </em>
+          </uib-accordion-heading>
+          <h3>{{ test.testName | className }}</h3>
+          <pre>
+            <code>{{ test.exceptionStacktrace }}</code>
+          </pre>
+        </uib-accordion-group>
+      </uib-accordion>
     </div>
     <div class="col-md-6">
       <build-selector builds="compare.availableBuilds.masters" selected="compare.selectedRight"
                       on-change="compare.rightSelectionChanged(prop, value)"></build-selector>
-      <ul class="list-group">
-        <li class="list-group-item" ng-repeat="test in compare.rightTests | orderBy:'insertionTime':true">{{ test.testClassName | className }}#{{ test.testName | className }}</li>
-      </ul>
+      <uib-accordion close-others="false">
+        <uib-accordion-group ng-repeat="test in compare.rightTests | orderBy:'insertionTime':true">
+          <uib-accordion-heading>
+            <iron-icon icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'"></iron-icon>
+            <span> {{ test.testClassName | className }}</span>
+            <em>
+              <time is="time-ago" datetime="{{ test.insertionTime | date:'yyyy-MM-ddTHH:mmZ' }}"
+                    title="{{ test.insertionTime | date }}">
+                {{ test.insertionTime | date }}
+              </time>
+            </em>
+          </uib-accordion-heading>
+          <h3>{{ test.testName | className }}</h3>
+          <pre>
+            <code>{{ test.exceptionStacktrace }}</code>
+          </pre>
+        </uib-accordion-group>
+      </uib-accordion>
     </div>
   </div>
 </div>
