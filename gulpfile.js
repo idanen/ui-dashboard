@@ -209,7 +209,7 @@ gulp.task('nodemon', function (cb) {
       });
 });
 
-gulp.task('build', ['jslib', 'styles', 'copy', 'images', 'inject'], function (cb) {
+gulp.task('build', function (cb) {
   runSequence('clean', ['jslib', 'styles', 'copy', 'images', 'inject'], cb);
 });
 

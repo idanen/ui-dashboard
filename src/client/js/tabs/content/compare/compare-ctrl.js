@@ -4,11 +4,13 @@
   angular.module('tabs')
     .controller('CompareCtrl', CompareController);
 
-  CompareController.$inject = ['build', 'toBuild', '$state', 'ciStatusService'];
-  function CompareController(build, toBuild, $state, ciStatusService) {
+  CompareController.$inject = ['build', 'toBuild', '$state', '$q', 'ciStatusService', 'buildTestsService'];
+  function CompareController(build, toBuild, $state, $q, ciStatusService, buildTestsService) {
     this.build = build;
     this.toBuild = toBuild;
     this.$state = $state;
+    this.$q = $q;
+    this.buildTestsService = buildTestsService;
     this.title = `Comparing build ${this.build.name}#${this.build.number} and ${this.toBuild.name}#${this.toBuild.number}`;
     this.availableBuilds = {
       masters: ciStatusService.getJobs(),
@@ -18,7 +20,8 @@
     this.selectedRight = {};
 
     this.availableBuilds.masters.$loaded()
-      .then(this.selectFirstOptions.bind(this));
+      .then(this.selectFirstOptions.bind(this))
+      .then(this.getTests.bind(this));
   }
 
   CompareController.prototype = {
@@ -56,6 +59,16 @@
           number: this.build.number - 1
         };
       }
+    },
+    getTests: function () {
+      var promises = [];
+      promises.push(this.buildTestsService.fetch(this.build.name, this.build.number));
+      promises.push(this.buildTestsService.fetch(this.toBuild.name, this.toBuild.number));
+
+      this.$q.all(promises).then((tests) => {
+        this.leftTests = tests[0];
+        this.rightTests = tests[1];
+      });
     }
   };
 }());
