@@ -154,7 +154,12 @@
             return `${this.JENKINS_BASE_URL}${jobName}/${jobNumber}`;
         },
         buildCompareLink: function (jobName, jobNumber) {
-          return this.$state.href('compare', {buildName: jobName, buildNumber: jobNumber});
+          return this.$state.href('compare', {
+            buildName: jobName,
+            buildNumber: jobNumber,
+            toBuildName: jobName,
+            toBuildNumber: (parseInt(jobNumber, 10) - 1)
+          });
         },
         selectJobImg:function(imgName){
             if(imgName && imgName.indexOf('anime') > -1){
