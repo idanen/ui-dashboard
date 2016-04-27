@@ -33,21 +33,23 @@
      */
     saveUser: function (authData) {
       var userId = authData.uid;
-      this.usersRef.child(userId).transaction((currentUserData) => {
-        if (currentUserData === null) {
-          return authData;
-        }
-      }, (error, committed) => {
-        if (error) {
-          return this.$q.reject(error);
-        }
-        if (!committed) {
-          // TODO: decide what to do when user already exists.
-          console.log(`User with uid "${authData.uid}" already exists`);
-        }
-        return this.$q.when(committed);
+      return this.$q((resolve, reject) => {
+        this.usersRef.child(userId).transaction((currentUserData) => {
+          if (currentUserData === null) {
+            return authData;
+          }
+        }, (error, committed) => {
+          if (error) {
+            reject(error);
+          }
+          if (!committed) {
+            // TODO: decide what to do when user already exists.
+            console.log(`User with uid "${authData.uid}" already exists`);
+          }
+          resolve(authData);
+        });
       });
-      return this.$q.when(this.usersRef.set(authData));
+      //return this.$q.when(this.usersRef.set(authData));
     },
     /**
      * Gets user's data

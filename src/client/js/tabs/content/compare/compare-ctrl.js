@@ -22,14 +22,10 @@
 
   CompareController.prototype = {
     leftSelectionChanged: function (prop, value) {
-      console.log('left selection before update: ', this.selectedLeft[prop]);
       this.selectedLeft[prop] = value;
-      console.log('left selection after update: ', this.selectedLeft[prop]);
     },
     rightSelectionChanged: function (prop, value) {
-      console.log('right selection before update: ', this.selectedRight[prop]);
       this.selectedRight[prop] = value;
-      console.log('right selection after update: ', this.selectedRight[prop]);
     },
     selectFirstOptions: function () {
       if (this.build) {
@@ -38,10 +34,15 @@
           number: this.build.number
         };
       }
-      if (this.toBuild) {
+      if (this.toBuild && this.toBuild.name && this.toBuild.number) {
         this.selectedRight = {
           name: this.toBuild.name,
           number: this.toBuild.number
+        };
+      } else {
+        this.selectedRight = {
+          name: this.build.name,
+          number: this.build.number - 1
         };
       }
     }

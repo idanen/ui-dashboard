@@ -31,15 +31,14 @@
         }.bind(this));
     },
     postLogin: function (user) {
-      this.model = angular.extend({}, user, {displayName: this.displayName});
-      return this.userService.saveUser(this.model)
-        .then(this.close.bind(this));
+      this.model = angular.extend({}, user, {displayName: this.displayName, email: user[user.provider].email});
+      return this.close();
     },
     cancel: function () {
       this.$uibModalInstance.dismiss('cancel');
     },
     close: function () {
-      this.$uibModalInstance.close(this.model);
+      return this.$uibModalInstance.close(this.model);
     }
   };
 }());

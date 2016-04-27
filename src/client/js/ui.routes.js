@@ -36,7 +36,7 @@
         compare = {
           name: 'compare',
           parent: home,
-          url: '^/compare/:buildName/:buildNumber?',
+          url: '^/compare/:buildName/:buildNumber?/:toBuildName?/:toBuildNumber?',
           templateUrl: '/js/tabs/content/compare/compare-tmpl.html',
           controller: 'CompareCtrl',
           controllerAs: 'compare',
@@ -47,9 +47,15 @@
                 number: $stateParams.buildNumber
               };
             }],
-            toBuild: function () {
+            toBuild: ['$stateParams', ($stateParams) => {
+              if ($stateParams.toBuildName && $stateParams.toBuildNumber) {
+                return {
+                  name: $stateParams.toBuildName,
+                  number: $stateParams.toBuildNumber
+                };
+              }
               return {};
-            }
+            }]
           }
         };
 

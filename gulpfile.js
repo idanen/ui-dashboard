@@ -209,12 +209,16 @@ gulp.task('nodemon', function (cb) {
       });
 });
 
+gulp.task('build', ['jslib', 'styles', 'copy', 'images', 'inject'], function (cb) {
+  runSequence('clean', ['jslib', 'styles', 'copy', 'images', 'inject'], cb);
+});
+
 // Watch files for changes & reload
-gulp.task('serve', ['jslib', 'styles', 'copy', 'images', 'inject'], function () {
+gulp.task('serve', ['build'], function () {
   browserSync({
     notify: false,
     // Customize the BrowserSync console logging prefix
-    logPrefix: 'dash',
+    logPrefix: 'ci-dash',
     // Run as an https by uncommenting 'https: true'
     // Note: this uses an unsigned certificate which on first access
     //       will present a certificate warning in the browser.
@@ -222,8 +226,8 @@ gulp.task('serve', ['jslib', 'styles', 'copy', 'images', 'inject'], function () 
     server: ['.tmp', 'dist']
   });
 
-  gulp.watch(['src/client/**/*.html'], ['templatecopy', reload]);
-  gulp.watch(['src/client/**/*.{scss,css}'], ['styles', reload]);
+  gulp.watch(['src/client/**/*.html'], ['templatecopy'], reload);
+  gulp.watch(['src/client/**/*.{scss,css}'], ['styles'], reload);
   gulp.watch(['src/client/js/**/*.js'], ['jshint', 'jslib', 'scripts'], reload);
   gulp.watch(['src/client/images/**/*'], reload);
 });

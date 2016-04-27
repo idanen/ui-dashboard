@@ -12,5 +12,13 @@
     </label>
   </div>
   <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="modalCtrl.login()">Sign in</button>
+</form>
+<form class="form-signin">
+  <h2 class="rom-signin-heading">Sign in using Google</h2>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" ng-model="modalCtrl.remember"> Remember me
+    </label>
+  </div>
   <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="modalCtrl.loginWithProvider('google')">Sign in with Google</button>
 </form>
