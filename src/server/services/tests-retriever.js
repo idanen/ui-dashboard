@@ -63,15 +63,15 @@ module.exports = (function () {
 
   TestsRetriever.prototype = {
     fetchFailed: function (buildName, buildNumber) {
-      //return new Promise(function (resolve, reject) {
-      //  this.TestResult.find({jobName: buildName, buildId: buildNumber, testFailed: true}, function (err, tests) {
-      //    if (err) {
-      //      reject(err);
-      //    }
-      //    resolve(tests);
-      //  });
-      //}.bind(this));
-      return Promise.resolve(mockTests);
+      return new Promise(function (resolve, reject) {
+        this.TestResult.find({jobName: buildName, buildId: buildNumber, testFailed: true}, function (err, tests) {
+          if (err) {
+            reject(err);
+          }
+          resolve(tests);
+        });
+      }.bind(this));
+      //return Promise.resolve(mockTests);
     }
   };
 
