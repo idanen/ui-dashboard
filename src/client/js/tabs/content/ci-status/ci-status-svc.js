@@ -60,21 +60,33 @@
         })
         .service('ciStatusService', CiStatusService);
 
-    CiStatusService.$inject = ['$http', 'Ref', '$firebaseObject', '$firebaseArray', '$stateParams', 'ENV'];
-    function CiStatusService($http, ref, $firebaseObject, $firebaseArray, $stateParams, ENV) {
+    CiStatusService.$inject = ['$http', '$q', 'Ref', '$firebaseObject', '$firebaseArray', '$stateParams', 'ENV'];
+    function CiStatusService($http, $q, ref, $firebaseObject, $firebaseArray, $stateParams, ENV) {
         this._jobsUrl = '//' + ENV.HOST + ':' + ENV.PORT;
         this._jobsRef = ref.child('allJobs');
         this._statusRef = ref.child('ciStatus');
         this._mastersRef = this._statusRef.child('masters');
         this._teamsRef = this._statusRef.child('teams');
         this.$http = $http;
+        this.$q = $q;
         this.$firebaseObject = $firebaseObject;
         this.$firebaseArray = $firebaseArray;
     }
 
     CiStatusService.prototype = {
-        getJobs: function (group) {
+        getJobs: function (group = 'masters') {
             return this.$firebaseObject(group ? this._statusRef.child(group) : this._statusRef.child('masters'));
+        },
+        getLastBuildNumber: function (group = 'masters', buildName = 'MaaS-SAW-USB-master') {
+            return this.$q((resolve) => {
+                this._statusRef.child(group).child(buildName)
+                    .child('builds').orderByKey().limitToLast(1)
+                    .once('value', function (snapshot) {
+                        snapshot.forEach(function (innerSnapshot) {
+                            resolve(innerSnapshot.key());
+                        });
+                    });
+            });
         },
         getJob: function (jobId, teamId) {
             if (teamId) {
@@ -95,6 +107,18 @@
         },
         getJobByName: function (jobName) {
             return this.$firebaseObject(this._jobsRef.child(jobName));
+        },
+        addBuildNumber: function (buildName, newBuildNumber, group = 'masters') {
+            var newBuild = {};
+            newBuild[newBuildNumber] = {
+                result: 'UNKNOWN',
+                lastUpdate: Date.now()
+            };
+            return this.$q((resolve) => {
+                this._statusRef.child(group).child(buildName).child('builds').update(newBuild, () => {
+                    resolve(newBuild);
+                });
+            });
         },
         addJob: function (toAdd) {
             return this.$http.post(this._jobsUrl + '/addJob', toAdd)

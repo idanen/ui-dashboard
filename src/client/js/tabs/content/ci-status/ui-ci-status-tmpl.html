@@ -2,13 +2,21 @@
     <div class="row">
         <div class="col-xs-12">
             <!-- Trigger the modal with a button -->
-            <paper-fab class=" pull-right" mini icon="add" title="New Job" data-toggle="modal"
-                       data-target="#newJobModal" ng-click="ciJobsCtrl.dataDismiss = ' '"></paper-fab>
+            <paper-fab class="pull-right" mini icon="expand-{{ciJobsCtrl.newBuildNumberFormOpen ? 'less' : 'more'}}" title="New Job"
+                       ng-click="ciJobsCtrl.newBuildNumberFormOpen = !ciJobsCtrl.newBuildNumberFormOpen"></paper-fab>
             <!-- Refresh The Job List -->
             <paper-button raised class="ladda-button mainBtns" ladda="loading" ng-click="ciJobsCtrl.updateAllJobs()">
                 <iron-icon icon="refresh"></iron-icon>
                 <span class="ladda-label">Refresh</span>
             </paper-button>
+          <div class="new-build-number-form" ng-class="{'new-build-number-form-open': ciJobsCtrl.newBuildNumberFormOpen}">
+            <ci-awesomplete list="ciJobsCtrl.listOfJobs" selected="ciJobsCtrl.newBuild.name" on-change="ciJobsCtrl.setNewBuildName(value)"></ci-awesomplete>
+            <paper-input-container>
+              <label>Build number</label>
+              <input is="iron-input" ng-model="ciJobsCtrl.newBuild.number">
+            </paper-input-container>
+            <paper-button raised ng-click="ciJobsCtrl.addNewBuildNumber()">OK</paper-button>
+          </div>
         </div>
     </div>
     <div class="row">
@@ -42,12 +50,10 @@
                         </time>
                     </th>
                     <th>
-                        <div class="btn-group">
-                            <paper-toggle-button ci-freeze-state-toggle="job.freeze"></paper-toggle-button>
-                        </div>
+                      <paper-toggle-button ci-freeze-state-toggle="job.freeze"></paper-toggle-button>
                     </th>
                 </tr>
-                <tr ng-class="ciJobsCtrl.styleJobRow(results)" ng-repeat="(jobNumber, results) in job.builds">
+                <tr ng-class="ciJobsCtrl.styleJobRow(build)" ng-repeat="(jobNumber, build) in job.builds">
                   <td>
                     <a ng-href="{{ ciJobsCtrl.buildCompareLink(jobName, jobNumber) }}" title="Compare this build to another">{{ jobNumber }}</a>
                     <a ng-href="{{ ciJobsCtrl.buildJenkinsLink(jobName, jobNumber) }}" target="_blank">
@@ -55,17 +61,17 @@
                     </a>
                   </td>
                   <td>
-                    <iron-icon class="job-result-icon" icon="{{ ciJobsCtrl.resultToIconName(results.result) }}" ng-class="'job-result-icon-' + ciJobsCtrl.resultToIconName(results.result)"></iron-icon>
-                    <span>{{ results.result }}</span>
+                    <iron-icon class="job-result-icon" icon="{{ ciJobsCtrl.resultToIconName(build.result) }}" ng-class="'job-result-icon-' + ciJobsCtrl.resultToIconName(build.result)"></iron-icon>
+                    <span>{{ build.result }}</span>
                   </td>
                   <td>
-                      <time is="time-ago" datetime="{{ results.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
-                            title="{{ results.lastUpdate | date }}">
-                          {{ results.lastUpdate | date }}
+                      <time is="time-ago" datetime="{{ build.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
+                            title="{{ build.lastUpdate | date }}">
+                          {{ build.lastUpdate | date }}
                       </time>
                   </td>
                   <td colspan="2">
-                    <build-progress build-name="jobName" build-number="jobNumber" sub-builds="build.subBuilds"></build-progress>
+                    <build-progress build-name="jobName" build-number="jobNumber"></build-progress>
                   </td>
                 </tr>
                 </tbody>

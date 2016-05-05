@@ -15,7 +15,14 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li ui-sref-active="active"><a ui-sref="compare({buildName: 'master', buildNumber: '1118'})">Compare</a></li>
-                <li ui-sref-active="active" ng-repeat="widget in facade.widgets"><a ui-sref="widget({widgetId: widget.id})">{{ widget.title }}</a></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ facade.currentStateWidget.title }} <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li ui-sref-active="active" ng-repeat="widget in facade.widgets">
+                            <a ui-sref="widget({widgetId: widget.id})">{{ widget.title }}</a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
             <span class="navbar-right"><login-btn></login-btn></span>
         </div><!-- /.navbar-collapse -->
@@ -25,7 +32,7 @@
     <div class="row dynamic-widgets-container">
         <div class="widget-container col-md-12">
             <paper-material class="widget" elevation="1">
-                <paper-drawer-panel responsive-width="768px">
+                <paper-drawer-panel responsive-width="768px" force-narrow="true">
                     <paper-header-panel drawer>
                         <paper-toolbar>
                             <!--<div class="title">Change Content</div>-->

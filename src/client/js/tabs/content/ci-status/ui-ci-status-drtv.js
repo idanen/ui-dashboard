@@ -26,12 +26,14 @@
         }])
         .controller('ciStatusController', CiStatusController);
 
-    CiStatusController.$inject = ['$scope', '$state', 'ciStatusService', 'JENKINS_BASE_URL', 'ResultsToIconNames'];
-    function CiStatusController($scope, $state, ciStatusService, JENKINS_BASE_URL, ResultsToIconNames) {
+    CiStatusController.$inject = ['$scope', '$element', '$state', 'ciStatusService', 'JENKINS_BASE_URL', 'ResultsToIconNames'];
+    function CiStatusController($scope, $element, $state, ciStatusService, JENKINS_BASE_URL, ResultsToIconNames) {
       this.$state = $state;
+      this.$element = $element;
       this.ciStatusService = ciStatusService;
       this.JENKINS_BASE_URL = JENKINS_BASE_URL;
       this.ResultsToIconNames = ResultsToIconNames;
+      this.jobs = this.ciStatusService.getJobs();
       this.listOfJobs = {}; // the list of jobs we get from server and use in ng-repeat
       // This assumes the controller's name is `ciJobsCtrl`
       this.ciStatusService.getJobs().$bindTo($scope, 'ciJobsCtrl.listOfJobs');
@@ -42,6 +44,8 @@
       this.validationErrorMessage = ''; // Error Message to show in the modal if input is invalid
       this.addJobFormSendBtn = 'btn btn-default'; // 'Add' button style in the 'add job' modal
       this.addJobResultButtonValue = 'Add'; // 'Add' button style in the 'add job' modal
+      this.buildsLimit = 3;
+      this.newBuild = {};
 
       this.ciStatusService.getJobs().$loaded()
           .then(this.determineInitialFreezeState.bind(this));
@@ -55,9 +59,9 @@
                 return;
             }
             var newJob = {
-                name: job.name, alias: job.alias, freeze: {
-                    state: false
-                }
+              name: job.name,
+              alias: job.alias,
+              freeze: false
             };
             this.ciStatusService.addJob(newJob)
                 .then((function (res) {
@@ -105,6 +109,9 @@
                 });
             }
         },
+        addNewBuildNumber: function () {
+          this.ciStatusService.addBuildNumber(this.newBuild.name, this.newBuild.number, 'masters').then(() => this.newBuild = {});
+        },
         determineInitialFreezeState: function (jobs) {
             angular.forEach(jobs, (function (job, jobId) {
                 if (/^\$/.test(jobId)) {
@@ -131,6 +138,13 @@
                 this.listOfJobs[jobName].freeze = state;
             }
         },
+        toDisplayArray: function (object) {
+          var displayArray = [];
+          _.map(object, (value, key) => {
+            displayArray.push(angular.extend({}, value, {jobNumber: key}));
+          });
+          return displayArray;
+        },
         /**
          * Displays the alias, if it doesn't exist we will show the job name.
          * @param {object} job the job
@@ -144,8 +158,11 @@
             }
         },
         status: function (job) {
-            if (job.building === true) {
-                return "Running";
+          if (!job) {
+            return '';
+          }
+            if (job.building) {
+                return 'Running';
             } else {
                 return job.result;
             }
@@ -169,14 +186,17 @@
         },
 
         chooseImg: function (job) {
-            if (job.building === true) {
+            if (job.building) {
                 return "../images/green_anime.gif";
             } else {
                 return "../images/" + (job.result && job.result.toLowerCase() || 'unknown') + ".png";
             }
         },
         trStatus: function (job) {
-            if (job.building === true) {
+            if (!job) {
+              return '';
+            }
+            if (job.building) {
                 return "active";
             } else {
                 if (job.result === "SUCCESS") {
@@ -197,6 +217,9 @@
          */
         styleJobRow: function (job) {
             return this.trStatus(job);
+        },
+        setNewBuildName: function (value) {
+          this.newBuild.name = value;
         }
     };
 

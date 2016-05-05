@@ -1,5 +1,7 @@
 var mongoose = require('mongoose'),
-    Promise = require('promise');
+    Schema = mongoose.Schema,
+    Promise = require('promise'),
+    _ = require('lodash');
 
 module.exports = (function () {
   'use strict';
@@ -35,16 +37,7 @@ module.exports = (function () {
   }];
 
   function TestsRetriever(mongoUrl) {
-    console.log('Trying to connect to ' + mongoUrl);
-    mongoose.connect(mongoUrl);
-    this.db = mongoose.connection;
-
-    this.db.on('error', console.error.bind(console, 'connection error:'));
-    this.db.once('open', function() {
-      console.log('Connected to mongoDB :)');
-    }.bind(this));
-
-    this.TestResult = mongoose.model('reports', mongoose.Schema({
+    var testSchema = new Schema({
       _id: mongoose.Schema.Types.ObjectId,
       jobName: String,
       buildId: Number,
@@ -58,20 +51,120 @@ module.exports = (function () {
       insertionTime: Date,
       testDuration: Number,
       category: String
-    }));
+    });
+    console.log('Trying to connect to ' + mongoUrl);
+    mongoose.connect(mongoUrl);
+    this.db = mongoose.connection;
+
+    this.db.on('error', console.error.bind(console, 'connection error:'));
+    this.db.once('open', function() {
+      console.log('Connected to mongoDB :)');
+    }.bind(this));
+
+    this.TestResult = mongoose.model('reports', testSchema);
   }
 
   TestsRetriever.prototype = {
-    fetchFailed: function (buildName, buildNumber) {
+    fetchFailed: function (buildName, buildNumber, onlyFailed) {
+      //return this._promisize('find', {jobName: buildName, buildId: buildNumber, testFailed: true});
+      console.log('buildName: \"' + buildName + '", buildNumber: ' + buildNumber);
+      return this._promisize('aggregate', [
+        {
+          $match: {
+            jobName: buildName,
+            buildId: parseInt(buildNumber, 10),
+            testFailed: !!onlyFailed
+          }
+        },
+        {
+          $sort: {
+            category: 1,
+            testClassName: 1
+          }
+        },
+        {
+          $group: {
+            _id: {
+              testClassName: '$testClassName'
+            },
+            tests: { $push: '$$ROOT' }
+          }
+        }/*,
+        {
+          $project: {
+            _id: 0,
+            tests: 1
+          }
+        },
+        {
+          $group: {
+            _id: '$tests.testClassName',
+            tests: { $push: '$$ROOT' }
+          }
+        }*/
+      ]);
+      //return Promise.resolve(mockTests);
+    },
+    fetchStability: function (buildName, tests, buildCount) {
+      console.log('buildName: \"' + buildName + '", buildCount: ' + buildCount + ', tests: ', tests);
+      var classesAndMethods;
+      classesAndMethods = _.transform(tests, function (result, value) {
+        result.classes.push(value.testClass);
+        result.methods = result.methods.concat(value.methods);
+      }, { classes: [], methods: [] });
+      return this._promisize('aggregate', [
+        {
+          $sort: {
+            buildId: -1
+          }
+        },
+        {
+          $match: {
+            jobName: buildName,
+            testClassName: {
+              $in: classesAndMethods.classes
+            },
+            testName: {
+              $in: classesAndMethods.methods
+            }
+          }
+        },
+        {
+          $project: {
+            jobName: 1,
+            buildId: 1,
+            testClassName: 1,
+            testName: 1,
+            failedCount: { $cond: ['$testFailed', 1, 0] }
+          }
+        },
+        {
+          $limit: 20
+        },
+        {
+          $group: {
+            _id: {
+              testClassName: '$testClassName',
+              testName: '$testName'
+            },
+            stability: { $avg: '$failedCount' },
+            failed: { $sum: '$failedCount' },
+            buildIds: { $push: '$buildId' }/*,
+            tests: {$push: '$$ROOT'}*/
+          }
+        }
+      ]);
+    },
+    _promisize: function (method, data) {
       return new Promise(function (resolve, reject) {
-        this.TestResult.find({jobName: buildName, buildId: buildNumber, testFailed: true}, function (err, tests) {
+        this.TestResult[method](data, function (err, results) {
           if (err) {
             reject(err);
+            return;
           }
-          resolve(tests);
+          resolve(results);
         });
       }.bind(this));
-      //return Promise.resolve(mockTests);
     }
   };
 

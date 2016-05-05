@@ -19,8 +19,8 @@
 
   BuildSelectorController.prototype = {
     $onInit: function () {
-      this.name = this.selected.name;
-      this.number = this.selected.number;
+      this.name = this.selected && this.selected.name;
+      this.number = this.selected && this.selected.number;
     },
     $onChanges: function (changes) {
       if (changes.selected && changes.selected.currentValue.name) {

@@ -17,80 +17,13 @@ module.exports = (function () {
     }
 
     UIDashboardController.prototype = {
-        addNewJob: function (request, res) {
-            var job = request.body;
-            var tmpJson = JSON.stringify(job);
-            // apply first validation , job name exists in Jenkins
-            eRequest.get(JENKINS_JOB_URL + job.name + '/lastBuild/api/json',
-                function(error, response, body) {
-                    if(response.statusCode == 404){ // if not exist return error
-                        res.send("3");
-                    }else{
-                        // apply second validation , check if job already exists in the DB
-                        eRequest.get(buildFirebaseURL(), function(error, response, body) {
-                            var jobsObj = JSON.parse(body),
-                                jobsArr = Object.keys(jobsObj).map(function(k) {
-                                    return jobsObj[k];
-                                });
-                            var jobExistInDB = checkJobExistInDB(jobsArr, job.name);
-                            if(jobExistInDB == true){ // calling a function that search if job exists in the array
-                                // if its not duplicated , add the job to DB
-                                eRequest.patch({
-                                    headers: {'content-type': 'application/json'},
-                                    url: buildFirebaseURL(job.name),
-                                    body: tmpJson
-                                }, function (error, response, body) {
-                                    if(error){
-                                        res.send("1");
-                                    }else{
-                                        res.send("0");
-                                    }
-                                });
-                            }else{
-                                res.send("2");
-                            }
-                        });
-                    }
-                });
-        },
-
-        updateJob: function (request, res) {
-            var job = request.body;
-            delete job.result;
-            delete job.building;
-            var tmpJson = JSON.stringify(job);
-            // using 'patch' to overwrite only required fields
-            eRequest.patch({
-                headers: {'content-type': 'application/json'},
-                url: buildFirebaseURL(job.name),
-                body: tmpJson
-            }, function (error, response, body) {
-                res.send("success");
-            });
-
-
-        },
-
-        getAllJobs: function (req, res) {
-            this.getJobsFromDatabase()
-                .then(getJobsStatus)
-                .then(function (jobsWithStatuses) {
-                    res.send(jobsWithStatuses);
-                })
-                .catch(function (err) {
-                    res.send(err);
-                });
-        },
 
         getBuildStatus: function (request, response) {
             return this.statusUpdater.getBuildStatus(request.params.buildName)
                 .then(function (statuses) {
                     response.send(statuses);
                 })
-                .catch(function (error) {
-                    console.error(error);
-                    response.send(error);
-                });
+                .catch(this._handleError.bind(this, response));
         },
 
         updateStatus: function (request, response) {
@@ -105,14 +38,21 @@ module.exports = (function () {
         },
 
         getBuildTests: function (request, response) {
-            this.testsRetriever.fetchFailed(request.params.buildName, request.params.buildNumber)
+            return this.testsRetriever.fetchFailed(request.params.buildName, request.params.buildNumber, request.params.onlyFailed || false)
                 .then(function (tests) {
                     response.send(tests);
                 })
                 .catch(function (error) {
+                  console.error(error);
                     response.status(500).send(error.message);
                 });
         },
+
+      getTestsStability: function (request, response) {
+        return this._handleRequest(request, response, function () {
+          return this.testsRetriever.fetchStability(request.params.buildName, request.body, request.params.buildCount)
+        }.bind(this));
+      },
 
         // get the job list from the DB ('filter' unused for now)
         getJobsFromDatabase: function (filter) {
@@ -130,7 +70,25 @@ module.exports = (function () {
                     resolve(jobsArr);
                 });
             });
-        }
+        },
+
+      _handleError: function (response, error) {
+        console.error(error);
+        response.status(error.status || 500).send({
+          status: error.status,
+          message: error.message
+        });
+      },
+
+      _handleSuccess: function (response, result) {
+        response.send(result);
+      },
+
+      _handleRequest: function (request, response, promiseFactory) {
+        promiseFactory(request)
+            .then(this._handleSuccess.bind(this, response))
+            .catch(this._handleError.bind(this, response));
+      }
     };
 
     /*

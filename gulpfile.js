@@ -227,8 +227,8 @@ gulp.task('serve', ['build'], function () {
   });
 
   gulp.watch(['src/client/**/*.html'], ['templatecopy'], reload);
-  gulp.watch(['src/client/**/*.{scss,css}'], ['styles'], reload);
-  gulp.watch(['src/client/js/**/*.js'], ['jshint', 'jslib', 'scripts'], reload);
+  gulp.watch(['src/client/**/*.{scss,css}'], ['styles', 'inject'], reload);
+  gulp.watch(['src/client/js/**/*.js'], ['jshint', 'jslib', 'scripts', 'inject'], reload);
   gulp.watch(['src/client/images/**/*'], reload);
 });
 

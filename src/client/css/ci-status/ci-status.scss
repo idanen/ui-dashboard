@@ -13,6 +13,14 @@
       color: silver;
     }
   }
+  .new-build-number-form {
+    transition: all .3s ease-in-out;
+    height: 0;
+    overflow: hidden;
+    &.new-build-number-form-open {
+      height: 170px;
+    }
+  }
   build-progress,
   .build-progress {
     display: inline-block;

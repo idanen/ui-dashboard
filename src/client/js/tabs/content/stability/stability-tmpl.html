@@ -1,0 +1,25 @@
+<div class="stability-container">
+  <h2>
+    build: {{ $ctrl.build.name }}#{{ $ctrl.build.number }}
+  </h2>
+
+  <form class="form-horizontal">
+    <div class="form-group" ng-repeat="test in $ctrl.tests">
+      <div class="col-xs-12">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="test.selected"><span>{{ test.testClass }}#{{ test.methods | json }}</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <paper-button raised ng-click="$ctrl.fetchStability()">
+      <iron-icon icon="send"></iron-icon>
+      <span>Go!</span>
+    </paper-button>
+  </form>
+
+  <code>
+    <pre>{{$ctrl.stability | json}}</pre>
+  </code>
+</div>
