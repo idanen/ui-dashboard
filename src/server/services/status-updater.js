@@ -71,9 +71,10 @@ module.exports = (function () {
       }
       return buildsStatus;
     },
-    updateBuildStatus: function (group, jobDetails) {
+    updateBuildStatus: function (group, jobDetails, isHead) {
       console.log('group: ' + group);
       console.log('jobDetails: ' + JSON.stringify(jobDetails));
+      console.log('isHead: ' + isHead);
       if (!group) {
         return Promise.reject(new Error('No group was supplied'));
       }
@@ -85,37 +86,50 @@ module.exports = (function () {
             }
             return group;
           })
-          .then(this.determineRefToUpdate.bind(this, group, jobDetails))
+          .then(this.determineRefToUpdate.bind(this, group, jobDetails, isHead))
           .then(this.updateStatusInDB.bind(this));
     },
-    determineRefToUpdate: function (group, buildStatus) {
+    determineRefToUpdate: function (group, buildStatus, isHead) {
       var buildName = buildStatus.name,
           buildParams = buildStatus.build.parameters,
           parentName, parentNumber;
 
       console.log('Updating ref of build named "' + buildName + '"');
-      if (buildParams) {
-        parentName = buildParams.HEAD_JOB_NAME;
-        parentNumber = buildParams.HEAD_BUILD_NUMBER;
-        console.log('with parent build named "' + parentName + '" and number "' + parentNumber + '"');
+      if (!buildParams || !buildParams.HEAD_JOB_NAME || !buildParams.HEAD_BUILD_NUMBER) {
+        console.log('Canceled updating due to missing parameters');
+        return;
+      }
+
+      parentName = buildParams.HEAD_JOB_NAME;
+      parentNumber = buildParams.HEAD_BUILD_NUMBER;
+      console.log('with parent build named "' + parentName + '" and number "' + parentNumber + '"');
+
+      if (isHead) {
+        console.log('HEAD of build -> updating "' + group + '/' + buildName + '"');
         return {
-          ref: group + '/' + parentName + '/builds/' + parentNumber + '/subBuilds/' + buildName,
+          isHead: true,
+          ref: group + '/' + parentName + '/builds/' + parentNumber,
           phase: buildStatus.build.phase,
           result: buildStatus.build.status
         };
       }
 
-      console.log('No parent -> updating "' + group + '/' + buildName + '"');
       return {
-        ref: group + '/' + buildName + '/builds/' + buildStatus.build.number,
+        ref: group + '/' + parentName + '/builds/' + parentNumber + '/subBuilds/' + buildName,
         phase: buildStatus.build.phase,
         result: buildStatus.build.status
       };
     },
     updateStatusInDB: function (toUpdate) {
       var // firebaseRef = this.firebaseRef.child(toUpdate.ref),
-          updateUri = toUpdate.ref,
+          updateUri,
           rootBuildUpdate, rootBuildUri;
+
+      if (!toUpdate) {
+        return Promise.resolve();
+      }
+
+      updateUri = toUpdate.ref;
 
       delete toUpdate.ref;
       toUpdate.lastUpdate = Date.now();
@@ -131,7 +145,8 @@ module.exports = (function () {
       }
 
       // When updating the parent build also update the result in the build's root
-      if (!/subBuilds/i.test(updateUri)) {
+      if (toUpdate.isHead) {
+        delete toUpdate.isHead;
         rootBuildUri = updateUri.replace(/\/builds\/\d+\/?$/, '');
         rootBuildUpdate = this.firebase.update(rootBuildUri, {
           lastUpdate: toUpdate.lastUpdate,

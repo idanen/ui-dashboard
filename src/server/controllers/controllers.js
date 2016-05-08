@@ -27,7 +27,8 @@ module.exports = (function () {
         },
 
         updateStatus: function (request, response) {
-            return this.statusUpdater.updateBuildStatus(request.params.group, request.body)
+          var isHead = request.query && request.query.HEAD === '1';
+            return this.statusUpdater.updateBuildStatus(request.params.group, request.body, isHead)
                 .then(function () {
                     response.send('thanks');
                 })
@@ -42,8 +43,9 @@ module.exports = (function () {
               page;
           if (request.query && request.query.pageSize && (/\d+/g.test(request.query.pageSize))) {
             pageSize = parseInt(request.query.pageSize, 10);
+            page = /\d+/g.test(request.query.page) ? parseInt(request.query.page, 10) : 0;
           }
-            return this.testsRetriever.fetchFailed(request.params.buildName, request.params.buildNumber, request.params.onlyFailed || false)
+            return this.testsRetriever.fetchFailed(request.params.buildName, request.params.buildNumber, request.params.onlyFailed || false, pageSize, page)
                 .then(function (tests) {
                     response.send(tests);
                 })

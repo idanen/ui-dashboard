@@ -53,7 +53,7 @@
                       <paper-toggle-button ci-freeze-state-toggle="job.freeze"></paper-toggle-button>
                     </th>
                 </tr>
-                <tr ng-class="ciJobsCtrl.styleJobRow(build)" ng-repeat="(jobNumber, build) in job.builds">
+                <tr ng-class="ciJobsCtrl.styleJobRow(build)" ng-repeat="(jobNumber, build) in job.builds track by jobNumber">
                   <td>
                     <a ng-href="{{ ciJobsCtrl.buildCompareLink(jobName, jobNumber) }}" title="Compare this build to another">{{ jobNumber }}</a>
                     <a ng-href="{{ ciJobsCtrl.buildJenkinsLink(jobName, jobNumber) }}" target="_blank">
