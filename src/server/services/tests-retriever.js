@@ -65,10 +65,10 @@ module.exports = (function () {
   }
 
   TestsRetriever.prototype = {
-    fetchFailed: function (buildName, buildNumber, onlyFailed) {
+    fetchFailed: function (buildName, buildNumber, onlyFailed, pageSize, page) {
       //return this._promisize('find', {jobName: buildName, buildId: buildNumber, testFailed: true});
       console.log('buildName: \"' + buildName + '", buildNumber: ' + buildNumber);
-      return this._promisize('aggregate', [
+      var aggregations = [
         {
           $match: {
             jobName: buildName,
@@ -89,20 +89,17 @@ module.exports = (function () {
             },
             tests: { $push: '$$ROOT' }
           }
-        }/*,
-        {
-          $project: {
-            _id: 0,
-            tests: 1
-          }
-        },
-        {
-          $group: {
-            _id: '$tests.testClassName',
-            tests: { $push: '$$ROOT' }
-          }
-        }*/
-      ]);
+        }
+      ];
+      if (pageSize) {
+        aggregations.push({
+          $skip: pageSize * (page || 0)
+        });
+        aggregations.push({
+          $limit: pageSize
+        });
+      }
+      return this._promisize('aggregate', aggregations);
       //return Promise.resolve(mockTests);
     },
     fetchStability: function (buildName, tests, buildCount) {

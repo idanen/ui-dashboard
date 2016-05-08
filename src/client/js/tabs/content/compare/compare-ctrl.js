@@ -18,6 +18,14 @@
     };
     this.selectedLeft = {};
     this.selectedRight = {};
+    this.selected = {
+      left: {
+        group: 'masters'
+      },
+      right: {
+        group: 'masters'
+      }
+    };
 
     this.availableBuilds.masters.$loaded()
       .then(this.selectFirstOptions.bind(this))
@@ -33,28 +41,35 @@
       this.selectedRight[prop] = value;
       this.updateState();
     },
+    selectionChanged: function (side, prop, value) {
+      this.selected[side][prop] = value;
+      this.getTests();
+    },
     updateState: function () {
       this.$state.go('compare', {
-        buildName: this.selectedLeft.name,
-        buildNumber: this.selectedLeft.number,
-        toBuildName: this.selectedRight.name,
-        toBuildNumber: this.selectedRight.number
+        buildName: this.selected.left.name,
+        buildNumber: this.selected.left.number,
+        toBuildName: this.selected.right.name,
+        toBuildNumber: this.selected.right.number
       });
     },
     selectFirstOptions: function () {
       if (this.build) {
-        this.selectedLeft = {
+        this.selected.left = {
+          group: 'masters',
           name: this.build.name,
           number: this.build.number
         };
       }
       if (this.toBuild && this.toBuild.name && this.toBuild.number) {
-        this.selectedRight = {
+        this.selected.right = {
+          group: 'masters',
           name: this.toBuild.name,
           number: this.toBuild.number
         };
       } else {
-        this.selectedRight = {
+        this.selected.right = {
+          group: 'masters',
           name: this.build.name,
           number: this.build.number - 1
         };
@@ -62,8 +77,8 @@
     },
     getTests: function () {
       var promises = [];
-      promises.push(this.buildTestsService.fetch(this.build.name, this.build.number));
-      promises.push(this.buildTestsService.fetch(this.toBuild.name, this.toBuild.number));
+      promises.push(this.buildTestsService.fetch(this.selected.left.name, this.selected.left.number, false));
+      promises.push(this.buildTestsService.fetch(this.selected.right.name, this.selected.right.number, false));
 
       this.$q.all(promises).then((tests) => {
         this.leftTests = tests[0];

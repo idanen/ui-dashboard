@@ -4,46 +4,42 @@
   </div>
   <div class="row">
     <div class="col-md-6">
-      <build-selector builds="compare.availableBuilds.masters" selected="compare.selectedLeft"
-                      on-change="compare.leftSelectionChanged(prop, value)"></build-selector>
+      <select name="selectLeftBuildGroup" ng-model="compare.selected.left.group" ng-options="group as group for (group, builds) in compare.availableBuilds"></select>
+      <build-selector builds="compare.availableBuilds[compare.selected.left.group]" selected="compare.selected.left"
+                      on-change="compare.selectionChanged('left', prop, value)"></build-selector>
       <uib-accordion close-others="false">
-        <uib-accordion-group ng-repeat="test in compare.leftTests | orderBy:'insertionTime':true">
+        <uib-accordion-group ng-repeat="testList in compare.leftTests | orderBy:'_id.testClassName'">
           <uib-accordion-heading>
-            <iron-icon icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'"></iron-icon>
-            <span> {{ test.testClassName | className }}</span>
-            <em>
-              <time is="time-ago" datetime="{{ test.insertionTime | date:'yyyy-MM-ddTHH:mmZ' }}"
-                    title="{{ test.insertionTime | date }}">
-                {{ test.insertionTime | date }}
-              </time>
-            </em>
+            <span> {{ testList._id.testClassName | className }}</span>
+            <span class="badge" ng-bind="testList.tests.length"></span>
           </uib-accordion-heading>
-          <h3>{{ test.testName | className }}</h3>
-          <pre>
-            <code>{{ test.exceptionStacktrace }}</code>
-          </pre>
+          <ul class="list-group">
+            <li class="list-group-item" ng-repeat="test in testList.tests | orderBy:'testName'">
+              <strong> {{ test.testName | className }}</strong>
+              <paper-badge icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'" alt="Connection exception"></paper-badge>
+              <em> {{ test.errorMessage }}</em>
+            </li>
+          </ul>
         </uib-accordion-group>
       </uib-accordion>
     </div>
     <div class="col-md-6">
-      <build-selector builds="compare.availableBuilds.masters" selected="compare.selectedRight"
-                      on-change="compare.rightSelectionChanged(prop, value)"></build-selector>
+      <select name="selectRightBuildGroup" ng-model="compare.selected.right.group" ng-options="group as group for (group, builds) in compare.availableBuilds"></select>
+      <build-selector builds="compare.availableBuilds.masters" selected="compare.selected.right"
+                      on-change="compare.selectionChanged('right', prop, value)"></build-selector>
       <uib-accordion close-others="false">
-        <uib-accordion-group ng-repeat="test in compare.rightTests | orderBy:'insertionTime':true">
+        <uib-accordion-group ng-repeat="testList in compare.rightTests">
           <uib-accordion-heading>
-            <iron-icon icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'"></iron-icon>
-            <span> {{ test.testClassName | className }}</span>
-            <em>
-              <time is="time-ago" datetime="{{ test.insertionTime | date:'yyyy-MM-ddTHH:mmZ' }}"
-                    title="{{ test.insertionTime | date }}">
-                {{ test.insertionTime | date }}
-              </time>
-            </em>
+            <span> {{ testList._id.testClassName | className }}</span>
+            <span class="badge" ng-bind="testList.tests.length"></span>
           </uib-accordion-heading>
-          <h3>{{ test.testName | className }}</h3>
-          <pre>
-            <code>{{ test.exceptionStacktrace }}</code>
-          </pre>
+          <ul class="list-group">
+            <li class="list-group-item" ng-repeat="test in testList.tests">
+              <strong> {{ test.testName | className }}</strong>
+              <paper-badge icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'" alt="Connection exception"></paper-badge>
+              <em> {{ test.errorMessage }}</em>
+            </li>
+          </ul>
         </uib-accordion-group>
       </uib-accordion>
     </div>

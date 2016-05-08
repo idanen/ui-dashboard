@@ -38,6 +38,11 @@ module.exports = (function () {
         },
 
         getBuildTests: function (request, response) {
+          var pageSize,
+              page;
+          if (request.query && request.query.pageSize && (/\d+/g.test(request.query.pageSize))) {
+            pageSize = parseInt(request.query.pageSize, 10);
+          }
             return this.testsRetriever.fetchFailed(request.params.buildName, request.params.buildNumber, request.params.onlyFailed || false)
                 .then(function (tests) {
                     response.send(tests);

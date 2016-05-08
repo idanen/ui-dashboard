@@ -6,7 +6,12 @@
 
   BuildTestsService.$inject = ['$resource', 'ENV'];
   function BuildTestsService($resource, ENV) {
-    this.BuildTests = $resource(`http://${ENV.HOST}:${ENV.PORT}/buildTests/:buildName/:buildNumber/:onlyFailed`);
+    this.BuildTests = $resource(`http://${ENV.HOST}:${ENV.PORT}/buildTests/:buildName/:buildNumber/:onlyFailed`, {}, {
+      specific: {
+        method: 'POST',
+        isArray: true
+      }
+    });
     this.Stability = $resource(`http://${ENV.HOST}:${ENV.PORT}/stability/:buildName/:buildCount`, {}, {
       query: {
         method: 'POST',
