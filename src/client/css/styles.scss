@@ -58,13 +58,6 @@ body {
   cursor: pointer;
 }
 
-@media (max-width: 991px) {
-  .fixed-widgets-container,
-  .dynamic-widgets-container {
-    height: auto;
-  }
-}
-
 .tabs-navigation-list {
     background-color: gainsboro;
     height: 700px;
