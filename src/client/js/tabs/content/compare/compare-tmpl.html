@@ -8,10 +8,13 @@
       <build-selector builds="compare.availableBuilds[compare.selected.left.group]" selected="compare.selected.left"
                       on-change="compare.selectionChanged('left', prop, value)"></build-selector>
       <uib-accordion close-others="false">
-        <uib-accordion-group ng-repeat="testList in compare.leftTests | orderBy:'_id.testClassName'">
+        <uib-accordion-group ng-repeat="testList in compare.leftTests | orderBy:'_id.testClassName'" panel-class="{{testList.tests[0].testFailed ? 'panel-warning' : 'panel-success'}}">
           <uib-accordion-heading>
             <span> {{ testList._id.testClassName | className }}</span>
             <span class="badge" ng-bind="testList.tests.length"></span>
+            <div class="pull-right" ng-class="testList.tests[0].testFailed ? 'text-warning' : 'text-success'">
+              <iron-icon icon="{{ testList.tests[0].testFailed ? 'error-outline' : 'check' }}"></iron-icon>
+            </div>
           </uib-accordion-heading>
           <ul class="list-group">
             <li class="list-group-item" ng-repeat="test in testList.tests | orderBy:'testName'">
@@ -28,10 +31,13 @@
       <build-selector builds="compare.availableBuilds.masters" selected="compare.selected.right"
                       on-change="compare.selectionChanged('right', prop, value)"></build-selector>
       <uib-accordion close-others="false">
-        <uib-accordion-group ng-repeat="testList in compare.rightTests">
+        <uib-accordion-group ng-repeat="testList in compare.rightTests | orderBy:'_id.testClassName'" panel-class="{{testList.tests[0].testFailed ? 'panel-warning' : 'panel-success'}}">
           <uib-accordion-heading>
             <span> {{ testList._id.testClassName | className }}</span>
             <span class="badge" ng-bind="testList.tests.length"></span>
+            <div class="pull-right" ng-class="testList.tests[0].testFailed ? 'text-warning' : 'text-success'">
+              <iron-icon icon="{{ testList.tests[0].testFailed ? 'error-outline' : 'check' }}"></iron-icon>
+            </div>
           </uib-accordion-heading>
           <ul class="list-group">
             <li class="list-group-item" ng-repeat="test in testList.tests">

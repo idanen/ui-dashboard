@@ -1,0 +1,46 @@
+<table class="table table-responsive table-hover">
+  <tbody class="builds-group slide-in">
+    <tr>
+      <th data-toggle="tooltip" title="{{ $ctrl.buildName }}">
+        {{ $ctrl.build.alias }}
+      </th>
+      <th>
+        <iron-icon class="job-result-icon" icon="{{ $ctrl.resultToIconName($ctrl.build.result) }}"
+                   ng-class="'job-result-icon-' + $ctrl.resultToIconName($ctrl.build.result)"></iron-icon>
+        <span>{{ $ctrl.build.result }}</span>
+      </th>
+      <th colspan="2">
+        <time is="time-ago" datetime="{{ $ctrl.build.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
+              title="{{ $ctrl.build.lastUpdate | date }}">
+          {{ $ctrl.build.lastUpdate | date }}
+        </time>
+      </th>
+      <th>
+        <ci-freeze-state-toggle freeze="$ctrl.build.freeze" on-update="$ctrl.freezeState(freeze)"></ci-freeze-state-toggle>
+      </th>
+    </tr>
+    <tr class="slide-in" ng-class="$ctrl.resultToClass(build)"
+        ng-repeat="build in $ctrl.buildResults | orderBy:'$id':true track by $index">
+      <td>
+        <a ng-href="{{ $ctrl.buildCompareLink(build.$id) }}" title="Compare this build to another">{{ build.$id }}</a>
+        <a ng-href="{{ $ctrl.buildJenkinsLink(build.$id) }}" title="Open in Jenkins" target="_blank">
+          <iron-icon icon="open-in-new"></iron-icon>
+        </a>
+      </td>
+      <td>
+        <iron-icon class="job-result-icon" icon="{{ $ctrl.resultToIconName(build.result) }}"
+                   ng-class="'job-result-icon-' + $ctrl.resultToIconName(build.result)"></iron-icon>
+        <span>{{ build.result }}</span>
+      </td>
+      <td>
+        <time is="time-ago" datetime="{{ build.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
+              title="{{ build.lastUpdate | date }}">
+          {{ build.lastUpdate | date }}
+        </time>
+      </td>
+      <td colspan="2">
+        <build-progress build-name="$ctrl.buildName" build-number="build.$id"></build-progress>
+      </td>
+    </tr>
+  </tbody>
+</table>

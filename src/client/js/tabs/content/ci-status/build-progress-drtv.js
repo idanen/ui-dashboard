@@ -2,7 +2,19 @@
   'use strict';
 
   angular.module('tabs')
-      .directive('buildProgress', buildProgressFactory)
+      .component('buildProgress', {
+        controller: BuildProgressController,
+        bindings: {
+          buildName: '<',
+          buildNumber: '<',
+          teamId: '<?'
+        },
+        template: `
+          <div class="build-progress">
+            <div class="sub-build slide-in" ng-repeat="(subBuildName, subBuild) in $ctrl.subBuilds" title="{{ subBuildName }}" ng-class="$ctrl.determineClass(subBuild)"></div>
+          </div>
+        `
+      })
       .controller('BuildProgressCtrl', BuildProgressController);
 
   function buildProgressFactory() {
@@ -14,12 +26,11 @@
       bindToController: {
         buildName: '<',
         buildNumber: '<',
-        subBuilds: '<',
         teamId: '<?'
       },
       template: `
       <div class="build-progress">
-        <div class="sub-build" ng-repeat="(subBuildName, subBuild) in buildProgress.subBuilds" title="{{ subBuildName }}" ng-class="buildProgress.determineClass(subBuild)"></div>
+        <div class="sub-build slide-in" ng-repeat="(subBuildName, subBuild) in buildProgress.subBuilds" title="{{ subBuildName }}" ng-class="buildProgress.determineClass(subBuild)"></div>
       </div>`
     };
   }
@@ -27,13 +38,17 @@
   BuildProgressController.$inject = ['ciStatusService', '$scope'];
   function BuildProgressController(ciStatusService, $scope) {
     this.statusService = ciStatusService;
-
-    $scope.$watch(() => {
-      return this.buildName;
-    }, this.getSubBuilds.bind(this));
   }
 
   BuildProgressController.prototype = {
+    $onInit: function () {
+      this.getSubBuilds();
+    },
+    $onChanges: function (changes) {
+      if (changes && changes.buildNumber) {
+        this.getSubBuilds();
+      }
+    },
     getSubBuilds: function () {
       if (this.buildName && this.buildNumber) {
         this.subBuilds = this.statusService.getJobSubBuilds(this.buildName, this.buildNumber, this.teamId);

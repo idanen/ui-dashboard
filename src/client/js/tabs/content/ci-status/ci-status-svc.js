@@ -60,8 +60,8 @@
         })
         .service('ciStatusService', CiStatusService);
 
-    CiStatusService.$inject = ['$http', '$q', 'Ref', '$firebaseObject', '$firebaseArray', '$stateParams', 'ENV'];
-    function CiStatusService($http, $q, ref, $firebaseObject, $firebaseArray, $stateParams, ENV) {
+    CiStatusService.$inject = ['$http', '$q', 'Ref', '$firebaseObject', '$firebaseArray', 'ENV'];
+    function CiStatusService($http, $q, ref, $firebaseObject, $firebaseArray, ENV) {
         this._jobsUrl = '//' + ENV.HOST + ':' + ENV.PORT;
         this._jobsRef = ref.child('allJobs');
         this._statusRef = ref.child('ciStatus');
@@ -75,7 +75,7 @@
 
     CiStatusService.prototype = {
         getJobs: function (group = 'masters') {
-            return this.$firebaseObject(group ? this._statusRef.child(group) : this._statusRef.child('masters'));
+            return this.$firebaseArray(this._statusRef.child(group));
         },
         getLastBuildNumber: function (group = 'masters', buildName = 'MaaS-SAW-USB-master') {
             return this.$q((resolve) => {
@@ -95,10 +95,14 @@
 
             return this.$firebaseObject(this._mastersRef.child(jobId));
         },
-        getJobBuilds: function (jobId, teamId) {
+        getJobBuilds: function (jobId, teamId, limit) {
             var startRef = this._getRef(jobId, teamId);
 
-            return this.$firebaseObject(startRef.child('builds'));
+            if (limit && angular.isNumber(limit)) {
+                return this.$firebaseArray(startRef.child('builds').orderByKey().limitToLast(limit));
+            }
+
+            return this.$firebaseArray(startRef.child('builds'));
         },
         getJobSubBuilds: function (jobId, jobNumber, teamId) {
             var startRef = this._getRef(jobId, teamId);

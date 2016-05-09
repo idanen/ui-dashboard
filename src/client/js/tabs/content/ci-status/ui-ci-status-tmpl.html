@@ -21,7 +21,7 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <table class="table">
+            <table class="table table-responsive table-hover">
                 <thead>
                     <tr>
                         <th colspan="5">Master Branches</th>
@@ -34,48 +34,10 @@
                         <th>Freeze</th>
                     </tr>
                 </thead>
-                <tbody class="builds-group" ng-repeat="(jobName, job) in ciJobsCtrl.listOfJobs">
-                <tr>
-                    <th data-toggle="tooltip" title="{{ job.alias }}">
-                        {{ job.alias }}
-                    </th>
-                    <th>
-                      <iron-icon class="job-result-icon" icon="{{ ciJobsCtrl.resultToIconName(job.result) }}" ng-class="'job-result-icon-' + ciJobsCtrl.resultToIconName(job.result)"></iron-icon>
-                      <span>{{ job.result }}</span>
-                    </th>
-                    <th colspan="2">
-                        <time is="time-ago" datetime="{{ job.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
-                              title="{{ job.lastUpdate | date }}">
-                            {{ job.lastUpdate | date }}
-                        </time>
-                    </th>
-                    <th>
-                      <paper-toggle-button ci-freeze-state-toggle="job.freeze"></paper-toggle-button>
-                    </th>
-                </tr>
-                <tr ng-class="ciJobsCtrl.styleJobRow(build)" ng-repeat="(jobNumber, build) in job.builds track by jobNumber">
-                  <td>
-                    <a ng-href="{{ ciJobsCtrl.buildCompareLink(jobName, jobNumber) }}" title="Compare this build to another">{{ jobNumber }}</a>
-                    <a ng-href="{{ ciJobsCtrl.buildJenkinsLink(jobName, jobNumber) }}" target="_blank">
-                      <iron-icon icon="open-in-new"></iron-icon>
-                    </a>
-                  </td>
-                  <td>
-                    <iron-icon class="job-result-icon" icon="{{ ciJobsCtrl.resultToIconName(build.result) }}" ng-class="'job-result-icon-' + ciJobsCtrl.resultToIconName(build.result)"></iron-icon>
-                    <span>{{ build.result }}</span>
-                  </td>
-                  <td>
-                      <time is="time-ago" datetime="{{ build.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
-                            title="{{ build.lastUpdate | date }}">
-                          {{ build.lastUpdate | date }}
-                      </time>
-                  </td>
-                  <td colspan="2">
-                    <build-progress build-name="jobName" build-number="jobNumber"></build-progress>
-                  </td>
-                </tr>
-                </tbody>
             </table>
+          <div class="row-fluid" ng-repeat="job in ciJobsCtrl.listOfJobs track by job.$id">
+            <build-status class="builds-group slide-in" build-name="job.$id" jobs-limit="3"></build-status>
+          </div>
         </div>
     </div>
 

@@ -8,6 +8,8 @@ module.exports = function (app) {
 
     app.get('/buildTests/:buildName/:buildNumber/:onlyFailed?', controller.getBuildTests.bind(controller));
 
+    app.post('/buildTests/:buildName/:buildNumber', controller.getSpecificBuildTests.bind(controller));
+
     app.post('/stability/:buildName/:buildCount', controller.getTestsStability.bind(controller));
 
     app.post('/updateStatus/:group', controller.updateStatus.bind(controller));

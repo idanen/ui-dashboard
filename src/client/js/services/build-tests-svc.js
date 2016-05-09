@@ -24,6 +24,9 @@
     fetch: function (buildName, buildNumber, onlyFailed = true) {
       return this.BuildTests.query({buildName, buildNumber, onlyFailed}).$promise;
     },
+    fetchSpecific: function (buildName, buildNumber, tests) {
+
+    },
     getStability: function (buildName, tests, buildCount = 10) {
       return this.Stability.query({buildName, buildCount}, tests).$promise;
     }

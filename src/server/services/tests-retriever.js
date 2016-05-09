@@ -85,7 +85,8 @@ module.exports = (function () {
         {
           $group: {
             _id: {
-              testClassName: '$testClassName'
+              testClassName: '$testClassName',
+              category: '$category'
             },
             tests: { $push: '$$ROOT' }
           }
@@ -136,7 +137,7 @@ module.exports = (function () {
           }
         },
         {
-          $limit: 20
+          $limit: 10 * classesAndMethods.methods.length
         },
         {
           $group: {
@@ -151,6 +152,52 @@ module.exports = (function () {
           }
         }
       ]);
+    },
+    fetchSpecific: function (buildName, buildNumber, tests, pageSize, page) {
+      console.log('fetchSpecific: buildName: \"' + buildName + '", buildNumber: ' + buildNumber + ', tests: ', tests);
+      var classesAndMethods, aggregations;
+      classesAndMethods = _.transform(tests, function (result, value) {
+        result.classes.push(value.testClass);
+        result.methods = result.methods.concat(value.methods);
+      }, { classes: [], methods: [] });
+      aggregations = [
+        {
+          $match: {
+            jobName: buildName,
+            buildId: buildNumber,
+            testClassName: {
+              $in: classesAndMethods.classes
+            },
+            testName: {
+              $in: classesAndMethods.methods
+            }
+          }
+        },
+        {
+          $sort: {
+            category: 1,
+            testClassName: 1
+          }
+        },
+        {
+          $group: {
+            _id: {
+              testClassName: '$testClassName',
+              category: '$category'
+            },
+            tests: { $push: '$$ROOT' }
+          }
+        }
+      ];
+      if (pageSize) {
+        aggregations.push({
+          $skip: pageSize * (page || 0)
+        });
+        aggregations.push({
+          $limit: pageSize
+        });
+      }
+      return this._promisize('aggregate', aggregations);
     },
     _promisize: function (method, data) {
       return new Promise(function (resolve, reject) {

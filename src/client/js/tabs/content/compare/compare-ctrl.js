@@ -33,14 +33,6 @@
   }
 
   CompareController.prototype = {
-    leftSelectionChanged: function (prop, value) {
-      this.selectedLeft[prop] = value;
-      this.updateState();
-    },
-    rightSelectionChanged: function (prop, value) {
-      this.selectedRight[prop] = value;
-      this.updateState();
-    },
     selectionChanged: function (side, prop, value) {
       this.selected[side][prop] = value;
       this.getTests();
@@ -83,6 +75,18 @@
       this.$q.all(promises).then((tests) => {
         this.leftTests = tests[0];
         this.rightTests = tests[1];
+
+        // Copy missing class between lists
+        this.leftTests.forEach((test) => {
+          if (!_.contains(this.rightTests, test)) {
+            this.rightTests.push(_.extend({}, test, {alien: true, testFailed: false}));
+          }
+        });
+        this.rightTests.forEach((test) => {
+          if (!_.contains(this.leftTests, test)) {
+            this.leftTests.push(_.extend({}, test, {alien: true, testFailed: false}));
+          }
+        });
       });
     }
   };

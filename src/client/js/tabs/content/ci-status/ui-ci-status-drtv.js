@@ -14,7 +14,17 @@
           ABORTED: 'remove-circle-outline',
           UNKNOWN: 'help-outline'
         })
-        .directive('ciFreezeStateToggle', CiFreezeStateToggleDirectiveFactory)
+        //.directive('ciFreezeStateToggle', CiFreezeStateToggleDirectiveFactory)
+        .component('ciFreezeStateToggle', {
+          controller: CiFreezeStateToggleController,
+          template: `
+            <paper-toggle-button></paper-toggle-button>
+          `,
+          bindings: {
+            freeze: '<',
+            onUpdate: '&'
+          }
+        })
         .directive('uiCiStatus', [function () {
             return {
                 restrict: 'E',
@@ -33,10 +43,10 @@
       this.ciStatusService = ciStatusService;
       this.JENKINS_BASE_URL = JENKINS_BASE_URL;
       this.ResultsToIconNames = ResultsToIconNames;
-      this.jobs = this.ciStatusService.getJobs();
-      this.listOfJobs = {}; // the list of jobs we get from server and use in ng-repeat
+      this.listOfJobs = this.ciStatusService.getJobs();
+      //this.listOfJobs = {}; // the list of jobs we get from server and use in ng-repeat
       // This assumes the controller's name is `ciJobsCtrl`
-      this.ciStatusService.getJobs().$bindTo($scope, 'ciJobsCtrl.listOfJobs');
+      //this.ciStatusService.getJobs().$bindTo($scope, 'ciJobsCtrl.listOfJobs');
       this.animateOnUpdate = 'fadeOut'; // ng-class fading for refreshing data
       this.loading = false; // when it true , progress bar enabled and job list disabled..
       this.dataDismiss = ' '; // we change it to keep the modal open until response of the server
@@ -145,17 +155,22 @@
           });
           return displayArray;
         },
+        getBuilds: function (job) {
+          return this.ciStatusService.getJobBuilds(job.$id, false, 3);
+        },
         /**
          * Displays the alias, if it doesn't exist we will show the job name.
          * @param {object} job the job
          * @returns {string} the job's display name
          */
         displayName: function (job) {
-            if (job.alias) {
-                return job.alias;
-            } else {
-                return job.name;
-            }
+          if (!job) {
+            return '';
+          }
+          if (job.alias) {
+            return job.alias;
+          }
+          return job.name;
         },
         status: function (job) {
           if (!job) {
@@ -250,4 +265,29 @@
 
         return ddo;
     }
+
+  CiFreezeStateToggleController.$inject = ['$element'];
+  function CiFreezeStateToggleController($element) {
+    this.$element = $element;
+  }
+    CiFreezeStateToggleController.prototype = {
+      $onInit: function () {
+        this.$element.find('paper-toggle-button')[0].checked = this.freeze;
+      },
+      $postLink: function () {
+        var $toggler = this.$element.find('paper-toggle-button');
+        $toggler.on('iron-change', (ev) => {
+          this.onUpdate({freeze: ev.target.checked});
+        });
+
+        this.$element.on('$destroy', () => {
+          $toggler.off();
+        });
+      },
+      $onChanges: function (changes) {
+        if (changes && changes.freeze) {
+          this.$element.find('paper-toggle-button')[0].checked = changes.freeze.currentValue;
+        }
+      }
+    };
 })();
