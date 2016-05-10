@@ -37,8 +37,8 @@
     },
     getAllTests: function () {
       return this.getTests()
-          .then(this.getTestsOfOther.bind(this));
-          //.then(this.assignToViewModel.bind(this));
+          .then(this.getTestsOfOther.bind(this))
+          .then(this.assignToViewModel.bind(this));
     },
     updateState: function () {
       this.$state.go('compare', {
@@ -114,20 +114,18 @@
       this.rightTests = rightTests.concat(_.map(addToRight, this._alienize));
 
       // Request tests status
-      //diffsPromises.push(
-      //    this.buildTestsService.fetchSpecific(this.selected.left.name, this.selected.left.number, this._groupByClass(addToLeft))
-      //        .then(this._alienize)
-      //);
-      //diffsPromises.push(
-      //    this.buildTestsService.fetchSpecific(this.selected.right.name, this.selected.right.number, this._groupByClass(addToRight))
-      //        .then(this._alienize)
-      //);
+      diffsPromises.push(
+          this.buildTestsService.fetchSpecific(this.selected.left.name, this.selected.left.number, this._groupByClass(addToLeft))
+      );
+      diffsPromises.push(
+          this.buildTestsService.fetchSpecific(this.selected.right.name, this.selected.right.number, this._groupByClass(addToRight))
+      );
 
       return this.$q.all(diffsPromises);
     },
     assignToViewModel: function (both) {
-      this.leftTests = this.leftTests.concat(both[0]);
-      this.rightTests = this.rightTests.concat(both[1]);
+      this._extendingWithServerResults(this.leftTests, both[0], this._testEquals.bind(this));
+      this._extendingWithServerResults(this.rightTests, both[1], this._testEquals.bind(this));
     },
     _groupByClass: function (tests) {
       var testsByClass = [];
@@ -152,14 +150,19 @@
       return _.isEqual(origTests, otherTests);
     },
     _omitIrrelevantFieldsFromTest: (test) => {
-      return _.omit(test, ['buildId', 'testDuration', 'insertionTime', 'testFailed', 'exceptionStacktrace', 'errorMessage']);
+      return _.omit(test, ['buildId', 'testDuration', 'insertionTime', 'testFailed', 'exceptionStacktrace', 'errorMessage', '_id']);
     },
     _alienize: function (testWrap) {
-      var modified = _.extend({alien: true}, testWrap);
-      modified.tests = testWrap.tests.map((test) => {
-        return _.extend({alien: true}, test);
+      return _.extend({alien: true}, testWrap);
+    },
+    _extendingWithServerResults: function (original, serverResults, equalizer) {
+      serverResults.forEach((testFromServer) => {
+        var found = _.find(original, (test) => equalizer(test, testFromServer));
+        if (found) {
+          delete found.alien;
+          _.extend(found, testFromServer);
+        }
       });
-      return modified;
     }
   };
 }());

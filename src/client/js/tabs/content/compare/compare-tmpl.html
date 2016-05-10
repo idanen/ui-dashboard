@@ -4,14 +4,15 @@
   </div>
   <div class="row">
     <div class="col-md-6">
+      <label>Select build</label>
       <select name="selectLeftBuildGroup" ng-model="compare.selected.left.group" ng-options="group as group for (group, builds) in compare.availableBuilds"></select>
       <build-selector builds="compare.availableBuilds[compare.selected.left.group]" selected="compare.selected.left"
                       on-change="compare.selectionChanged('left', prop, value)"></build-selector>
       <uib-accordion close-others="false">
         <uib-accordion-group ng-repeat="testList in compare.leftTests | orderBy:'_id.testClassName' track by $index" panel-class="{{compare.panelClass(testList)}}">
           <uib-accordion-heading>
-            <span> {{ testList._id.testClassName | className }}</span>
-            <span class="badge" ng-bind="testList.tests.length"></span>
+            <span ng-class="compare.testIconClass(testList)">{{ testList._id.testClassName | className }}</span>
+            <span class="badge" ng-class="compare.testIconClass(testList)" ng-bind="testList.tests.length"></span>
             <div class="pull-right" ng-class="compare.testIconClass(testList)">
               <iron-icon icon="{{ compare.testIcon(testList) }}"></iron-icon>
             </div>
@@ -27,14 +28,15 @@
       </uib-accordion>
     </div>
     <div class="col-md-6">
+      <label>Select build</label>
       <select name="selectRightBuildGroup" ng-model="compare.selected.right.group" ng-options="group as group for (group, builds) in compare.availableBuilds"></select>
       <build-selector builds="compare.availableBuilds.masters" selected="compare.selected.right"
                       on-change="compare.selectionChanged('right', prop, value)"></build-selector>
       <uib-accordion close-others="false">
         <uib-accordion-group ng-repeat="testList in compare.rightTests | orderBy:'_id.testClassName' track by $index" panel-class="{{compare.panelClass(testList)}}">
           <uib-accordion-heading>
-            <span> {{ testList._id.testClassName | className }}</span>
-            <span class="badge" ng-bind="testList.tests.length"></span>
+            <span ng-class="compare.testIconClass(testList)"> {{ testList._id.testClassName | className }}</span>
+            <span class="badge" ng-bind="testList.tests.length" ng-class="compare.testIconClass(testList)"></span>
             <div class="pull-right" ng-class="compare.testIconClass(testList)">
               <iron-icon icon="{{ compare.testIcon(testList) }}"></iron-icon>
             </div>
