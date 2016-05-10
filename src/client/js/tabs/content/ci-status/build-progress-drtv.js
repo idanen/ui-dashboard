@@ -17,26 +17,8 @@
       })
       .controller('BuildProgressCtrl', BuildProgressController);
 
-  function buildProgressFactory() {
-    return {
-      restrict: 'E',
-      scope: {},
-      controller: 'BuildProgressCtrl',
-      controllerAs: 'buildProgress',
-      bindToController: {
-        buildName: '<',
-        buildNumber: '<',
-        teamId: '<?'
-      },
-      template: `
-      <div class="build-progress">
-        <div class="sub-build slide-in" ng-repeat="(subBuildName, subBuild) in buildProgress.subBuilds" title="{{ subBuildName }}" ng-class="buildProgress.determineClass(subBuild)"></div>
-      </div>`
-    };
-  }
-
-  BuildProgressController.$inject = ['ciStatusService', '$scope'];
-  function BuildProgressController(ciStatusService, $scope) {
+  BuildProgressController.$inject = ['ciStatusService'];
+  function BuildProgressController(ciStatusService) {
     this.statusService = ciStatusService;
   }
 

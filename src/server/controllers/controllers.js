@@ -45,7 +45,7 @@ module.exports = (function () {
             pageSize = parseInt(request.query.pageSize, 10);
             page = /\d+/g.test(request.query.page) ? parseInt(request.query.page, 10) : 0;
           }
-            return this.testsRetriever.fetchFailed(request.params.buildName, request.params.buildNumber, request.params.onlyFailed || false, pageSize, page)
+            return this.testsRetriever.fetchFailed(request.params.buildName, parseInt(request.params.buildNumber, 10), request.params.onlyFailed || false, pageSize, page)
                 .then(function (tests) {
                     response.send(tests);
                 })
@@ -62,7 +62,7 @@ module.exports = (function () {
           pageSize = parseInt(request.query.pageSize, 10);
           page = /\d+/g.test(request.query.page) ? parseInt(request.query.page, 10) : 0;
         }
-        return this.testsRetriever.fetchSpecific(request.params.buildName, request.params.buildNumber, request.body, pageSize, page)
+        return this.testsRetriever.fetchSpecific(request.params.buildName, parseInt(request.params.buildNumber, 10), request.body, pageSize, page)
             .then(function (tests) {
               response.send(tests);
             })

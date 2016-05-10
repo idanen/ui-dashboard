@@ -72,7 +72,7 @@ module.exports = (function () {
         {
           $match: {
             jobName: buildName,
-            buildId: parseInt(buildNumber, 10),
+            buildId: buildNumber,
             testFailed: !!onlyFailed
           }
         },
