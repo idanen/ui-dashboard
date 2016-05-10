@@ -66,8 +66,7 @@ module.exports = (function () {
 
   TestsRetriever.prototype = {
     fetchFailed: function (buildName, buildNumber, onlyFailed, pageSize, page) {
-      //return this._promisize('find', {jobName: buildName, buildId: buildNumber, testFailed: true});
-      console.log('buildName: \"' + buildName + '", buildNumber: ' + buildNumber);
+      // console.log('buildName: \"' + buildName + '", buildNumber: ' + buildNumber);
       var aggregations = [
         {
           $match: {
@@ -101,10 +100,9 @@ module.exports = (function () {
         });
       }
       return this._promisize('aggregate', aggregations);
-      //return Promise.resolve(mockTests);
     },
     fetchStability: function (buildName, tests, buildCount) {
-      console.log('buildName: \"' + buildName + '", buildCount: ' + buildCount + ', tests: ', tests);
+      // console.log('buildName: \"' + buildName + '", buildCount: ' + buildCount + ', tests: ', tests);
       var classesAndMethods;
       classesAndMethods = _.transform(tests, function (result, value) {
         result.classes.push(value.testClass);
@@ -154,7 +152,7 @@ module.exports = (function () {
       ]);
     },
     fetchSpecific: function (buildName, buildNumber, tests, pageSize, page) {
-      console.log('fetchSpecific: buildName: \"' + buildName + '", buildNumber: ' + buildNumber + ', tests: ', tests);
+      // console.log('fetchSpecific: buildName: \"' + buildName + '", buildNumber: ' + buildNumber + ', tests: ', tests);
       var classesAndMethods, aggregations;
       classesAndMethods = _.transform(tests, function (result, value) {
         result.classes.push(value.testClass);

@@ -25,7 +25,7 @@
       return this.BuildTests.query({buildName, buildNumber, onlyFailed}).$promise;
     },
     fetchSpecific: function (buildName, buildNumber, tests) {
-      console.log('sending request to get tests ', tests);
+      // console.log('sending request to get tests ', tests);
       return this.BuildTests.specific({buildName, buildNumber}, tests).$promise;
     },
     getStability: function (buildName, tests, buildCount = 10) {

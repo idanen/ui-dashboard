@@ -78,22 +78,22 @@
       return this.$q.all(promises);
     },
     panelClass: function (aTest) {
-      if (aTest.tests[0].alien) {
+      if (aTest.alien) {
         return '';
       }
-      return aTest.tests[0].testFailed ? 'panel-danger' : 'panel-success';
+      return aTest.tests.some((test) => test.testFailed) ? 'panel-danger' : 'panel-success';
     },
     testIcon: function (aTest) {
-      if (aTest.tests[0].alien) {
+      if (aTest.alien) {
         return 'help-outline';
       }
-      return aTest.tests[0].testFailed ? 'error-outline' : 'check';
+      return aTest.tests.some((test) => test.testFailed) ? 'error-outline' : 'check';
     },
     testIconClass: function (aTest) {
-      if (aTest.tests[0].alien) {
+      if (aTest.alien) {
         return 'text-muted';
       }
-      return aTest.tests[0].testFailed ? 'text-danger' : 'text-success';
+      return aTest.tests.some((test) => test.testFailed)  ? 'text-danger' : 'text-success';
     },
     getTestsOfOther: function (both) {
       var leftTests = both[0],
@@ -102,12 +102,12 @@
           addToRight, addToLeft;
 
       // Get diffs from each side
-      console.log('on left: ', leftTests.length);
+      // console.log('on left: ', leftTests.length);
       addToLeft = _.differenceWith(rightTests, leftTests, this._testEquals.bind(this));
-      console.log('need to add to left: ', addToLeft.length);
-      console.log('on right: ', rightTests.length);
+      // console.log('need to add to left: ', addToLeft.length);
+      // console.log('on right: ', rightTests.length);
       addToRight = _.differenceWith(leftTests, rightTests, this._testEquals.bind(this));
-      console.log('need to add to right: ', addToRight.length);
+      // console.log('need to add to right: ', addToRight.length);
 
       // Assign middle result
       this.leftTests = leftTests.concat(_.map(addToLeft, this._alienize));
@@ -155,7 +155,7 @@
       return _.omit(test, ['buildId', 'testDuration', 'insertionTime', 'testFailed', 'exceptionStacktrace', 'errorMessage']);
     },
     _alienize: function (testWrap) {
-      var modified = _.extend({}, testWrap);
+      var modified = _.extend({alien: true}, testWrap);
       modified.tests = testWrap.tests.map((test) => {
         return _.extend({alien: true}, test);
       });
