@@ -72,15 +72,13 @@ module.exports = (function () {
       return buildsStatus;
     },
     updateBuildStatus: function (group, jobDetails, isHead) {
-      console.log('group: ' + group);
-      console.log('jobDetails: ' + JSON.stringify(jobDetails));
-      console.log('isHead: ' + isHead);
+      console.log('Updating build status: group: "' + group + '", isHead: ' + isHead + ', jobDetails: ' + JSON.stringify(jobDetails));
       if (!group) {
         return Promise.reject(new Error('No group was supplied'));
       }
       return this.validateGroup(group)
           .then(function (valid) {
-            console.log(valid);
+            // console.log(valid);
             if (!valid) {
               return Promise.reject(new Error('Group "' + group + '" is not tracked'));
             }

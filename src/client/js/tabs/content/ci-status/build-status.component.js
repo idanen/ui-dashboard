@@ -18,6 +18,7 @@
     this.$state = $state;
     this.ResultsToIconNames = ResultsToIconNames;
     this.JENKINS_BASE_URL = JENKINS_BASE_URL;
+    this.buildsHidden = false;
 
     this._resultToClass = {
       SUCCESS: 'success',
@@ -64,6 +65,9 @@
     freezeState: function (state) {
       this.build.freeze = state;
       this.build.$save();
+    },
+    buildsHiddenToggle: function () {
+      this.buildsHidden = !this.buildsHidden;
     }
   };
 }());

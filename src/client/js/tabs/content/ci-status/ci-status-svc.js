@@ -74,8 +74,9 @@
     }
 
     CiStatusService.prototype = {
-        getJobs: function (group = 'masters') {
-            return this.$firebaseArray(this._statusRef.child(group));
+        getJobs: function (group = 'masters', teamId = 'DevOps') {
+            var ref = (group !== 'masters') ? this._statusRef.child(group).child(teamId) : this._statusRef.child(group);
+            return this.$firebaseArray(ref);
         },
         getLastBuildNumber: function (group = 'masters', buildName = 'MaaS-SAW-USB-master') {
             return this.$q((resolve) => {

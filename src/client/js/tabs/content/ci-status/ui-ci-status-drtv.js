@@ -12,18 +12,20 @@
           FAILURE: 'error',
           UNSTABLE: 'warning',
           ABORTED: 'remove-circle-outline',
-          UNKNOWN: 'help-outline'
+          UNKNOWN: 'help-outline',
+          running: 'alarm'
         })
         //.directive('ciFreezeStateToggle', CiFreezeStateToggleDirectiveFactory)
         .component('ciFreezeStateToggle', {
           controller: CiFreezeStateToggleController,
-          template: `
-            <paper-toggle-button></paper-toggle-button>
-          `,
+          transclude: true,
           bindings: {
             freeze: '<',
             onUpdate: '&'
-          }
+          },
+          template: `
+            <paper-toggle-button><label>Freeze</label></paper-toggle-button>
+          `
         })
         .directive('uiCiStatus', [function () {
             return {
@@ -36,29 +38,29 @@
         }])
         .controller('ciStatusController', CiStatusController);
 
-    CiStatusController.$inject = ['$scope', '$element', '$state', 'ciStatusService', 'JENKINS_BASE_URL', 'ResultsToIconNames'];
-    function CiStatusController($scope, $element, $state, ciStatusService, JENKINS_BASE_URL, ResultsToIconNames) {
+    CiStatusController.$inject = ['$q', '$element', '$state', 'ciStatusService', 'JENKINS_BASE_URL', 'ResultsToIconNames'];
+    function CiStatusController($q, $element, $state, ciStatusService, JENKINS_BASE_URL, ResultsToIconNames) {
       this.$state = $state;
       this.$element = $element;
       this.ciStatusService = ciStatusService;
       this.JENKINS_BASE_URL = JENKINS_BASE_URL;
       this.ResultsToIconNames = ResultsToIconNames;
-      this.listOfJobs = this.ciStatusService.getJobs();
-      //this.listOfJobs = {}; // the list of jobs we get from server and use in ng-repeat
-      // This assumes the controller's name is `ciJobsCtrl`
-      //this.ciStatusService.getJobs().$bindTo($scope, 'ciJobsCtrl.listOfJobs');
-      this.animateOnUpdate = 'fadeOut'; // ng-class fading for refreshing data
+      this.teamId = 'DevOps';
+      this.jobs = {
+        masters: this.ciStatusService.getJobs(),
+        teams: this.ciStatusService.getJobs('teams', this.teamId)
+      };
+      //this.listOfJobs = this.ciStatusService.getJobs();
       this.loading = false; // when it true , progress bar enabled and job list disabled..
       this.dataDismiss = ' '; // we change it to keep the modal open until response of the server
       this.validateForm = false; // control visibility of the Error Message in the modal
-      this.validationErrorMessage = ''; // Error Message to show in the modal if input is invalid
       this.addJobFormSendBtn = 'btn btn-default'; // 'Add' button style in the 'add job' modal
       this.addJobResultButtonValue = 'Add'; // 'Add' button style in the 'add job' modal
       this.buildsLimit = 3;
       this.newBuild = {};
 
-      this.ciStatusService.getJobs().$loaded()
-          .then(this.determineInitialFreezeState.bind(this));
+      //$q.all([this.jobs.masters.$loaded(), this.jobs.teams.$loaded()])
+      //  .then(this.determineInitialFreezeState.bind(this));
     }
 
     CiStatusController.prototype = {
@@ -98,7 +100,7 @@
             if (!this.loading) {
                 this.loading = true;
                 this.ciStatusService.getJobs('masters').$loaded()
-                    .then(this.determineInitialFreezeState.bind(this))
+                    //.then(this.determineInitialFreezeState.bind(this))
                     //.then(this.ciStatusService.getBuildStatus.bind(this.ciStatusService, 'MaaS-SAW-USB-master'))
                     //.then(this.extendResults.bind(this))
                     .catch(this.networkError.bind(this))
@@ -143,9 +145,9 @@
             this.animateOnUpdate = 'fadeOut';
             this.loadJobs();
         },
-        freezeState: function (jobName, state) {
-            if (jobName in this.listOfJobs) {
-                this.listOfJobs[jobName].freeze = state;
+        freezeState: function (jobName, state, group) {
+            if (jobName in this.jobs[group || 'masters']) {
+                this.jobs[group || 'masters'][jobName].freeze = state;
             }
         },
         toDisplayArray: function (object) {

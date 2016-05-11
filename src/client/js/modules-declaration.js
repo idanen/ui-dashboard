@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('tabs', ['firebase', 'ngAnimate', 'ngSanitize', 'ngResource', 'ui.router', 'ui.select', 'ui.bootstrap', 'angular-ladda', 'ngclipboard'])
+    angular.module('tabs', ['firebase', 'ngAnimate', 'ngSanitize', 'ngResource', 'ui.router', 'ui.select', 'ui.bootstrap', 'angular-ladda', 'ngclipboard', 'collapsiblePanel'])
         .constant('ENV', {
             //HOST: 'myd-vm08383.hpswlabs.adapps.hp.com',
             HOST: 'localhost',

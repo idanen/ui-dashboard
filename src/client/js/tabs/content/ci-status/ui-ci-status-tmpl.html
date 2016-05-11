@@ -1,4 +1,4 @@
-<div class="ci-status" ng-app="tabs" ng-init="ciJobsCtrl.loadJobs()">
+<div class="ci-status" ng-app="tabs">
     <div class="row">
         <div class="col-xs-12">
             <!-- Trigger the modal with a button -->
@@ -21,22 +21,13 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <table class="table table-responsive table-hover">
-                <thead>
-                    <tr>
-                        <th colspan="5">Master Branches</th>
-                    </tr>
-                    <tr>
-                        <th>Job Name</th>
-                        <th>Build Status</th>
-                        <th>Last update</th>
-                        <th>Progress</th>
-                        <th>Freeze</th>
-                    </tr>
-                </thead>
-            </table>
-          <div class="row-fluid" ng-repeat="job in ciJobsCtrl.listOfJobs track by job.$id">
+          <h4>Master Branches</h4>
+          <div class="row-fluid" ng-repeat="job in ciJobsCtrl.jobs.masters track by job.$id">
             <build-status class="builds-group slide-in" build-name="job.$id" jobs-limit="3"></build-status>
+          </div>
+          <h4>Team Branches</h4>
+          <div class="row-fluid" ng-repeat="job in ciJobsCtrl.jobs.teams track by job.$id">
+            <build-status class="builds-group slide-in" build-name="job.$id" team-id="ciJobsCtrl.teamId" jobs-limit="3"></build-status>
           </div>
         </div>
     </div>
