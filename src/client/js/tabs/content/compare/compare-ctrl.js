@@ -12,9 +12,10 @@
     this.$q = $q;
     this.buildTestsService = buildTestsService;
     this.title = `Comparing build ${this.build.name}#${this.build.number} and ${this.toBuild.name}#${this.toBuild.number}`;
+    this.teamId = 'DevOps';
     this.availableBuilds = {
       masters: ciStatusService.getJobs(),
-      teams: []
+      teams: ciStatusService.getJobs('teams', this.teamId)
     };
     this.selected = {
       left: {

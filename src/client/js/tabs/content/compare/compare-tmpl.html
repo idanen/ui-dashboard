@@ -1,6 +1,16 @@
 <div class="compare-content">
   <div class="row">
-    <h2 class="col-xs-12">{{ compare.title }}</h2>
+    <h5 class="col-xs-12">{{ compare.title }}</h5>
+    <form class="form-horizontal">
+      <div class="form-group">
+        <div class="col-xs-offset-2 col-xs-8">
+          <paper-input-container>
+            <label>Team Id</label>
+            <input is="iron-input" ng-model="compare.teamId">
+          </paper-input-container>
+        </div>
+      </div>
+    </form>
   </div>
   <div class="row">
     <div class="col-md-6">
@@ -30,7 +40,7 @@
     <div class="col-md-6">
       <label>Select build</label>
       <select name="selectRightBuildGroup" ng-model="compare.selected.right.group" ng-options="group as group for (group, builds) in compare.availableBuilds"></select>
-      <build-selector builds="compare.availableBuilds.masters" selected="compare.selected.right"
+      <build-selector builds="compare.availableBuilds[compare.selected.right.group]" selected="compare.selected.right"
                       on-change="compare.selectionChanged('right', prop, value)"></build-selector>
       <uib-accordion close-others="false">
         <uib-accordion-group ng-repeat="testList in compare.rightTests | orderBy:'_id.testClassName' track by $index" panel-class="{{compare.panelClass(testList)}}">
