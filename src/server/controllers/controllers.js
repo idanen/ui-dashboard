@@ -55,6 +55,27 @@ module.exports = (function () {
                 });
         },
 
+      getCompareTests: function (request, response) {
+        var pageSize,
+        page;
+        if (request.query && request.query.pageSize && (/\d+/g.test(request.query.pageSize))) {
+          pageSize = parseInt(request.query.pageSize, 10);
+          page = /\d+/g.test(request.query.page) ? parseInt(request.query.page, 10) : 0;
+        }
+        return this.testsRetriever.fetchCompare(request.params.buildName,
+            parseInt(request.params.buildNumber, 10),
+            request.params.toBuildName,
+            parseInt(request.params.toBuildNumber, 10),
+            pageSize, page)
+            .then(function (tests) {
+              response.send(tests);
+            })
+            .catch(function (error) {
+              console.error(error);
+              response.status(500).send(error.message);
+            });
+      },
+
       getSpecificBuildTests: function (request, response) {
         var pageSize,
         page;

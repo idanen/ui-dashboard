@@ -197,6 +197,56 @@ module.exports = (function () {
       }
       return this._promisize('aggregate', aggregations);
     },
+    fetchCompare: function (buildName, buildNumber, toBuildName, toBuildNumber, pageSize, page) {
+      var aggregations;
+      aggregations = [
+        {
+          $match: {
+            jobName: {
+              $in: [buildName, toBuildName]
+            },
+            buildId: {
+              $in: [buildNumber, toBuildNumber]
+            },
+            testFailed: true
+          }
+        },
+        {
+          $sort: {
+            category: 1,
+            testClassName: 1
+          }
+        },
+        {
+          $group: {
+            _id: {
+              jobName: '$jobName',
+              buildId: '$buildId'
+            },
+            tests: { $push: '$$ROOT' }
+          }
+        }
+      ];
+      if (pageSize) {
+        aggregations.push({
+          $skip: pageSize * (page || 0)
+        });
+        aggregations.push({
+          $limit: pageSize
+        });
+      }
+      console.log(JSON.stringify(aggregations));
+      return this._promisize('aggregate', aggregations)
+          .then(this.secondGroup);
+    },
+    secondGroup: function (aggregated) {
+      if (aggregated) {
+        return aggregated.map(function (testsWrap) {
+          return _.groupBy(testsWrap.tests, 'testClassName');
+        });
+      }
+      return aggregated;
+    },
     _promisize: function (method, data) {
       return new Promise(function (resolve, reject) {
         this.TestResult[method](data, function (err, results) {
