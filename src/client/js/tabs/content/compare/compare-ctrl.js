@@ -17,6 +17,7 @@
       masters: ciStatusService.getJobs(),
       teams: ciStatusService.getJobs('teams', this.teamId)
     };
+    this.availableGroups = Object.keys(this.availableBuilds);
     this.selected = {
       left: {
         group: 'masters'
@@ -26,7 +27,10 @@
       }
     };
 
-    this.availableBuilds.masters.$loaded()
+    this.sortFields = ['category', 'testClassName', 'markedUnstable', 'insertionTime'];
+    this.sortField = this.sortFields[0];
+
+    $q.all(this.availableBuilds.masters.$loaded(), this.availableBuilds.teams.$loaded())
       .then(this.selectFirstOptions.bind(this))
       .then(this.getAllTests.bind(this));
   }
@@ -151,7 +155,7 @@
       return _.isEqual(origTests, otherTests);
     },
     _omitIrrelevantFieldsFromTest: (test) => {
-      return _.omit(test, ['buildId', 'testDuration', 'insertionTime', 'testFailed', 'exceptionStacktrace', 'errorMessage', '_id']);
+      return _.pick(test, ['testClassName', 'testName']);
     },
     _alienize: function (testWrap) {
       return _.extend({alien: true}, testWrap);

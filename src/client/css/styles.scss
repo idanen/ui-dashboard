@@ -152,6 +152,14 @@ ui-ci-status .table tbody td:first-child {
     margin-bottom: 5px;
 }
 
+.stability-container {
+  .progress-bar {
+    .test-result-stable {
+      white-space: nowrap;
+    }
+  }
+}
+
 .fadeOut {
     opacity: 0.5;
 }
@@ -172,6 +180,10 @@ ui-ci-status .table tbody td:first-child {
 .slide-in {
   &.ng-animate {
     transition: all 0.3s ease-in-out;
+  }
+  &.ng-enter-stagger {
+    transition-delay: .1s;
+    transition-duration: 0s;
   }
   &.ng-enter {
     opacity: 0;

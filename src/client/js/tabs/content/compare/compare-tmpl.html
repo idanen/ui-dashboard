@@ -1,6 +1,6 @@
 <div class="compare-content">
   <div class="row">
-    <h5 class="col-xs-12">{{ compare.title }}</h5>
+    <h4 class="col-xs-offset-2 col-xs-8">{{ compare.title }}</h4>
     <form class="form-horizontal">
       <div class="form-group">
         <div class="col-xs-offset-2 col-xs-8">
@@ -10,16 +10,22 @@
           </paper-input-container>
         </div>
       </div>
+      <div class="gorm-group">
+        <label class="col-xs-offset-2 col-xs-2">Sort tests by</label>
+        <select name="sortTestsBy" ng-model="compare.sortField" ng-options="field as field for field in compare.sortFields"></select>
+      </div>
     </form>
   </div>
   <div class="row">
     <div class="col-md-6">
+      <h5><strong>My build</strong></h5>
       <label>Select build</label>
-      <select name="selectLeftBuildGroup" ng-model="compare.selected.left.group" ng-options="group as group for (group, builds) in compare.availableBuilds"></select>
-      <build-selector builds="compare.availableBuilds[compare.selected.left.group]" selected="compare.selected.left"
+      <build-selector groups="compare.availableGroups"
+                      builds="compare.availableBuilds[compare.selected.left.group]"
+                      selected="compare.selected.left"
                       on-change="compare.selectionChanged('left', prop, value)"></build-selector>
       <uib-accordion close-others="false">
-        <uib-accordion-group ng-repeat="testList in compare.leftTests | orderBy:'_id.testClassName' track by $index" panel-class="{{compare.panelClass(testList)}}">
+        <uib-accordion-group ng-repeat="testList in compare.leftTests | orderBy:[('_id.' + compare.sortField), '_id.testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}">
           <uib-accordion-heading>
             <span ng-class="compare.testIconClass(testList)">{{ testList._id.testClassName | className }}</span>
             <span class="badge" ng-class="compare.testIconClass(testList)" ng-bind="testList.tests.length"></span>
@@ -38,12 +44,14 @@
       </uib-accordion>
     </div>
     <div class="col-md-6">
+      <h5><strong>Compare to (default is previous build)</strong></h5>
       <label>Select build</label>
-      <select name="selectRightBuildGroup" ng-model="compare.selected.right.group" ng-options="group as group for (group, builds) in compare.availableBuilds"></select>
-      <build-selector builds="compare.availableBuilds[compare.selected.right.group]" selected="compare.selected.right"
+      <build-selector groups="compare.availableGroups"
+                      builds="compare.availableBuilds[compare.selected.right.group]"
+                      selected="compare.selected.right"
                       on-change="compare.selectionChanged('right', prop, value)"></build-selector>
       <uib-accordion close-others="false">
-        <uib-accordion-group ng-repeat="testList in compare.rightTests | orderBy:'_id.testClassName' track by $index" panel-class="{{compare.panelClass(testList)}}">
+        <uib-accordion-group ng-repeat="testList in compare.rightTests | orderBy:[('_id.' + compare.sortField), '_id.testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}">
           <uib-accordion-heading>
             <span ng-class="compare.testIconClass(testList)"> {{ testList._id.testClassName | className }}</span>
             <span class="badge" ng-bind="testList.tests.length" ng-class="compare.testIconClass(testList)"></span>

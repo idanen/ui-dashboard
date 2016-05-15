@@ -1,4 +1,18 @@
 <div class="build-selector">
+  <select name="selectGroup"
+          ng-model="$ctrl.group"
+          ng-change="$ctrl.onChange({prop: 'group', value: $ctrl.group})"
+          ng-options="group as group for group in $ctrl.groups"></select>
+  <span uib-dropdown>
+    <span uib-dropdown-toggle>
+      {{ $ctrl.group }}
+    </span>
+    <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+      <li ng-repeat="group in $ctrl.groups">
+        <a ng-click="$ctrl.change('group', group)">{{group}}</a>
+      </li>
+    </ul>
+  </span>
   <select name="selectedBuildName"
           ng-model="$ctrl.name"
           ng-change="$ctrl.selectedName()">
@@ -8,6 +22,6 @@
   <select name="selectedBuildNumber"
           ng-model="$ctrl.number"
           ng-change="$ctrl.onChange({prop: 'number', value: $ctrl.number})">
-    <option ng-repeat="(buildNumber, buildResult) in $ctrl.buildResults track by buildNumber" value="{{ buildNumber }}" ng-bind="buildNumber"></option>
+    <option ng-repeat="buildNumber in $ctrl.buildResults track by $index" value="{{ buildNumber }}" ng-bind="buildNumber"></option>
   </select>
 </div>

@@ -2,9 +2,25 @@
   <h2>
     build: {{ $ctrl.build.name }}#{{ $ctrl.build.number }}
   </h2>
-
-  <form class="form-horizontal">
-    <div class="form-group" ng-repeat="test in $ctrl.tests">
+  <form class="form-horizontal" name="$ctrl.settings">
+    <fieldset class="form-group">
+      <label class="col-md-2">Select build</label>
+      <div class="col-md-10">
+        <build-selector groups="$ctrl.availableGroups"
+                        builds="$ctrl.availableBuilds[$ctrl.build.group]" selected="$ctrl.build"
+                        on-change="$ctrl.selectionChanged(prop, value)"></build-selector>
+      </div>
+    </fieldset>
+    <fieldset class="form-group">
+      <label class="col-md-2">Builds count</label>
+      <div class="col-md-8">
+        <input class="form-control" type="range" min="10" max="50" ng-model="$ctrl.buildsCount">
+      </div>
+      <div class="col-md-2">
+        <output class="form-control">{{ $ctrl.buildsCount }}</output>
+      </div>
+    </fieldset>
+    <fieldset class="form-group" ng-repeat="test in $ctrl.tests">
       <div class="col-xs-12">
         <div class="checkbox">
           <label>
@@ -12,13 +28,49 @@
           </label>
         </div>
       </div>
-    </div>
-    <paper-button raised ng-click="$ctrl.fetchStability()">
-      <iron-icon icon="send"></iron-icon>
-      <span>Go!</span>
-    </paper-button>
+    </fieldset>
+    <fieldset class="form-group">
+      <div class="col-xs-4">
+        <paper-input-container>
+          <label>Class (full quelified name)</label>
+          <input is="iron-input" ng-model="$ctrl.newTest.testClass">
+        </paper-input-container>
+      </div>
+      <div class="col-xs-4">
+        <paper-input-container>
+          <label>Method (comma separated)</label>
+          <input is="iron-input" ng-model="$ctrl.newTest.methods">
+        </paper-input-container>
+      </div>
+      <div class="col-xs-4">
+        <paper-button raised ng-click="$ctrl.addTest()">
+          <iron-icon icon="add"></iron-icon>
+          <span>Add</span>
+        </paper-button>
+      </div>
+    </fieldset>
+    <fieldset class="form-group">
+      <paper-button raised ng-click="$ctrl.fetchStability()">
+        <iron-icon icon="send"></iron-icon>
+        <span>Go!</span>
+      </paper-button>
+    </fieldset>
   </form>
 
+  <ul class="list-group">
+    <li class="list-group-item" ng-repeat="test in $ctrl.tests">
+      <span>{{test.testClass}}</span>
+      <ul class="list-group">
+        <li class="list-group-item" ng-repeat="(testName, result) in test.results">
+          <span>{{testName}}</span>
+          <uib-progressbar class="progress-striped" max="result.count" value="result.failed" type="{{result.stability > 0.3 ? 'danger' : 'warning'}}">
+            <span class="text-success test-result-stable" ng-if="result.failed === 0"><iron-icon icon="done-all"></iron-icon> Stable</span>
+            <i ng-if="result.failed > 0">{{ result.failed }} / {{ result.count }}</i>
+          </uib-progressbar>
+        </li>
+      </ul>
+    </li>
+  </ul>
   <code>
     <pre>{{$ctrl.stability | json}}</pre>
   </code>

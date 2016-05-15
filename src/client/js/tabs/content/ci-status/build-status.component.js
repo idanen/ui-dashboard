@@ -7,6 +7,7 @@
         templateUrl: 'js/tabs/content/ci-status/build-status-tmpl.html',
         bindings: {
           buildName: '<',
+          buildsHidden: '<?',
           teamId: '<?',
           jobsLimit: '<?'
         }
@@ -18,7 +19,6 @@
     this.$state = $state;
     this.ResultsToIconNames = ResultsToIconNames;
     this.JENKINS_BASE_URL = JENKINS_BASE_URL;
-    this.buildsHidden = false;
 
     this._resultToClass = {
       SUCCESS: 'success',
