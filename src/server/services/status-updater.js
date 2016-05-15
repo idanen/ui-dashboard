@@ -71,26 +71,15 @@ module.exports = (function () {
       }
       return buildsStatus;
     },
-    updateBuildStatus: function (group, jobDetails, isHead) {
-      console.log('Updating build status: group: "' + group + '", isHead: ' + isHead + ', jobDetails: ' + JSON.stringify(jobDetails));
-      if (!group) {
-        return Promise.reject(new Error('No group was supplied'));
-      }
-      return this.validateGroup(group)
-          .then(function (valid) {
-            // console.log(valid);
-            if (!valid) {
-              return Promise.reject(new Error('Group "' + group + '" is not tracked'));
-            }
-            return group;
-          })
-          .then(this.determineRefToUpdate.bind(this, group, jobDetails, isHead))
+    updateBuildStatus: function (jobDetails, isHead) {
+      console.log('Updating build status: isHead: ' + isHead + ', jobDetails: ' + JSON.stringify(jobDetails));
+      return this.determineRefToUpdate(jobDetails, isHead)
           .then(this.updateStatusInDB.bind(this));
     },
-    determineRefToUpdate: function (group, buildStatus, isHead) {
+    determineRefToUpdate: function (buildStatus, isHead) {
       var buildName = buildStatus.name,
           buildParams = buildStatus.build.parameters,
-          parentName, parentNumber;
+          group, parentName, parentNumber;
 
       console.log('Updating ref of build named "' + buildName + '"');
       if (!buildParams || !buildParams.HEAD_JOB_NAME || !buildParams.HEAD_BUILD_NUMBER) {
@@ -100,7 +89,8 @@ module.exports = (function () {
 
       parentName = buildParams.HEAD_JOB_NAME;
       parentNumber = buildParams.HEAD_BUILD_NUMBER;
-      console.log('with parent build named "' + parentName + '" and number "' + parentNumber + '"');
+      group = this.isMastersGroup(buildParams) ? 'masters' : 'teams';
+      console.log('with parent build named "' + parentName + '" and number "' + parentNumber + '", branch name "' + buildParams.GIT_BRANCH + '"');
 
       if (isHead) {
         console.log('HEAD of build -> updating "' + group + '/' + buildName + '"');
@@ -210,6 +200,9 @@ module.exports = (function () {
             }
             return true;
           });
+    },
+    isMastersGroup: function (buildParams) {
+      return buildParams && buildParams.GIT_BRANCH === 'master' || /generic$/i.test(buildParams.HEAD_JOB_NAME) || /^release-\d+.\d+$/i.test(buildParams.GIT_BRANCH);
     }
   };
 

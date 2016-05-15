@@ -28,7 +28,7 @@ module.exports = (function () {
 
         updateStatus: function (request, response) {
           var isHead = request.query && request.query.HEAD === '1';
-            return this.statusUpdater.updateBuildStatus(request.params.group, request.body, isHead)
+            return this.statusUpdater.updateBuildStatus(request.body, isHead)
                 .then(function () {
                     response.send('thanks');
                 })
