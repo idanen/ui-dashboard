@@ -14,11 +14,11 @@
     </fieldset>
     <fieldset class="form-group">
       <label class="col-md-2">Builds count</label>
-      <div class="col-md-8">
-        <input class="form-control" type="range" min="10" max="50" ng-model="$ctrl.buildsCount">
-      </div>
       <div class="col-md-2">
-        <output class="form-control">{{ $ctrl.buildsCount }}</output>
+        <input class="form-control" type="number" ng-model="$ctrl.buildsCount">
+      </div>
+      <div class="col-md-8">
+        <paper-slider pin min="10" max="50" bind-from="$ctrl.buildsCount" on-update="$ctrl.buildsCountUpdated(value)" style="width: 100%;"></paper-slider>
       </div>
     </fieldset>
     <fieldset class="form-group" ng-repeat="test in $ctrl.tests">
@@ -51,10 +51,12 @@
       </div>
     </fieldset>
     <fieldset class="form-group">
-      <paper-button raised ng-click="$ctrl.fetchStability()">
-        <iron-icon icon="send"></iron-icon>
-        <span>Go!</span>
-      </paper-button>
+      <div class="col-xs-12">
+        <paper-button raised ng-click="$ctrl.fetchStability()">
+          <iron-icon icon="send"></iron-icon>
+          <span>Go!</span>
+        </paper-button>
+      </div>
     </fieldset>
   </form>
 
@@ -66,13 +68,13 @@
           <span>{{testName}}</span>
           <uib-progressbar class="progress-striped" max="result.count" value="result.failed" type="{{result.stability > 0.3 ? 'danger' : 'warning'}}">
             <span class="text-success test-result-stable" ng-if="result.failed === 0"><iron-icon icon="done-all"></iron-icon> Stable</span>
-            <i ng-if="result.failed > 0">{{ result.failed }} / {{ result.count }}</i>
+            <em ng-if="result.failed > 0">{{ result.failed }} / {{ result.count }} ({{ result.stability | percentage:0 }})</em>
           </uib-progressbar>
         </li>
       </ul>
     </li>
   </ul>
-  <code>
-    <pre>{{$ctrl.stability | json}}</pre>
-  </code>
+  <!--<code>-->
+    <!--<pre>{{$ctrl.stability | json}}</pre>-->
+  <!--</code>-->
 </div>

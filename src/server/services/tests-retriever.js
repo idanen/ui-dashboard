@@ -135,7 +135,7 @@ module.exports = (function () {
           }
         },
         {
-          $limit: 10 * classesAndMethods.methods.length
+          $limit: buildCount * classesAndMethods.methods.length
         },
         {
           $group: {

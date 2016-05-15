@@ -61,7 +61,7 @@
         stability = {
           name: 'stability',
           parent: home,
-          url: '^/compare/:buildName/:buildNumber',
+          url: '^/stability/:buildName/:buildNumber',
           templateUrl: '/js/tabs/content/stability/stability-tmpl.html',
           controller: 'CIStabilityCtrl',
           controllerAs: '$ctrl',

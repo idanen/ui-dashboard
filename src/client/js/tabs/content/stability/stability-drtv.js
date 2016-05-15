@@ -8,8 +8,9 @@
         templateUrl: 'js/tabs/content/stability/stability-tmpl.html'
       });
 
-  CIStabilityController.$inject = ['$q', 'buildTestsService', 'ciStatusService', 'build'];
-  function CIStabilityController($q, buildTestsService, ciStatusService, build) {
+  CIStabilityController.$inject = ['$q', '$scope', 'buildTestsService', 'ciStatusService', 'build'];
+  function CIStabilityController($q, $scope, buildTestsService, ciStatusService, build) {
+    this.$scope = $scope;
     this.buildTestsService = buildTestsService;
     this.ciStatusService = ciStatusService;
     this.buildsCount = 10;
@@ -66,6 +67,11 @@
       if (prop === 'number') {
         this.fetchFailedOfBuild();
       }
+    },
+    buildsCountUpdated: function (value) {
+      this.$scope.$applyAsync(() => {
+        this.buildsCount = value;
+      });
     },
     addTest: function () {
       this.tests = this.tests.concat(_.extend({selected: true}, {testClass: this.newTest.testClass, methods: this.newTest.methods.split(/,\s*/)}));

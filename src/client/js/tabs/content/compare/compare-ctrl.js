@@ -133,6 +133,9 @@
       this._extendingWithServerResults(this.leftTests, both[0], this._testEquals.bind(this));
       this._extendingWithServerResults(this.rightTests, both[1], this._testEquals.bind(this));
     },
+    buildStabilityLink: function (testsList) {
+      return this.$state.href('stability', {buildName: testsList.tests[0].jobName, buildNumber: testsList.tests[0].buildId});
+    },
     _groupByClass: function (tests) {
       var testsByClass = [];
       tests.forEach((test) => {
