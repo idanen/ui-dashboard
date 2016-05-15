@@ -53,18 +53,23 @@
         this.name = firstBuild.$id;
         this.buildResults = Object.keys(firstBuild.builds).reverse();
         this.number = this.buildResults[0];
+        this.onChange({prop: 'name', value: this.name});
+        this.onChange({prop: 'number', value: this.number});
       }
     },
     $postLink: angular.noop,
     $onDestroy: angular.noop,
     change: function (prop, value) {
       this[prop] = value;
-      this.onChange({prop: prop, value: value});
-    },
-    selectedName: function () {
-      this.onChange({prop: 'name', value: this.name});
-      let selectedBuild = _.find(this.builds, {$id: this.name});
-      this.buildResults = Object.keys(selectedBuild.builds).reverse();
+      if (prop === 'name') {
+        let selectedBuild = _.find(this.builds, {$id: this.name});
+        this.buildResults = Object.keys(selectedBuild.builds).reverse();
+        this.number = this.buildResults[0];
+        this.onChange({prop: 'number', value: this.number});
+        this.onChange({prop: prop, value: value});
+      } else {
+        this.onChange({prop: prop, value: value});
+      }
     }
   };
 }());

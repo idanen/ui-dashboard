@@ -2,14 +2,6 @@
   <div class="row">
     <h4 class="col-xs-offset-2 col-xs-8">{{ compare.title }}</h4>
     <form class="form-horizontal">
-      <div class="form-group">
-        <div class="col-xs-offset-2 col-xs-8">
-          <paper-input-container>
-            <label>Team Id</label>
-            <input is="iron-input" ng-model="compare.teamId">
-          </paper-input-container>
-        </div>
-      </div>
       <div class="gorm-group">
         <label class="col-xs-offset-2 col-xs-2">Sort tests by</label>
         <select name="sortTestsBy" ng-model="compare.sortField" ng-options="field as field for field in compare.sortFields"></select>

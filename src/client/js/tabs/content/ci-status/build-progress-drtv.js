@@ -6,8 +6,7 @@
         controller: BuildProgressController,
         bindings: {
           buildName: '<',
-          buildNumber: '<',
-          teamId: '<?'
+          buildNumber: '<'
         },
         template: `
           <div class="build-progress">
@@ -33,7 +32,7 @@
     },
     getSubBuilds: function () {
       if (this.buildName && this.buildNumber) {
-        this.subBuilds = this.statusService.getJobSubBuilds(this.buildName, this.buildNumber, this.teamId);
+        this.subBuilds = this.statusService.getJobSubBuilds(this.buildName, this.buildNumber, 'teams');
       }
     },
     determineClass: function (subBuild) {

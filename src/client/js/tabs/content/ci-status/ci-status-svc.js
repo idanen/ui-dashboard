@@ -74,8 +74,8 @@
     }
 
     CiStatusService.prototype = {
-        getJobs: function (group = 'masters', teamId = 'DevOps') {
-            var ref = (group !== 'masters') ? this._statusRef.child(group).child(teamId) : this._statusRef.child(group);
+        getJobs: function (group = 'masters') {
+            var ref = (group !== 'masters') ? this._statusRef.child(group) : this._statusRef.child(group);
             return this.$firebaseArray(ref);
         },
         getLastBuildNumber: function (group = 'masters', buildName = 'MaaS-SAW-USB-master') {
@@ -89,15 +89,15 @@
                     });
             });
         },
-        getJob: function (jobId, teamId) {
-            if (teamId) {
-                return this.$firebaseObject(this._teamsRef.child(teamId).child(jobId));
+        getJob: function (jobId, group) {
+            if (group) {
+                return this.$firebaseObject(this._statusRef.child(group).child(jobId));
             }
 
             return this.$firebaseObject(this._mastersRef.child(jobId));
         },
-        getJobBuilds: function (jobId, teamId, limit) {
-            var startRef = this._getRef(jobId, teamId);
+        getJobBuilds: function (jobId, group = 'masters', limit = 0) {
+            var startRef = this._getRef(jobId, group);
 
             if (limit && angular.isNumber(limit)) {
                 return this.$firebaseArray(startRef.child('builds').orderByKey().limitToLast(limit));
@@ -105,8 +105,8 @@
 
             return this.$firebaseArray(startRef.child('builds'));
         },
-        getJobSubBuilds: function (jobId, jobNumber, teamId) {
-            var startRef = this._getRef(jobId, teamId);
+        getJobSubBuilds: function (jobId, jobNumber, group) {
+            var startRef = this._getRef(jobId, group);
 
             return this.$firebaseObject(startRef.child('builds').child(jobNumber).child('subBuilds'));
         },
@@ -140,9 +140,9 @@
         _processResponse: function (response) {
             return response.data;
         },
-        _getRef: function (jobId, teamId) {
-            if (teamId) {
-                return this._teamsRef.child(teamId).child(jobId);
+        _getRef: function (jobId, group) {
+            if (group) {
+                return this._statusRef.child(group).child(jobId);
             }
 
             return this._mastersRef.child(jobId);

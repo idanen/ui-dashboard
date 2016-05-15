@@ -2,28 +2,28 @@
   'use strict';
 
   angular.module('tabs')
+    .controller('CIStabilityCtrl', CIStabilityController)
     .component('ciStability', {
         controller: CIStabilityController,
         templateUrl: 'js/tabs/content/stability/stability-tmpl.html'
       });
 
-  CIStabilityController.$inject = ['$q', 'buildTestsService', 'ciStatusService'];
-  function CIStabilityController($q, buildTestsService, ciStatusService) {
+  CIStabilityController.$inject = ['$q', 'buildTestsService', 'ciStatusService', 'build'];
+  function CIStabilityController($q, buildTestsService, ciStatusService, build) {
     this.buildTestsService = buildTestsService;
     this.ciStatusService = ciStatusService;
-    this.teamId = 'DevOps';
     this.buildsCount = 10;
     this.tests = [];
     this.stability = {};
     this.availableBuilds = {
       masters: ciStatusService.getJobs(),
-      teams: ciStatusService.getJobs('teams', this.teamId)
+      teams: ciStatusService.getJobs('teams')
     };
     this.availableGroups = Object.keys(this.availableBuilds);
     this.build = {
-      group: 'masters',
-      name: 'MaaS-SAW-USB-master',
-      number: ''
+      group: build.group || 'masters',
+      name: build.name || 'MaaS-SAW-USB-master',
+      number: build.number || ''
     };
 
     //ciStatusService.getLastBuildNumber('masters', this.build.name).then((lastBuild) => {
@@ -56,14 +56,16 @@
     selectFirstOptions: function () {
       if (this.build) {
         let selectedBuild = _.find(this.availableBuilds[this.build.group], this.build.name);
-        if (selectedBuild) {
+        if (selectedBuild && !this.build.number) {
           this.build.number = selectedBuild.builds[0].buildId;
         }
       }
     },
     selectionChanged: function (prop, value) {
       this.build[prop] = value;
-      this.fetchFailedOfBuild();
+      if (prop === 'number') {
+        this.fetchFailedOfBuild();
+      }
     },
     addTest: function () {
       this.tests = this.tests.concat(_.extend({selected: true}, {testClass: this.newTest.testClass, methods: this.newTest.methods.split(/,\s*/)}));

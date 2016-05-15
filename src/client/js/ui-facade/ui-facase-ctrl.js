@@ -30,6 +30,9 @@
             this.currentStateWidget = widget;
         },
         gotoState: function (widgetId) {
+            if (widgetId === 'stability') {
+                this.$state.go(widgetId);
+            }
             this.$state.go('widget', { widgetId: widgetId });
             this.setWidgetState(this.UiFacadeService.getById(widgetId));
         },

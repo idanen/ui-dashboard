@@ -8,7 +8,7 @@
   function configRoutes($stateProvider, $urlRouterProvider, laddaProvider) {
     var home = {
           name: 'home',
-          url: '/?:teamId',
+          url: '/',
           templateUrl: '/js/ui-facade/ui-facade-tmpl.html',
           controller: 'UiFacadeCtrl',
           controllerAs: 'facade'
@@ -57,6 +57,22 @@
               return {};
             }]
           }
+        },
+        stability = {
+          name: 'stability',
+          parent: home,
+          url: '^/compare/:buildName/:buildNumber',
+          templateUrl: '/js/tabs/content/stability/stability-tmpl.html',
+          controller: 'CIStabilityCtrl',
+          controllerAs: '$ctrl',
+          resolve: {
+            build: ['$stateParams', ($stateParams) => {
+              return {
+                name: $stateParams.buildName,
+                number: $stateParams.buildNumber
+              };
+            }]
+          }
         };
 
     laddaProvider.setOption({
@@ -69,6 +85,7 @@
     $stateProvider.state(widget);
     $stateProvider.state(login);
     $stateProvider.state(compare);
+    $stateProvider.state(stability);
 
     $urlRouterProvider.otherwise('/cistatus');
   }

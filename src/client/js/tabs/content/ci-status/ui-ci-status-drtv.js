@@ -45,10 +45,9 @@
       this.ciStatusService = ciStatusService;
       this.JENKINS_BASE_URL = JENKINS_BASE_URL;
       this.ResultsToIconNames = ResultsToIconNames;
-      this.teamId = 'DevOps';
       this.jobs = {
         masters: this.ciStatusService.getJobs(),
-        teams: this.ciStatusService.getJobs('teams', this.teamId)
+        teams: this.ciStatusService.getJobs('teams')
       };
       //this.listOfJobs = this.ciStatusService.getJobs();
       this.loading = false; // when it true , progress bar enabled and job list disabled..

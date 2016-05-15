@@ -7,7 +7,8 @@
       <label class="col-md-2">Select build</label>
       <div class="col-md-10">
         <build-selector groups="$ctrl.availableGroups"
-                        builds="$ctrl.availableBuilds[$ctrl.build.group]" selected="$ctrl.build"
+                        builds="$ctrl.availableBuilds[$ctrl.build.group]"
+                        selected="$ctrl.build"
                         on-change="$ctrl.selectionChanged(prop, value)"></build-selector>
       </div>
     </fieldset>

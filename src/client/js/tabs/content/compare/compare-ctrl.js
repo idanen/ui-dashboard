@@ -12,10 +12,9 @@
     this.$q = $q;
     this.buildTestsService = buildTestsService;
     this.title = `Comparing build ${this.build.name}#${this.build.number} and ${this.toBuild.name}#${this.toBuild.number}`;
-    this.teamId = 'DevOps';
     this.availableBuilds = {
       masters: ciStatusService.getJobs(),
-      teams: ciStatusService.getJobs('teams', this.teamId)
+      teams: ciStatusService.getJobs('teams')
     };
     this.availableGroups = Object.keys(this.availableBuilds);
     this.selected = {
@@ -38,7 +37,9 @@
   CompareController.prototype = {
     selectionChanged: function (side, prop, value) {
       this.selected[side][prop] = value;
-      this.getAllTests();
+      if (prop === 'number') {
+        this.getAllTests();
+      }
     },
     getAllTests: function () {
       return this.getTests()
@@ -56,20 +57,20 @@
     selectFirstOptions: function () {
       if (this.build) {
         this.selected.left = {
-          group: 'masters',
+          group: this.selected.left.group || 'masters',
           name: this.build.name,
           number: this.build.number
         };
       }
       if (this.toBuild && this.toBuild.name && this.toBuild.number) {
         this.selected.right = {
-          group: 'masters',
+          group: this.selected.right.group || 'masters',
           name: this.toBuild.name,
           number: this.toBuild.number
         };
       } else {
         this.selected.right = {
-          group: 'masters',
+          group: this.selected.right.group || 'masters',
           name: this.build.name,
           number: this.build.number - 1
         };

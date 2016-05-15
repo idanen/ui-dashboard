@@ -3,8 +3,8 @@
 
     angular.module('tabs', ['firebase', 'ngAnimate', 'ngSanitize', 'ngResource', 'ui.router', 'ui.select', 'ui.bootstrap', 'angular-ladda', 'ngclipboard', 'collapsiblePanel'])
         .constant('ENV', {
-            //HOST: 'myd-vm08383.hpswlabs.adapps.hp.com',
-            HOST: 'localhost',
+            HOST: 'myd-vm08383.hpswlabs.adapps.hp.com',
+            //HOST: 'localhost',
             PORT: '4000'
         })
         .constant('JENKINS_BASE_URL', 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/')

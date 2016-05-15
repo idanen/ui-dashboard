@@ -1,11 +1,7 @@
 <div class="build-selector">
-  <select name="selectGroup"
-          ng-model="$ctrl.group"
-          ng-change="$ctrl.onChange({prop: 'group', value: $ctrl.group})"
-          ng-options="group as group for group in $ctrl.groups"></select>
   <span uib-dropdown>
     <span uib-dropdown-toggle>
-      {{ $ctrl.group }}
+      {{ $ctrl.group }} <iron-icon icon="arrow-drop-down"></iron-icon>
     </span>
     <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
       <li ng-repeat="group in $ctrl.groups">
@@ -13,15 +9,25 @@
       </li>
     </ul>
   </span>
-  <select name="selectedBuildName"
-          ng-model="$ctrl.name"
-          ng-change="$ctrl.selectedName()">
-    <option ng-repeat="build in $ctrl.builds track by build.$id" value="{{ build.$id }}" ng-bind="build.$id"></option>
-  </select>
+  <span uib-dropdown>
+    <span uib-dropdown-toggle>
+      {{ $ctrl.name }} <iron-icon icon="arrow-drop-down"></iron-icon>
+    </span>
+    <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+      <li ng-repeat="build in $ctrl.builds track by build.$id">
+        <a ng-click="$ctrl.change('name', build.$id)">{{build.$id}}</a>
+      </li>
+    </ul>
+  </span>
   <span>#</span>
-  <select name="selectedBuildNumber"
-          ng-model="$ctrl.number"
-          ng-change="$ctrl.onChange({prop: 'number', value: $ctrl.number})">
-    <option ng-repeat="buildNumber in $ctrl.buildResults track by $index" value="{{ buildNumber }}" ng-bind="buildNumber"></option>
-  </select>
+  <span uib-dropdown>
+    <span uib-dropdown-toggle>
+      {{ $ctrl.number }} <iron-icon icon="arrow-drop-down"></iron-icon>
+    </span>
+    <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+      <li ng-repeat="buildNumber in $ctrl.buildResults track by $index">
+        <a ng-click="$ctrl.change('number', buildNumber)">{{ buildNumber }}</a>
+      </li>
+    </ul>
+  </span>
 </div>

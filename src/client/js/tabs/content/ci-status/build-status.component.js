@@ -8,7 +8,7 @@
         bindings: {
           buildName: '<',
           buildsHidden: '<?',
-          teamId: '<?',
+          group: '<?',
           jobsLimit: '<?'
         }
       });
@@ -29,8 +29,8 @@
 
   BuildStatusController.prototype = {
     $onInit: function () {
-      this.build = this.ciStatusService.getJob(this.buildName, this.teamId);
-      this.buildResults = this.ciStatusService.getJobBuilds(this.buildName, this.teamId, this.jobsLimit);
+      this.build = this.ciStatusService.getJob(this.buildName, this.group);
+      this.buildResults = this.ciStatusService.getJobBuilds(this.buildName, this.group, this.jobsLimit);
 
       this.build.$loaded()
           .then((job) => this.determineInitialFreezeState(job));
