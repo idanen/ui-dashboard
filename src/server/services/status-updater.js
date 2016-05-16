@@ -72,9 +72,10 @@ module.exports = (function () {
       return buildsStatus;
     },
     updateBuildStatus: function (jobDetails, isHead) {
+      var toUpdate;
       console.log('Updating build status: isHead: ' + isHead + ', jobDetails: ' + JSON.stringify(jobDetails));
-      return this.determineRefToUpdate(jobDetails, isHead)
-          .then(this.updateStatusInDB.bind(this));
+      toUpdate = this.determineRefToUpdate(jobDetails, isHead)
+      return this.updateStatusInDB(toUpdate);
     },
     determineRefToUpdate: function (buildStatus, isHead) {
       var buildName = buildStatus.name,
@@ -111,13 +112,14 @@ module.exports = (function () {
     updateStatusInDB: function (toUpdate) {
       var // firebaseRef = this.firebaseRef.child(toUpdate.ref),
           updateUri,
-          rootBuildUpdate, rootBuildUri;
+          rootBuildUpdate, rootBuildUri, group;
 
       if (!toUpdate) {
         return Promise.resolve();
       }
 
       updateUri = toUpdate.ref;
+      group = updateUri.split('/')[0];
 
       delete toUpdate.ref;
       toUpdate.lastUpdate = Date.now();
@@ -138,7 +140,8 @@ module.exports = (function () {
         rootBuildUri = updateUri.replace(/\/builds\/\d+\/?$/, '');
         rootBuildUpdate = this.firebase.update(rootBuildUri, {
           lastUpdate: toUpdate.lastUpdate,
-          result: toUpdate.result
+          result: toUpdate.result,
+          group: group
         });
       }
 

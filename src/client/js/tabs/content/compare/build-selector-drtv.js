@@ -26,7 +26,7 @@
       this.builds.$loaded().then(() => {
         let selectedBuild = _.find(this.builds, {$id: this.name});
         if (selectedBuild) {
-          this.buildResults = Object.keys(selectedBuild.builds).reverse();
+          this.buildResults = this.buildResultsData(this.builds, this.name);
           if (!this.number) {
             this.number = this.buildResults[0];
             this.onChange({prop: 'number', value: this.number});
@@ -41,8 +41,7 @@
         }
         if (changes.selected.currentValue.name) {
           this.name = changes.selected.currentValue.name;
-          let selectedBuild = _.find(this.builds, {$id: this.name});
-          this.buildResults = Object.keys(selectedBuild.builds).reverse();
+          this.buildResults = this.buildResultsData(this.builds, this.name);
         }
         if (changes.selected.currentValue.number) {
           this.number = changes.selected.currentValue.number;
@@ -51,7 +50,7 @@
       if (changes.builds && changes.builds.currentValue) {
         let firstBuild = changes.builds.currentValue[0];
         this.name = firstBuild.$id;
-        this.buildResults = Object.keys(firstBuild.builds).reverse();
+        this.buildResults = this.buildResultsData(this.builds, this.name);
         this.number = this.buildResults[0];
         this.onChange({prop: 'name', value: this.name});
         this.onChange({prop: 'number', value: this.number});
@@ -62,14 +61,25 @@
     change: function (prop, value) {
       this[prop] = value;
       if (prop === 'name') {
-        let selectedBuild = _.find(this.builds, {$id: this.name});
-        this.buildResults = Object.keys(selectedBuild.builds).reverse();
+        this.buildResults = this.buildResultsData(this.builds, this.name);
         this.number = this.buildResults[0];
         this.onChange({prop: 'number', value: this.number});
         this.onChange({prop: prop, value: value});
       } else {
         this.onChange({prop: prop, value: value});
       }
+    },
+    buildResultsData: function (builds, selectedName) {
+      let buildResults,
+          selectedBuild = _.find(builds, {$id: selectedName});
+      buildResults = Object.keys(selectedBuild.builds).reverse();
+      buildResults = buildResults.map((result) => {
+        return {
+          id: result,
+          result: selectedBuild.builds[result].result
+        };
+      });
+      return buildResults;
     }
   };
 }());

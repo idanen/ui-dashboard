@@ -36,20 +36,22 @@
         compare = {
           name: 'compare',
           parent: home,
-          url: '^/compare/:buildName/:buildNumber/:toBuildName/:toBuildNumber',
+          url: '^/compare/:group/:buildName/:buildNumber/:toGroup/:toBuildName/:toBuildNumber',
           templateUrl: '/js/tabs/content/compare/compare-tmpl.html',
           controller: 'CompareCtrl',
           controllerAs: 'compare',
           resolve: {
             build: ['$stateParams', ($stateParams) => {
               return {
+                group: $stateParams.group,
                 name: $stateParams.buildName,
                 number: $stateParams.buildNumber
               };
             }],
             toBuild: ['$stateParams', ($stateParams) => {
-              if ($stateParams.toBuildName && $stateParams.toBuildNumber) {
+              if ($stateParams.toGroup && $stateParams.toBuildName && $stateParams.toBuildNumber) {
                 return {
+                  group: $stateParams.toGroup,
                   name: $stateParams.toBuildName,
                   number: $stateParams.toBuildNumber
                 };
@@ -61,13 +63,15 @@
         stability = {
           name: 'stability',
           parent: home,
-          url: '^/stability/:buildName/:buildNumber',
+          url: '^/stability/:group/:buildName/:buildNumber',
           templateUrl: '/js/tabs/content/stability/stability-tmpl.html',
           controller: 'CIStabilityCtrl',
           controllerAs: '$ctrl',
+          params: {tests: []},
           resolve: {
             build: ['$stateParams', ($stateParams) => {
               return {
+                group: $stateParams.group,
                 name: $stateParams.buildName,
                 number: $stateParams.buildNumber
               };

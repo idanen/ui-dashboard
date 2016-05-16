@@ -9,7 +9,8 @@
           buildName: '<',
           buildsHidden: '<?',
           group: '<?',
-          jobsLimit: '<?'
+          jobsLimit: '<?',
+          changeLimit: '&'
         }
       });
 
@@ -40,8 +41,10 @@
     },
     buildCompareLink: function (buildNumber) {
       return this.$state.href('compare', {
+        group: this.group,
         buildName: this.buildName,
         buildNumber: buildNumber,
+        toGroup: this.group,
         toBuildName: this.buildName,
         toBuildNumber: (parseInt(buildNumber, 10) - 1)
       });
@@ -68,6 +71,12 @@
     },
     buildsHiddenToggle: function () {
       this.buildsHidden = !this.buildsHidden;
+    },
+    onLimitChange: function () {
+      if (this.buildResults && this.buildResults.$destroy) {
+        this.buildResults.$destroy();
+      }
+      this.buildResults = this.ciStatusService.getJobBuilds(this.buildName, this.group, this.jobsLimit);
     }
   };
 }());

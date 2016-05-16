@@ -19,10 +19,8 @@
     this.availableGroups = Object.keys(this.availableBuilds);
     this.selected = {
       left: {
-        group: 'masters'
       },
       right: {
-        group: 'masters'
       }
     };
 
@@ -48,8 +46,10 @@
     },
     updateState: function () {
       this.$state.go('compare', {
+        group: this.selected.left.group,
         buildName: this.selected.left.name,
         buildNumber: this.selected.left.number,
+        toGroup: this.selected.right.group,
         toBuildName: this.selected.right.name,
         toBuildNumber: this.selected.right.number
       });
@@ -57,20 +57,20 @@
     selectFirstOptions: function () {
       if (this.build) {
         this.selected.left = {
-          group: this.selected.left.group || 'masters',
+          group: this.selected.left.group || this.build.group || 'masters',
           name: this.build.name,
           number: this.build.number
         };
       }
       if (this.toBuild && this.toBuild.name && this.toBuild.number) {
         this.selected.right = {
-          group: this.selected.right.group || 'masters',
+          group: this.selected.right.group || this.toBuild.group || 'masters',
           name: this.toBuild.name,
           number: this.toBuild.number
         };
       } else {
         this.selected.right = {
-          group: this.selected.right.group || 'masters',
+          group: this.selected.right.group || this.toBuild.group || 'masters',
           name: this.build.name,
           number: this.build.number - 1
         };
@@ -134,7 +134,10 @@
       this._extendingWithServerResults(this.rightTests, both[1], this._testEquals.bind(this));
     },
     buildStabilityLink: function (testsList) {
-      return this.$state.href('stability', {buildName: testsList.tests[0].jobName, buildNumber: testsList.tests[0].buildId});
+      return this.$state.href('stability', {
+        buildName: testsList.tests[0].jobName,
+        buildNumber: testsList.tests[0].buildId,
+        tests: testsList.tests});
     },
     _groupByClass: function (tests) {
       var testsByClass = [];

@@ -1,7 +1,5 @@
 <div class="stability-container">
-  <h2>
-    build: {{ $ctrl.build.name }}#{{ $ctrl.build.number }}
-  </h2>
+  <!--<h2>build: {{ $ctrl.build.name }}#{{ $ctrl.build.number }}</h2>-->
   <form class="form-horizontal" name="$ctrl.settings">
     <fieldset class="form-group">
       <label class="col-md-2">Select build</label>
@@ -21,13 +19,40 @@
         <paper-slider pin min="10" max="50" bind-from="$ctrl.buildsCount" on-update="$ctrl.buildsCountUpdated(value)" style="width: 100%;"></paper-slider>
       </div>
     </fieldset>
-    <fieldset class="form-group" ng-repeat="test in $ctrl.tests">
+    <fieldset class="form-group">
       <div class="col-xs-12">
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" ng-model="test.selected"><span>{{ test.testClass }}#{{ test.methods | json }}</span>
-          </label>
-        </div>
+        <paper-button raised ng-click="$ctrl.selectAll()">
+          <iron-icon icon="done"></iron-icon>
+          select all
+        </paper-button>
+        <paper-button raised ng-click="$ctrl.selectNone()">
+          <iron-icon icon="clear"></iron-icon>
+          select none
+        </paper-button>
+      </div>
+    </fieldset>
+    <fieldset class="form-group" ng-repeat="test in $ctrl.tests">
+      <div class="col-md-4">
+        {{ test.testClass | className }}
+      </div>
+      <div class="col-md-4">
+        <ul class="list-group">
+          <li class="list-group-item" ng-repeat="testMethod in test.methods track by $index">
+            <label>
+              <input type="checkbox" ng-model="test.selected"><span> {{ testMethod }}</span>
+            </label>
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <ul class="list-group" ng-if="test.results">
+          <li class="list-group-item" ng-repeat="(testName, result) in test.results">
+            <uib-progressbar class="progress-striped" max="result.count" value="result.failed" type="{{result.stability > 0.3 ? 'danger' : 'warning'}}">
+              <span class="text-success test-result-stable" ng-if="result.failed === 0"><iron-icon icon="done-all"></iron-icon> Stable</span>
+              <em ng-if="result.failed > 0">{{ result.failed }} / {{ result.count }} ({{ result.stability | percentage:0 }})</em>
+            </uib-progressbar>
+          </li>
+        </ul>
       </div>
     </fieldset>
     <fieldset class="form-group">
@@ -60,20 +85,20 @@
     </fieldset>
   </form>
 
-  <ul class="list-group">
-    <li class="list-group-item" ng-repeat="test in $ctrl.tests">
-      <span>{{test.testClass}}</span>
-      <ul class="list-group">
-        <li class="list-group-item" ng-repeat="(testName, result) in test.results">
-          <span>{{testName}}</span>
-          <uib-progressbar class="progress-striped" max="result.count" value="result.failed" type="{{result.stability > 0.3 ? 'danger' : 'warning'}}">
-            <span class="text-success test-result-stable" ng-if="result.failed === 0"><iron-icon icon="done-all"></iron-icon> Stable</span>
-            <em ng-if="result.failed > 0">{{ result.failed }} / {{ result.count }} ({{ result.stability | percentage:0 }})</em>
-          </uib-progressbar>
-        </li>
-      </ul>
-    </li>
-  </ul>
+  <!--<ul class="list-group">-->
+    <!--<li class="list-group-item" ng-repeat="test in $ctrl.tests">-->
+      <!--<span>{{test.testClass}}</span>-->
+      <!--<ul class="list-group">-->
+        <!--<li class="list-group-item" ng-repeat="(testName, result) in test.results">-->
+          <!--<span>{{testName}}</span>-->
+          <!--<uib-progressbar class="progress-striped" max="result.count" value="result.failed" type="{{result.stability > 0.3 ? 'danger' : 'warning'}}">-->
+            <!--<span class="text-success test-result-stable" ng-if="result.failed === 0"><iron-icon icon="done-all"></iron-icon> Stable</span>-->
+            <!--<em ng-if="result.failed > 0">{{ result.failed }} / {{ result.count }} ({{ result.stability | percentage:0 }})</em>-->
+          <!--</uib-progressbar>-->
+        <!--</li>-->
+      <!--</ul>-->
+    <!--</li>-->
+  <!--</ul>-->
   <!--<code>-->
     <!--<pre>{{$ctrl.stability | json}}</pre>-->
   <!--</code>-->

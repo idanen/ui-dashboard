@@ -96,7 +96,7 @@
 
             return this.$firebaseObject(this._mastersRef.child(jobId));
         },
-        getJobBuilds: function (jobId, group = 'masters', limit = 0) {
+        getJobBuilds: function (jobId, group = 'masters', limit = 10) {
             var startRef = this._getRef(jobId, group);
 
             if (limit && angular.isNumber(limit)) {
