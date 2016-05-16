@@ -74,7 +74,7 @@ module.exports = (function () {
     updateBuildStatus: function (jobDetails, isHead) {
       var toUpdate;
       console.log('Updating build status: isHead: ' + isHead + ', jobDetails: ' + JSON.stringify(jobDetails));
-      toUpdate = this.determineRefToUpdate(jobDetails, isHead)
+      toUpdate = this.determineRefToUpdate(jobDetails, isHead);
       return this.updateStatusInDB(toUpdate);
     },
     determineRefToUpdate: function (buildStatus, isHead) {
@@ -91,7 +91,7 @@ module.exports = (function () {
       parentName = buildParams.HEAD_JOB_NAME;
       parentNumber = buildParams.HEAD_BUILD_NUMBER;
       group = this.isMastersGroup(buildParams) ? 'masters' : 'teams';
-      console.log('with parent build named "' + parentName + '" and number "' + parentNumber + '", branch name "' + buildParams.GIT_BRANCH + '"');
+      console.log('with parent build named "' + parentName + '" and number "' + parentNumber + '", group "' + group + '" (branch = ' + buildParams.GIT_BRANCH + ')');
 
       if (isHead) {
         console.log('HEAD of build -> updating "' + group + '/' + buildName + '"');
@@ -127,7 +127,7 @@ module.exports = (function () {
       rootBuildUpdate = Promise.resolve(toUpdate);
 
       if (toUpdate.phase === 'COMPLETED') {
-        return toUpdate;
+        return Promise.resolve(toUpdate);
       }
 
       if (toUpdate.phase === 'STARTED') {
