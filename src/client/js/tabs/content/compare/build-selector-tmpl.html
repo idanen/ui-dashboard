@@ -26,7 +26,7 @@
     </span>
     <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
       <li ng-repeat="buildNumber in $ctrl.buildResults track by $index">
-        <a ng-click="$ctrl.change('number', buildNumber.id)">{{ buildNumber.id }} <span class="ind-build-result-aborted" ng-if="buildNumber.result === 'ABORTED'" title="Aborted">&lowast;</span></a>
+        <a ng-click="$ctrl.change('number', buildNumber.id)">{{ buildNumber.id }} <span class="ind-build-result-aborted" ng-if="buildNumber.result === 'ABORTED'" uib-tooltip="Aborted">&lowast;</span></a>
       </li>
     </ul>
   </span>

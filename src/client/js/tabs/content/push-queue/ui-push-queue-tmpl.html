@@ -36,11 +36,11 @@
         <span>Last master merge was </span>
         <span>
           <time is="time-ago" datetime="{{ pushQueueCtrl.lastMasterMerge() | date:'yyyy-MM-ddTHH:mmZ' }}"
-                title="{{ pushQueueCtrl.lastMasterMerge() | date:pushQueueCtrl.dateFormat }}">
+                uib-tooltip="{{ pushQueueCtrl.lastMasterMerge() | date:pushQueueCtrl.dateFormat }}">
             {{ pushQueueCtrl.lastMasterMerge() | date:pushQueueCtrl.dateFormat }}
           </time>
         </span>
-        <paper-button class="colorful" raised ng-click="pushQueueCtrl.updateMergedToMaster()" title="Click to update to now">
+        <paper-button class="colorful" raised ng-click="pushQueueCtrl.updateMergedToMaster()" uib-tooltip="Click to update to now">
           <iron-icon icon="refresh"></iron-icon>
         </paper-button>
       </div>

@@ -1,10 +1,36 @@
 <div class="compare-content">
   <div class="row">
     <!--<h4 class="col-xs-offset-2 col-xs-8">{{ compare.title }}</h4>-->
-    <form class="form-horizontal">
-      <div class="gorm-group">
-        <label class="col-xs-offset-2 col-xs-2">Sort tests by</label>
-        <select name="sortTestsBy" ng-model="compare.sortField" ng-options="field as field for field in compare.sortFields"></select>
+    <form class="form-horizontal col-xs-12">
+      <div class="form-group">
+        <label class="col-md-4">Sort tests by</label>
+        <div class="col-md-4">
+          <select class="form-control" name="sortTestsBy" ng-model="compare.sortField" ng-options="field as field for field in compare.sortFields"></select>
+        </div>
+        <div class="col-md-4 compare-legend-container">
+          <paper-button class="pull-right compare-legend-opener" ng-click="compare.toggleLegend()">
+            <iron-icon icon="help"></iron-icon>
+            <span>Help</span>
+          </paper-button>
+          <div class="compare-legend" ng-class="compare.legendShown ? 'compare-legend-open' : ''">
+            <div class="text-success">
+              <iron-icon icon="check"></iron-icon>
+              <span>A passed test</span>
+            </div>
+            <div class="text-danger">
+              <iron-icon icon="error-outline"></iron-icon>
+              <span>A failed test</span>
+            </div>
+            <div class="text-warning">
+              <iron-icon icon="bug-report"></iron-icon>
+              <span>Unstable (doesn't run on master)</span>
+            </div>
+            <div class="text-muted">
+              <iron-icon icon="help-outline"></iron-icon>
+              <span>Aborted build / New test</span>
+            </div>
+          </div>
+        </div>
       </div>
     </form>
   </div>
@@ -16,7 +42,7 @@
                       selected="compare.selected.left"
                       on-change="compare.selectionChanged('left', prop, value)"></build-selector>
       <uib-accordion close-others="false">
-        <uib-accordion-group ng-repeat="testList in compare.leftTests | orderBy:[('_id.' + compare.sortField), '_id.testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}" is-open="testList.showTests" is-disabled="testList.alien">
+        <uib-accordion-group ng-repeat="testList in compare.leftTests | orderBy:[('_id.' + compare.sortField), '_id.testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}" is-open="testList.showTests">
           <uib-accordion-heading>
             <span ng-class="compare.testIconClass(testList)">{{ testList._id.testClassName | className }}</span>
             <span class="badge" ng-class="compare.testIconClass(testList)" ng-bind="testList.tests.length"></span>
@@ -28,11 +54,11 @@
             <li class="list-group-item" ng-repeat="test in testList.tests | orderBy:'testName'">
               <strong> {{ test.testName | className }}</strong>
               <paper-badge icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'" alt="Connection exception"></paper-badge>
-              <em> {{ test.errorMessage }}</em>
-              <a class="pull-right" title="stability" ng-href="{{ compare.buildStabilityLink(testList) }}">
+              <em ng-if="!testList.alien"> {{ test.errorMessage }}</em>
+              <a class="pull-right" uib-tooltip="stability" ng-click="compare.goToStability(testList)">
                 <iron-icon icon="assessment"></iron-icon>
               </a>
-              <a class="pull-right" ng-href="{{ test.testReportUrl }}" target="_blank" title="Go to report" ng-if="test.testReportUrl">
+              <a class="pull-right" ng-href="{{ test.testReportUrl }}" target="_blank" uib-tooltip="Go to report" ng-if="test.testReportUrl">
                 <iron-icon icon="launch"></iron-icon>
               </a>
             </li>
@@ -47,7 +73,7 @@
                       selected="compare.selected.right"
                       on-change="compare.selectionChanged('right', prop, value)"></build-selector>
       <uib-accordion close-others="false">
-        <uib-accordion-group ng-repeat="testList in compare.rightTests | orderBy:[('_id.' + compare.sortField), '_id.testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}" is-open="testList.showTests" is-disabled="testList.alien">
+        <uib-accordion-group ng-repeat="testList in compare.rightTests | orderBy:[('_id.' + compare.sortField), '_id.testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}" is-open="testList.showTests">
           <uib-accordion-heading>
             <span ng-class="compare.testIconClass(testList)"> {{ testList._id.testClassName | className }}</span>
             <span class="badge" ng-bind="testList.tests.length" ng-class="compare.testIconClass(testList)"></span>
@@ -59,11 +85,11 @@
             <li class="list-group-item" ng-repeat="test in testList.tests | orderBy:'testName'">
               <strong> {{ test.testName | className }}</strong>
               <paper-badge icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'" alt="Connection exception"></paper-badge>
-              <em> {{ test.errorMessage }}</em>
-              <a class="pull-right" title="stability" ng-href="{{ compare.buildStabilityLink(testList) }}">
+              <em ng-if="!testList.alien"> {{ test.errorMessage }}</em>
+              <a class="pull-right" uib-tooltip="stability" ng-href="{{ compare.buildStabilityLink(testList) }}">
                 <iron-icon icon="assessment"></iron-icon>
               </a>
-              <a class="pull-right" ng-href="{{ test.testReportUrl }}" target="_blank" title="Go to report" ng-if="test.testReportUrl">
+              <a class="pull-right" ng-href="{{ test.testReportUrl }}" target="_blank" uib-tooltip="Go to report" ng-if="test.testReportUrl">
                 <iron-icon icon="launch"></iron-icon>
               </a>
             </li>

@@ -13,12 +13,6 @@
                 columns: 12
             },
             {
-                id: 'stability',
-                title: 'Tests Stability',
-                contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-stability-tmpl.html',
-                columns: 12
-            },
-            {
                 id: 'pushqueue',
                 title: 'Push Queue',
                 contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-push-queue-tmpl.html',

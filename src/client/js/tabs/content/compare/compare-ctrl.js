@@ -23,6 +23,7 @@
       right: {
       }
     };
+    this.legendShown = false;
 
     this.sortFields = ['category', 'testClassName', 'markedUnstable', 'insertionTime'];
     this.sortField = this.sortFields[0];
@@ -137,7 +138,18 @@
       return this.$state.href('stability', {
         buildName: testsList.tests[0].jobName,
         buildNumber: testsList.tests[0].buildId,
-        tests: testsList.tests});
+        tests: testsList.tests
+      });
+    },
+    goToStability: function (testsList) {
+      return this.$state.go('stability', {
+        buildName: testsList.tests[0].jobName,
+        buildNumber: testsList.tests[0].buildId,
+        tests: testsList.tests
+      });
+    },
+    toggleLegend: function () {
+      this.legendShown = !this.legendShown;
     },
     _groupByClass: function (tests) {
       var testsByClass = [];

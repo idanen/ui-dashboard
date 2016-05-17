@@ -156,6 +156,28 @@ ui-ci-status .table tbody td:first-child {
   color: red;
 }
 
+.compare-content {
+  .compare-legend-container {
+    position: relative;
+    .compare-legend {
+      position: absolute;
+      top: 50%;
+      right: 90px;
+      z-index: 1;
+      padding: 7px 12px;
+      background: white;
+      line-height: 2.4em;
+      box-shadow: 0 3px 5px rgba(0,0,0,.3);
+      transition: all .3s ease-out;
+      transform: scale(0);
+      transform-origin: top right;
+      &.compare-legend-open {
+        transform: scale(1);
+      }
+    }
+  }
+}
+
 .stability-container {
   .progress {
     margin-bottom: 5px;

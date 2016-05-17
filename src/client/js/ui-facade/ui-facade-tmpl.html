@@ -38,16 +38,16 @@
                             <!--<div class="title">Change Content</div>-->
                         </paper-toolbar>
                         <paper-menu>
-                            <paper-item class="widget-link" ng-repeat="widget in facade.widgets" ng-click="facade.gotoState(widget.id)" title="{{ widget.title }}">
+                            <paper-item class="widget-link" ng-repeat="widget in facade.widgets" ng-click="facade.gotoState(widget.id)" uib-tooltip="{{ widget.title }}">
                                 <paper-item-body two-line>
                                     <div>{{ widget.title }}</div>
                                     <!--<div secondary>{{ widget.subTitle }}</div>-->
                                 </paper-item-body>
                             </paper-item>
-                            <paper-item class="widget-link" ng-click="facade.gotoState('stability')" title="Test Stability">
+                            <paper-item class="widget-link" ng-click="facade.gotoState('stability')" uib-tooltip="Test Stability">
                                 <paper-item-body two-line>
                                     <div>Test Stability</div>
-                                    <div secondary>Check test&apos;s stability</div>
+                                    <!--<div secondary>Check test&apos;s stability</div>-->
                                 </paper-item-body>
                             </paper-item>
                         </paper-menu>

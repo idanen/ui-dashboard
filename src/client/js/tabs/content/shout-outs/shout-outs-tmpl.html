@@ -8,7 +8,7 @@
       </paper-input-container>
     </div>
     <div class="col-xs-3">
-      <paper-fab icon="send" ng-click="shouter.shout()" title="Shout!">
+      <paper-fab icon="send" ng-click="shouter.shout()" uib-tooltip="Shout!">
       </paper-fab>
     </div>
   </div>
@@ -20,7 +20,7 @@
           <span>{{::shout.message}}</span>
           <em class="pull-right">
             <time is="time-ago" datetime="{{ ::shout.shoutedAt | date:'yyyy-MM-ddTHH:mmZ' }}"
-                  title="{{ ::shout.shoutedAt | date:shouter.dateFormat }}">
+                  uib-tooltip="{{ ::shout.shoutedAt | date:shouter.dateFormat }}">
               {{ ::shout.shoutedAt | date:shouter.dateFormat }}
             </time>
           </em>

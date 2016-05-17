@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-sm-4 build-name-column">
         <paper-icon-button icon="unfold-more" raised toggles ng-click="$ctrl.buildsHiddenToggle()"></paper-icon-button>
-        <strong title="{{$ctrl.build.$id}}"> {{ $ctrl.build.alias || $ctrl.build.$id }}</strong>
+        <strong uib-tooltip="{{ $ctrl.build.$id }}"> {{ $ctrl.build.alias || $ctrl.build.$id }}</strong>
       </div>
       <div class="col-sm-4">
         <iron-icon class="job-result-icon" icon="{{ $ctrl.resultToIconName($ctrl.build.result) }}"
@@ -11,7 +11,7 @@
         <span> {{ $ctrl.build.result }} (</span>
         <em>
           <time is="time-ago" datetime="{{ $ctrl.build.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
-                title="{{ $ctrl.build.lastUpdate | date }}">
+                uib-tooltip="{{ $ctrl.build.lastUpdate | date }}">
             {{ $ctrl.build.lastUpdate | date }}
           </time>
         </em>
@@ -28,8 +28,8 @@
   <div class="build-status-rows">
     <div class="row builds-group slide-in" ng-repeat="build in $ctrl.buildResults | orderBy:'$id':true track by $index">
       <div class="col-sm-4">
-        <a ng-href="{{ $ctrl.buildCompareLink(build.$id) }}" title="Compare this build to another">{{ build.$id }}</a>
-        <a ng-href="{{ $ctrl.buildJenkinsLink(build.$id) }}" title="Open in Jenkins" target="_blank">
+        <a ng-href="{{ $ctrl.buildCompareLink(build.$id) }}" uib-tooltip="Compare this build to another">{{ build.$id }}</a>
+        <a ng-href="{{ $ctrl.buildJenkinsLink(build.$id) }}" uib-tooltip="Open in Jenkins" target="_blank">
           <iron-icon icon="open-in-new"></iron-icon>
         </a>
       </div>
@@ -39,14 +39,14 @@
         <span> {{ build.result }} (</span>
         <em>
           <time is="time-ago" datetime="{{ build.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
-                title="{{ build.lastUpdate | date }}">
+                uib-tooltip="{{ build.lastUpdate | date }}">
             {{ build.lastUpdate | date }}
           </time>
         </em>
         <span>)</span>
       </div>
       <div class="col-sm-4">
-        <build-progress build-name="$ctrl.buildName" build-number="build.$id"></build-progress>
+        <build-progress build-name="$ctrl.buildName" build-number="build.$id" build-group="$ctrl.group"></build-progress>
       </div>
     </div>
   </div>

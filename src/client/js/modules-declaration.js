@@ -13,8 +13,16 @@
           PUSH_Q: 'PushQueueNotification',
           BRANCH_OWNER_Q: 'BranchOwnerNotification'
         })
+        .config(config)
         .run(initApp);
     angular.module('ui', ['tabs']);
+
+    config.$inject = ['$uibTooltipProvider'];
+    function config($uibTooltipProvider) {
+      $uibTooltipProvider.options({
+        placement: 'bottom', appendToBody: true
+      });
+    }
 
     initApp.$inject = ['$rootScope', '$state', 'ShoutOutsService'];
     function initApp($rootScope, $state, shoutOutsService) {

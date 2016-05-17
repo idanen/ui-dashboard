@@ -6,11 +6,12 @@
         controller: BuildProgressController,
         bindings: {
           buildName: '<',
-          buildNumber: '<'
+          buildNumber: '<',
+          buildGroup: '<'
         },
         template: `
           <div class="build-progress">
-            <div class="sub-build slide-in" ng-repeat="(subBuildName, subBuild) in $ctrl.subBuilds" title="{{ subBuildName }}" ng-class="$ctrl.determineClass(subBuild)"></div>
+            <div class="sub-build slide-in" ng-repeat="(subBuildName, subBuild) in $ctrl.subBuilds" uib-tooltip="{{ subBuildName }}" ng-class="$ctrl.determineClass(subBuild)"></div>
           </div>
         `
       })
@@ -32,7 +33,7 @@
     },
     getSubBuilds: function () {
       if (this.buildName && this.buildNumber) {
-        this.subBuilds = this.statusService.getJobSubBuilds(this.buildName, this.buildNumber, 'teams');
+        this.subBuilds = this.statusService.getJobSubBuilds(this.buildName, this.buildNumber, this.buildGroup);
       }
     },
     determineClass: function (subBuild) {
