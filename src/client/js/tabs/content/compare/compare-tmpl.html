@@ -16,7 +16,7 @@
                       selected="compare.selected.left"
                       on-change="compare.selectionChanged('left', prop, value)"></build-selector>
       <uib-accordion close-others="false">
-        <uib-accordion-group ng-repeat="testList in compare.leftTests | orderBy:[('_id.' + compare.sortField), '_id.testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}" is-open="testList.showTests">
+        <uib-accordion-group ng-repeat="testList in compare.leftTests | orderBy:[('_id.' + compare.sortField), '_id.testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}" is-open="testList.showTests" is-disabled="testList.alien">
           <uib-accordion-heading>
             <span ng-class="compare.testIconClass(testList)">{{ testList._id.testClassName | className }}</span>
             <span class="badge" ng-class="compare.testIconClass(testList)" ng-bind="testList.tests.length"></span>
@@ -47,7 +47,7 @@
                       selected="compare.selected.right"
                       on-change="compare.selectionChanged('right', prop, value)"></build-selector>
       <uib-accordion close-others="false">
-        <uib-accordion-group ng-repeat="testList in compare.rightTests | orderBy:[('_id.' + compare.sortField), '_id.testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}" is-open="testList.showTests">
+        <uib-accordion-group ng-repeat="testList in compare.rightTests | orderBy:[('_id.' + compare.sortField), '_id.testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}" is-open="testList.showTests" is-disabled="testList.alien">
           <uib-accordion-heading>
             <span ng-class="compare.testIconClass(testList)"> {{ testList._id.testClassName | className }}</span>
             <span class="badge" ng-bind="testList.tests.length" ng-class="compare.testIconClass(testList)"></span>
@@ -56,7 +56,7 @@
             </div>
           </uib-accordion-heading>
           <ul class="list-group">
-            <li class="list-group-item" ng-repeat="test in testList.tests">
+            <li class="list-group-item" ng-repeat="test in testList.tests | orderBy:'testName'">
               <strong> {{ test.testName | className }}</strong>
               <paper-badge icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'" alt="Connection exception"></paper-badge>
               <em> {{ test.errorMessage }}</em>
