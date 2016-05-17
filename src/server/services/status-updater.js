@@ -80,7 +80,7 @@ module.exports = (function () {
     determineRefToUpdate: function (buildStatus, isHead) {
       var buildName = buildStatus.name,
           buildParams = buildStatus.build.parameters,
-          group, parentName, parentNumber;
+          group, parentName, parentNumber, branchName;
 
       console.log('Updating ref of build named "' + buildName + '"');
       if (!buildParams || !buildParams.HEAD_JOB_NAME || !buildParams.HEAD_BUILD_NUMBER) {
@@ -91,7 +91,8 @@ module.exports = (function () {
       parentName = buildParams.HEAD_JOB_NAME;
       parentNumber = buildParams.HEAD_BUILD_NUMBER;
       group = this.isMastersGroup(buildParams) ? 'masters' : 'teams';
-      console.log('with parent build named "' + parentName + '" and number "' + parentNumber + '", group "' + group + '" (branch = ' + buildParams.GIT_BRANCH + ')');
+      branchName = buildParams.GIT_BRANCH;
+      console.log('with parent build named "' + parentName + '" and number "' + parentNumber + '", group "' + group + '" (branch = ' + branchName + ')');
 
       if (isHead) {
         console.log('HEAD of build -> updating "' + group + '/' + buildName + '"');
@@ -99,7 +100,8 @@ module.exports = (function () {
           isHead: true,
           ref: group + '/' + parentName + '/builds/' + parentNumber,
           phase: buildStatus.build.phase,
-          result: buildStatus.build.status
+          result: buildStatus.build.status,
+          branchName: branchName
         };
       }
 

@@ -49,13 +49,16 @@
             <div class="pull-right" ng-class="compare.testIconClass(testList)">
               <iron-icon icon="{{ compare.testIcon(testList) }}"></iron-icon>
             </div>
+            <div class="pull-right text-warning" ng-if="compare.hasMarkedUnstable(testList)">
+              <iron-icon icon="bug-report"></iron-icon>
+            </div>
           </uib-accordion-heading>
           <ul class="list-group">
             <li class="list-group-item" ng-repeat="test in testList.tests | orderBy:'testName'">
-              <strong> {{ test.testName | className }}</strong>
+              <strong ng-class="test.markedUnstable ? 'text-warning' : ''"><iron-icon ng-show="test.markedUnstable" icon="bug-report"></iron-icon> {{ test.testName | className }}</strong>
               <paper-badge icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'" alt="Connection exception"></paper-badge>
               <em ng-if="!testList.alien"> {{ test.errorMessage }}</em>
-              <a class="pull-right" uib-tooltip="stability" ng-click="compare.goToStability(testList)">
+              <a class="pull-right" uib-tooltip="stability" ng-click="compare.goToStability(testList, 'left')">
                 <iron-icon icon="assessment"></iron-icon>
               </a>
               <a class="pull-right" ng-href="{{ test.testReportUrl }}" target="_blank" uib-tooltip="Go to report" ng-if="test.testReportUrl">
@@ -86,7 +89,7 @@
               <strong> {{ test.testName | className }}</strong>
               <paper-badge icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'" alt="Connection exception"></paper-badge>
               <em ng-if="!testList.alien"> {{ test.errorMessage }}</em>
-              <a class="pull-right" uib-tooltip="stability" ng-href="{{ compare.buildStabilityLink(testList) }}">
+              <a class="pull-right" uib-tooltip="stability" ng-click="compare.goToStability(testList, 'right')">
                 <iron-icon icon="assessment"></iron-icon>
               </a>
               <a class="pull-right" ng-href="{{ test.testReportUrl }}" target="_blank" uib-tooltip="Go to report" ng-if="test.testReportUrl">

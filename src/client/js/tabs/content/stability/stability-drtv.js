@@ -27,8 +27,12 @@
       number: build.number || ''
     };
 
-    if ($stateParams.tests) {
-      this.appendToTests(this.reFormatTestsStructure($stateParams.tests));
+    if ($stateParams.tests && $stateParams.tests.length) {
+      let testsFromState = $stateParams.tests;
+      if (!Array.isArray(testsFromState)) {
+        testsFromState = [testsFromState];
+      }
+      this.appendToTests(this.reFormatTestsStructure(testsFromState));
     }
 
     //ciStatusService.getLastBuildNumber('masters', this.build.name).then((lastBuild) => {
@@ -109,6 +113,12 @@
     },
     selectNone: function () {
       this.tests.forEach((test) => test.selected = false);
+    },
+    clearAll: function () {
+      this.tests = [];
+    },
+    removeTest: function (testClass) {
+      this.tests = _.filter(this.tests, test => test.testClass !== testClass);
     },
     renderResults: function () {
       _.forEach(this.tests, (test) => {

@@ -28,7 +28,7 @@
         if (selectedBuild) {
           this.buildResults = this.buildResultsData(this.builds, this.name);
           if (!this.number) {
-            this.number = this.buildResults[0];
+            this.number = this.buildResults[0].id;
             this.onChange({prop: 'number', value: this.number});
           }
         }
@@ -51,7 +51,7 @@
         let firstBuild = changes.builds.currentValue[0];
         this.name = firstBuild.$id;
         this.buildResults = this.buildResultsData(this.builds, this.name);
-        this.number = this.buildResults[0];
+        this.number = this.buildResults[0].id;
         this.onChange({prop: 'name', value: this.name});
         this.onChange({prop: 'number', value: this.number});
       }
@@ -62,9 +62,9 @@
       this[prop] = value;
       if (prop === 'name') {
         this.buildResults = this.buildResultsData(this.builds, this.name);
-        this.number = this.buildResults[0];
-        this.onChange({prop: 'number', value: this.number});
+        this.number = this.buildResults[0].id;
         this.onChange({prop: prop, value: value});
+        this.onChange({prop: 'number', value: this.number});
       } else {
         this.onChange({prop: prop, value: value});
       }
@@ -76,7 +76,8 @@
       buildResults = buildResults.map((result) => {
         return {
           id: result,
-          result: selectedBuild.builds[result].result
+          result: selectedBuild.builds[result].result,
+          branch: selectedBuild.builds[result].branchName
         };
       });
       return buildResults;

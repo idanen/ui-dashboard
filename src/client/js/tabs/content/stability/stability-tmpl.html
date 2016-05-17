@@ -21,6 +21,10 @@
     </fieldset>
     <fieldset class="form-group">
       <div class="col-xs-12">
+        <paper-button raised ng-click="$ctrl.fetchFailedOfBuild()">
+          <iron-icon icon="get-app"></iron-icon>
+          Re-fetch
+        </paper-button>
         <paper-button raised ng-click="$ctrl.selectAll()">
           <iron-icon icon="done"></iron-icon>
           select all
@@ -29,11 +33,16 @@
           <iron-icon icon="clear"></iron-icon>
           select none
         </paper-button>
+        <paper-button class="text-danger" raised ng-click="$ctrl.clearAll()">
+          <iron-icon icon="block"></iron-icon>
+          clear all
+        </paper-button>
       </div>
     </fieldset>
     <fieldset class="form-group" ng-repeat="test in $ctrl.tests">
       <div class="col-md-4">
-        {{ test.testClass | className }}
+        <paper-icon-button icon="clear" ng-click="$ctrl.removeTest(test.testClass)"></paper-icon-button>
+        <span>{{ test.testClass | className }}</span>
       </div>
       <div class="col-md-4">
         <ul class="list-group">
@@ -49,7 +58,7 @@
           <li class="list-group-item" ng-repeat="(testName, result) in test.results">
             <uib-progressbar class="progress-striped" max="result.count" value="result.failed" type="{{result.stability > 0.3 ? 'danger' : 'warning'}}">
               <span class="text-success test-result-stable" ng-if="result.failed === 0"><iron-icon icon="done-all"></iron-icon> Stable</span>
-              <em ng-if="result.failed > 0">{{ result.failed }} / {{ result.count }} ({{ result.stability | percentage:0 }})</em>
+              <em ng-if="result.failed > 0" uib-tooltip="{{ result.failed }} / {{ result.count }} ({{ result.stability | percentage:0 }})">{{ result.failed }} / {{ result.count }} ({{ result.stability | percentage:0 }})</em>
             </uib-progressbar>
           </li>
         </ul>

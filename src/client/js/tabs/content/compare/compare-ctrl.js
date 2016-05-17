@@ -79,8 +79,8 @@
     },
     getTests: function () {
       var promises = [];
-      promises.push(this.buildTestsService.fetch(this.selected.left.name, this.selected.left.number, false));
-      promises.push(this.buildTestsService.fetch(this.selected.right.name, this.selected.right.number, false));
+      promises.push(this.buildTestsService.fetch(this.selected.left.name, this.selected.left.number, true));
+      promises.push(this.buildTestsService.fetch(this.selected.right.name, this.selected.right.number, true));
 
       return this.$q.all(promises);
     },
@@ -141,12 +141,17 @@
         tests: testsList.tests
       });
     },
-    goToStability: function (testsList) {
+    goToStability: function (testsList, side) {
       return this.$state.go('stability', {
+        group: this.selected[side].group,
         buildName: testsList.tests[0].jobName,
         buildNumber: testsList.tests[0].buildId,
-        tests: testsList.tests
+        tests: testsList
       });
+    },
+    hasMarkedUnstable: function (testsList) {
+      let unstable = _.find(testsList.tests, { markedUnstable: true });
+      return !!unstable;
     },
     toggleLegend: function () {
       this.legendShown = !this.legendShown;
