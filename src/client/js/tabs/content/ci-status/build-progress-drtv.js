@@ -7,11 +7,14 @@
         bindings: {
           buildName: '<',
           buildNumber: '<',
-          buildGroup: '<'
+          buildGroup: '<',
+          buildResult: '<'
         },
         template: `
-          <div class="build-progress">
-            <div class="sub-build slide-in" ng-repeat="(subBuildName, subBuild) in $ctrl.subBuilds" uib-tooltip="{{ subBuildName }}" ng-class="$ctrl.determineClass(subBuild)"></div>
+          <div class="build-progress" ng-class="$ctrl.buildResult === 'running' && 'build-progress-running'">
+            <div class="sub-build slide-in" ng-repeat="(subBuildName, subBuild) in $ctrl.subBuilds" uib-tooltip="{{ subBuildName }}" ng-class="$ctrl.determineClass(subBuild)">
+              <span class="sub-build-result">{{ subBuild.result }}</span>
+            </div>
           </div>
         `
       })

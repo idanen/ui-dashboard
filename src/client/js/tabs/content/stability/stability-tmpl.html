@@ -33,6 +33,10 @@
           <iron-icon icon="clear"></iron-icon>
           select none
         </paper-button>
+        <paper-button raised ng-click="$ctrl.clearResults()">
+          <iron-icon icon="block"></iron-icon>
+          clear results
+        </paper-button>
         <paper-button class="text-danger" raised ng-click="$ctrl.clearAll()">
           <iron-icon icon="block"></iron-icon>
           clear all
@@ -78,7 +82,7 @@
         </paper-input-container>
       </div>
       <div class="col-xs-4">
-        <paper-button raised ng-click="$ctrl.addTest()">
+        <paper-button raised ng-click="$ctrl.addNewTest()">
           <iron-icon icon="add"></iron-icon>
           <span>Add</span>
         </paper-button>

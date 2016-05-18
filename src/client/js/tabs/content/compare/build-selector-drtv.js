@@ -16,6 +16,7 @@
   BuildSelectorController.$inject = ['$element'];
   function BuildSelectorController($element) {
     this.$element = $element;
+    this.selectedBuildResult = 'UNKNOWN';
   }
 
   BuildSelectorController.prototype = {
@@ -26,11 +27,14 @@
       this.builds.$loaded().then(() => {
         let selectedBuild = _.find(this.builds, {$id: this.name});
         if (selectedBuild) {
+          let buildResult;
           this.buildResults = this.buildResultsData(this.builds, this.name);
+          buildResult = _.find(this.buildResults, {id: this.number});
           if (!this.number) {
             this.number = this.buildResults[0].id;
             this.onChange({prop: 'number', value: this.number});
           }
+          this.selectedBuildResult = buildResult ? buildResult.result : 'UNKNOWN';
         }
       });
     },
@@ -45,6 +49,7 @@
         }
         if (changes.selected.currentValue.number) {
           this.number = changes.selected.currentValue.number;
+          this.selectedBuildResult = _.find(this.buildResults, {id: this.number}).result;
         }
       }
       if (changes.builds && changes.builds.currentValue) {
@@ -52,6 +57,7 @@
         this.name = firstBuild.$id;
         this.buildResults = this.buildResultsData(this.builds, this.name);
         this.number = this.buildResults[0].id;
+        this.selectedBuildResult = _.find(this.buildResults, {id: this.number}).result;
         this.onChange({prop: 'name', value: this.name});
         this.onChange({prop: 'number', value: this.number});
       }
@@ -63,6 +69,7 @@
       if (prop === 'name') {
         this.buildResults = this.buildResultsData(this.builds, this.name);
         this.number = this.buildResults[0].id;
+        this.selectedBuildResult = _.find(this.buildResults, {id: this.number}).result;
         this.onChange({prop: prop, value: value});
         this.onChange({prop: 'number', value: this.number});
       } else {

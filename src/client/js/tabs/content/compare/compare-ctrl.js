@@ -25,6 +25,10 @@
     };
     this.legendShown = false;
 
+    if (!this.build.number) {
+      this.build.number = '1370';
+    }
+
     this.sortFields = ['category', 'testClassName', 'markedUnstable', 'insertionTime'];
     this.sortField = this.sortFields[0];
 
@@ -43,7 +47,24 @@
     getAllTests: function () {
       return this.getTests()
           .then(this.getTestsOfOther.bind(this))
-          .then(this.assignToViewModel.bind(this));
+          .then(this.assignToViewModel.bind(this))
+          .then(this.getSelectedTestResult.bind(this));
+    },
+    getSelectedTestResult: function () {
+      this.availableBuilds[this.selected.left.group].$loaded()
+        .then(() => {
+            let selectedLeft = _.find(this.availableBuilds[this.selected.left.group], {$id: this.selected.left.name});
+            if (selectedLeft) {
+              this.selected.left.result = selectedLeft.builds[this.selected.left.number].result;
+            }
+          });
+      this.availableBuilds[this.selected.right.group].$loaded()
+        .then(() => {
+            let selectedRight = _.find(this.availableBuilds[this.selected.right.group], {$id: this.selected.right.name});
+            if (selectedRight) {
+              this.selected.right.result = selectedRight.builds[this.selected.right.number].result;
+            }
+          });
     },
     updateState: function () {
       this.$state.go('compare', {

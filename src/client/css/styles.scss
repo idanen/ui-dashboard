@@ -22,7 +22,10 @@ body {
 }
 
 [ui-view] {
-    height: 100%;
+  height: 100%;
+  .inner-title {
+    text-align: center;
+  }
 }
 
 .container {
@@ -152,8 +155,13 @@ ui-ci-status .table tbody td:first-child {
     margin-bottom: 5px;
 }
 
-.build-selector .ind-build-result-aborted {
-  color: red;
+.build-selector {
+  [uib-dropdown] {
+    cursor: pointer;
+  }
+  .ind-build-result-aborted {
+    color: red;
+  }
 }
 
 .compare-content {
@@ -303,4 +311,14 @@ ui-ci-status .table tbody td:first-child {
     100% {
         background-color: rgb(255, 255, 255);
     }
+}
+
+@keyframes scan {
+  from {
+    transform: skew(-25deg) translate3d(-10px,0,0);
+  }
+
+  to {
+    transform: skew(-25deg) translate3d(300px,0,0);
+  }
 }

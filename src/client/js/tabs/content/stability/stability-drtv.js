@@ -65,7 +65,30 @@
       return reformated;
     },
     appendToTests: function (tests) {
-      this.tests = this.tests.concat(tests);
+      if (!tests) {
+        return;
+      }
+      if (!Array.isArray(tests)) {
+        tests = [tests];
+      }
+      _.forEach(tests, (test) => {
+        let existing = _.find(this.tests, {testClass: test.testClass}),
+            newMethods = Array.isArray(test.methods) ? test.methods : test.methods.split(/,\s*/);
+        if (existing) {
+          let methodsToAdd = [];
+          _.forEach(newMethods, (method) => {
+            if (!_.includes(existing.methods(method))) {
+              methodsToAdd.push(method);
+            }
+          });
+          existing.methods = existing.methods.concat(methodsToAdd);
+        } else {
+          this.tests = this.tests.concat(_.extend({selected: true}, {
+            testClass: test.testClass,
+            methods: newMethods
+          }));
+        }
+      });
     },
     selectFirstOptions: function () {
       if (this.build) {
@@ -86,33 +109,47 @@
         this.buildsCount = value;
       });
     },
-    addTest: function () {
-      let existing = _.find(this.tests, {testClass: this.newTest.testClass}),
-          newMethods = this.newTest.methods.split(/,\s*/);
-      if (existing) {
-        let toAdd = [];
-        _.forEach(newMethods, (method) => {
-          if (!_.includes(existing.methods(method))) {
-            toAdd.push(method);
-          }
-        });
-        existing.methods = existing.methods.concat(toAdd);
-      } else {
-        this.tests = this.tests.concat(_.extend({selected: true}, {
-          testClass: this.newTest.testClass,
-          methods: newMethods
-        }));
-      }
+    addNewTest: function () {
+      this.addTests(this.newTest);
       this.newTest = {
         testClass: '',
         methods: ''
       };
+    },
+    addTests: function (toAdd) {
+      if (!toAdd) {
+        return;
+      }
+      if (!Array.isArray(toAdd)) {
+        toAdd = [toAdd];
+      }
+      _.forEach(toAdd, (test) => {
+        let existing = _.find(this.tests, {testClass: test.testClass}),
+        newMethods = test.methods.split(/,\s*/);
+        if (existing) {
+          let methodsToAdd = [];
+          _.forEach(newMethods, (method) => {
+            if (!_.includes(existing.methods(method))) {
+              methodsToAdd.push(method);
+            }
+          });
+          existing.methods = existing.methods.concat(methodsToAdd);
+        } else {
+          this.tests = this.tests.concat(_.extend({selected: true}, {
+            testClass: test.testClass,
+            methods: newMethods
+          }));
+        }
+      });
     },
     selectAll: function () {
       this.tests.forEach((test) => test.selected = true);
     },
     selectNone: function () {
       this.tests.forEach((test) => test.selected = false);
+    },
+    clearResults: function () {
+      this.tests.forEach((test) => test.results = []);
     },
     clearAll: function () {
       this.tests = [];

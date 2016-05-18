@@ -41,21 +41,6 @@
       }
     }
   }
-
-  .job-result-icon {
-    &.job-result-icon-done {
-      color: darkgreen;
-    }
-    &.job-result-icon-warning {
-      color: gold;
-    }
-    &.job-result-icon-error {
-      color: darkred;
-    }
-    &.job-result-icon-block {
-      color: silver;
-    }
-  }
   .new-build-number-form {
     transition: all .3s ease-in-out;
     height: 0;
@@ -70,11 +55,39 @@
     width: 200px;
     height: 100%;
     .build-progress {
+      &.build-progress-running::before {
+        content: '';
+        width: 0;
+        height: 50%;
+        top: 7px;
+        position: absolute;
+        background: white;
+        z-index: 3;
+        box-shadow: 0 0 7px 5px rgb(255,255,255);
+        transform: skew(-25deg) translate3d(-10px,0,0);
+        animation: scan 1.4s infinite cubic-bezier(0.13, 0.23, 0, 0.96);
+      }
       .sub-build {
         width: 20%;
         height: 20px;
         display: inline-block;
         color: #ccc;
+        vertical-align: middle;
+        .sub-build-result {
+          position: absolute;
+          background: transparent;
+          top: 0;
+          z-index: 1;
+          color: white;
+          font-size: 1.2rem;
+          text-align: center;
+          visibility: hidden;
+        }
+        &:hover {
+          .sub-build-result {
+            visibility: visible;
+          }
+        }
         &::before,
         &::after {
           content: '';
@@ -117,5 +130,20 @@
         }
       }
     }
+  }
+}
+
+.job-result-icon {
+  &.job-result-icon-done {
+    color: darkgreen;
+  }
+  &.job-result-icon-warning {
+    color: gold;
+  }
+  &.job-result-icon-error {
+    color: darkred;
+  }
+  &.job-result-icon-block {
+    color: silver;
   }
 }

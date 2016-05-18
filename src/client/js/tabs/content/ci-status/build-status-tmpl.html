@@ -32,21 +32,21 @@
         <a ng-href="{{ $ctrl.buildJenkinsLink(build.$id) }}" uib-tooltip="Open in Jenkins" target="_blank">
           <iron-icon icon="open-in-new"></iron-icon>
         </a>
+        <em>{{ build.branchName }}</em>
       </div>
       <div class="col-sm-4">
-        <iron-icon class="job-result-icon" icon="{{ $ctrl.resultToIconName(build.result) }}"
-                   ng-class="'job-result-icon-' + $ctrl.resultToIconName(build.result)"></iron-icon>
-        <span> {{ build.result }} (</span>
+        <build-result result="build.result"></build-result>
         <em>
+          (
           <time is="time-ago" datetime="{{ build.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
                 uib-tooltip="{{ build.lastUpdate | date }}">
             {{ build.lastUpdate | date }}
           </time>
+          )
         </em>
-        <span>)</span>
       </div>
       <div class="col-sm-4">
-        <build-progress build-name="$ctrl.buildName" build-number="build.$id" build-group="$ctrl.group"></build-progress>
+        <build-progress build-name="$ctrl.buildName" build-number="build.$id" build-group="$ctrl.group" build-result="build.result"></build-progress>
       </div>
     </div>
   </div>

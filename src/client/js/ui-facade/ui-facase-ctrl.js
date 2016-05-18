@@ -30,6 +30,10 @@
             this.currentStateWidget = widget;
         },
         gotoState: function (widgetId) {
+            if (widgetId === 'compare') {
+                this.$state.go(widgetId, {group: 'masters', buildName: 'MaaS-SAW-USB-master'});
+                return;
+            }
             if (widgetId === 'stability') {
                 this.$state.go(widgetId);
                 return;
