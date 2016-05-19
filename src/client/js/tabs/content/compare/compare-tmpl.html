@@ -1,37 +1,34 @@
 <div class="compare-content">
   <div class="row">
-    <div class="col-xs-offset-2 col-xs-8">
-      <h3 class="center-block inner-title">Compare Builds</h3>
+    <h3 class="col-xs-6">Compare Builds</h3>
+    <div class="col-xs-4 pull-right compare-legend-container">
+      <paper-icon-button class="pull-right compare-legend-opener" icon="help" title="Show legend" ng-click="compare.toggleLegend()"></paper-icon-button>
+      <div class="compare-legend" ng-class="compare.legendShown ? 'compare-legend-open' : ''">
+        <div class="text-success">
+          <iron-icon icon="check"></iron-icon>
+          <span>A passed test</span>
+        </div>
+        <div class="text-danger">
+          <iron-icon icon="error-outline"></iron-icon>
+          <span>A failed test</span>
+        </div>
+        <div class="text-warning">
+          <iron-icon icon="bug-report"></iron-icon>
+          <span>Marked as Unstable</span>
+        </div>
+        <div class="text-muted">
+          <iron-icon icon="help-outline"></iron-icon>
+          <span>Aborted build / New test</span>
+        </div>
+      </div>
     </div>
+  </div>
+  <div class="row">
     <form class="form-horizontal col-xs-12">
       <div class="form-group">
         <label class="col-md-4">Sort tests by</label>
-        <div class="col-md-4">
+        <div class="col-md-8">
           <select class="form-control" name="sortTestsBy" ng-model="compare.sortField" ng-options="field as field for field in compare.sortFields"></select>
-        </div>
-        <div class="col-md-4 compare-legend-container">
-          <paper-button class="pull-right compare-legend-opener" ng-click="compare.toggleLegend()">
-            <iron-icon icon="help"></iron-icon>
-            <span>Help</span>
-          </paper-button>
-          <div class="compare-legend" ng-class="compare.legendShown ? 'compare-legend-open' : ''">
-            <div class="text-success">
-              <iron-icon icon="check"></iron-icon>
-              <span>A passed test</span>
-            </div>
-            <div class="text-danger">
-              <iron-icon icon="error-outline"></iron-icon>
-              <span>A failed test</span>
-            </div>
-            <div class="text-warning">
-              <iron-icon icon="bug-report"></iron-icon>
-              <span>Unstable (doesn't run on master)</span>
-            </div>
-            <div class="text-muted">
-              <iron-icon icon="help-outline"></iron-icon>
-              <span>Aborted build / New test</span>
-            </div>
-          </div>
         </div>
       </div>
     </form>
@@ -44,15 +41,17 @@
                       selected="compare.selected.left"
                       on-change="compare.selectionChanged('left', prop, value)"></build-selector>
       <uib-accordion close-others="false">
-        <uib-accordion-group ng-repeat="testList in compare.leftTests | orderBy:[('_id.' + compare.sortField), '_id.testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}" is-open="testList.showTests">
+        <uib-accordion-group ng-repeat="testList in compare.leftTests | orderBy:[('_id.' + compare.sortField), '_id.testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}" is-open="compare.openTestLists[testList._id.testClassName]">
           <uib-accordion-heading>
-            <span ng-class="compare.testIconClass(testList)">{{ testList._id.testClassName | className }}</span>
-            <span class="badge" ng-class="compare.testIconClass(testList)" ng-bind="testList.tests.length"></span>
-            <div class="pull-right" ng-class="compare.testIconClass(testList)">
-              <iron-icon icon="{{ compare.testIcon(testList) }}"></iron-icon>
-            </div>
-            <div class="pull-right text-warning" ng-if="compare.hasMarkedUnstable(testList)">
-              <iron-icon icon="bug-report"></iron-icon>
+            <div class="test-compare-accordion-heading" ng-click="compare.toggleTestList($event, testList._id.testClassName)">
+              <span ng-class="compare.testIconClass(testList)">{{ testList._id.testClassName | className }}</span>
+              <span class="badge" ng-class="compare.testIconClass(testList)" ng-bind="testList.tests.length"></span>
+              <div class="pull-right" ng-class="compare.testIconClass(testList)">
+                <iron-icon icon="{{ compare.testIcon(testList) }}"></iron-icon>
+              </div>
+              <div class="pull-right text-warning" ng-if="compare.hasMarkedUnstable(testList)">
+                <iron-icon icon="bug-report"></iron-icon>
+              </div>
             </div>
           </uib-accordion-heading>
           <ul class="list-group">
@@ -80,12 +79,17 @@
                       selected="compare.selected.right"
                       on-change="compare.selectionChanged('right', prop, value)"></build-selector>
       <uib-accordion close-others="false">
-        <uib-accordion-group ng-repeat="testList in compare.rightTests | orderBy:[('_id.' + compare.sortField), '_id.testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}" is-open="testList.showTests">
+        <uib-accordion-group ng-repeat="testList in compare.rightTests | orderBy:[('_id.' + compare.sortField), '_id.testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}" is-open="compare.openTestLists[testList._id.testClassName]">
           <uib-accordion-heading>
-            <span ng-class="compare.testIconClass(testList)"> {{ testList._id.testClassName | className }}</span>
-            <span class="badge" ng-bind="testList.tests.length" ng-class="compare.testIconClass(testList)"></span>
-            <div class="pull-right" ng-class="compare.testIconClass(testList)">
-              <iron-icon icon="{{ compare.testIcon(testList) }}"></iron-icon>
+            <div class="test-compare-accordion-heading" ng-click="compare.toggleTestList($event, testList._id.testClassName)">
+              <span ng-class="compare.testIconClass(testList)"> {{ testList._id.testClassName | className }}</span>
+              <span class="badge" ng-bind="testList.tests.length" ng-class="compare.testIconClass(testList)"></span>
+              <div class="pull-right" ng-class="compare.testIconClass(testList)">
+                <iron-icon icon="{{ compare.testIcon(testList) }}"></iron-icon>
+              </div>
+              <div class="pull-right text-warning" ng-if="compare.hasMarkedUnstable(testList)">
+                <iron-icon icon="bug-report"></iron-icon>
+              </div>
             </div>
           </uib-accordion-heading>
           <ul class="list-group">

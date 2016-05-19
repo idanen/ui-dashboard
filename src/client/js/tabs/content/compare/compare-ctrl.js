@@ -23,6 +23,7 @@
       right: {
       }
     };
+    this.openTestLists = {};
     this.legendShown = false;
 
     if (!this.build.number) {
@@ -150,6 +151,10 @@
       );
 
       return this.$q.all(diffsPromises);
+    },
+    toggleTestList: function ($event, whichTest) {
+      $event.preventDefault();
+      this.openTestLists[whichTest] = !this.openTestLists[whichTest];
     },
     assignToViewModel: function (both) {
       this._extendingWithServerResults(this.leftTests, both[0], this._testEquals.bind(this));

@@ -165,24 +165,37 @@ ui-ci-status .table tbody td:first-child {
 }
 
 .compare-content {
+  h3, .h3 {
+    margin-bottom: 20px;
+  }
   .compare-legend-container {
     position: relative;
     .compare-legend {
       position: absolute;
       top: 50%;
-      right: 90px;
+      right: 50px;
       z-index: 1;
       padding: 7px 12px;
       background: white;
       line-height: 2.4em;
       box-shadow: 0 3px 5px rgba(0,0,0,.3);
-      transition: all .3s ease-out;
+      transition: all 250ms ease-out;
       transform: scale(0);
       transform-origin: top right;
       &.compare-legend-open {
         transform: scale(1);
       }
     }
+  }
+  uib-accordion {
+    .panel-title > a,
+    [uib-accordion-header] {
+      outline: 0;
+    }
+  }
+  .test-compare-accordion-heading {
+    outline: 0;
+    cursor: pointer;
   }
 }
 
