@@ -24,7 +24,7 @@
             onUpdate: '&'
           },
           template: `
-            <paper-toggle-button><label>Freeze</label></paper-toggle-button>
+            <label><paper-toggle-button></paper-toggle-button><span>Freeze</span></label>
           `
         })
         .directive('uiCiStatus', [function () {
@@ -57,6 +57,7 @@
       this.addJobResultButtonValue = 'Add'; // 'Add' button style in the 'add job' modal
       this.buildsLimit = 3;
       this.newBuild = {};
+      this.legendShown = false;
 
       //$q.all([this.jobs.masters.$loaded(), this.jobs.teams.$loaded()])
       //  .then(this.determineInitialFreezeState.bind(this));
@@ -122,6 +123,9 @@
         },
         addNewBuildNumber: function () {
           this.ciStatusService.addBuildNumber(this.newBuild.name, this.newBuild.number, 'masters').then(() => this.newBuild = {});
+        },
+        toggleLegend: function () {
+          this.legendShown = !this.legendShown;
         },
         determineInitialFreezeState: function (jobs) {
             angular.forEach(jobs, (function (job, jobId) {

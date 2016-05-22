@@ -20,6 +20,9 @@
           float: left;
         }
       }
+      paper-toggle-button {
+        display: inline-block;
+      }
     }
     .build-status-rows {
       line-height: 2.5em;
@@ -56,7 +59,7 @@
     height: 100%;
     .build-progress {
       &.build-progress-running::before {
-        content: '';
+        //content: '';
         width: 0;
         height: 50%;
         top: 7px;
@@ -65,70 +68,81 @@
         z-index: 3;
         box-shadow: 0 0 7px 5px rgb(255,255,255);
         transform: skew(-25deg) translate3d(-10px,0,0);
-        animation: scan 1.4s infinite cubic-bezier(0.13, 0.23, 0, 0.96);
+        //animation: scan 1.4s infinite cubic-bezier(0.13, 0.23, 0, 0.96);
       }
-      .sub-build {
-        width: 20%;
-        height: 20px;
-        display: inline-block;
-        color: #ccc;
-        vertical-align: middle;
-        .sub-build-result {
-          position: absolute;
-          background: transparent;
-          top: 0;
-          z-index: 1;
-          color: white;
-          font-size: 1.2rem;
-          text-align: center;
-          visibility: hidden;
-        }
-        &:hover {
-          .sub-build-result {
-            visibility: visible;
-          }
-        }
-        &::before,
-        &::after {
-          content: '';
-          height: 50%;
-          width: 100%;
-          display: block;
-          position: relative;
-          bottom: 0;
-          left: 0;
-          background-color: currentColor;
-        }
-        &::before {
-          transform: skewX(25deg);
-        }
-        &::after {
-          transform: skewX(-25deg);
-        }
-        &:not(:first-child) {
-          &::before,
-          &::after {
-            border-left: 1px solid #747474;
-          }
-        }
+    }
+  }
+  .sub-build {
+    width: 14%;
+    height: 20px;
+    display: inline-block;
+    color: #ccc;
+    vertical-align: middle;
+    &.build-state-running {
+      animation-name: pulse;
+      animation-iteration-count: infinite;
+      animation-duration: 2s;
+    }
+    .sub-build-result {
+      position: absolute;
+      background: transparent;
+      top: 0;
+      z-index: 1;
+      color: white;
+      font-size: 1.2rem;
+      text-align: center;
+      text-transform: lowercase;
+      visibility: hidden;
+    }
+    &:hover {
+      .sub-build-result {
+        visibility: visible;
       }
-      .sub-build {
-        &.build-state-success {
-          color: #0fd74a;
-        }
-        &.build-state-unstable {
-          color: #f7f10c;
-        }
-        &.build-state-failure {
-          color: #d13422;
-        }
-        &.build-state-aborted {
-          color: #a1a1a1;
-        }
-        &.build-state-unknown {
-          color: rgba(161,161,161,.5);
-        }
+    }
+    &.build-state-running:hover {
+      .sub-build-result {
+        top: -7px;
       }
+    }
+    &::before,
+    &::after {
+      content: '';
+      height: 50%;
+      width: 100%;
+      display: block;
+      position: relative;
+      bottom: 0;
+      left: 0;
+      background-color: currentColor;
+    }
+    &::before {
+      transform: skewX(25deg);
+    }
+    &::after {
+      transform: skewX(-25deg);
+    }
+    &:not(:first-child) {
+      &::before,
+      &::after {
+        border-left: 1px solid #747474;
+      }
+    }
+  }
+  .sub-build {
+    &.build-state-success {
+      color: #0fd74a;
+    }
+    &.build-state-unstable {
+      color: #f7f10c;
+    }
+    &.build-state-failure {
+      color: #d13422;
+    }
+    &.build-state-aborted {
+      color: #a1a1a1;
+    }
+    &.build-state-unknown {
+      color: rgba(161,161,161,.5);
     }
   }
 }

@@ -20,8 +20,10 @@
       })
       .controller('BuildProgressCtrl', BuildProgressController);
 
-  BuildProgressController.$inject = ['ciStatusService'];
-  function BuildProgressController(ciStatusService) {
+  BuildProgressController.$inject = ['$element', '$timeout', 'ciStatusService'];
+  function BuildProgressController($element, $timeout, ciStatusService) {
+    this.$element = $element;
+    this.$timeout = $timeout;
     this.statusService = ciStatusService;
   }
 
@@ -36,8 +38,25 @@
     },
     getSubBuilds: function () {
       if (this.buildName && this.buildNumber) {
+        let unwatch = angular.noop;
+        if (this.subBuilds && _.isFunction(this.subBuilds.$destroy)) {
+          unwatch();
+          this.subBuilds.$destroy();
+        }
+
         this.subBuilds = this.statusService.getJobSubBuilds(this.buildName, this.buildNumber, this.buildGroup);
+        unwatch = this.subBuilds.$watch(this.updateSubBuildsSizes.bind(this));
+        this.$element.on('$destroy', unwatch);
       }
+    },
+    updateSubBuildsSizes: function () {
+      // TODO (idan): find a better way (the timeout is used just because the DOM elements are rendered (a tick) after the data arrives)
+      this.$timeout(() => {
+        return this.$element.find('.sub-build').length;
+      }, 50)
+          .then((length) => {
+            this.$element.find('.sub-build').css('width', (100 / length) + '%');
+          });
     },
     determineClass: function (subBuild) {
       var status = {

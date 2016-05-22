@@ -16,6 +16,8 @@
     this.buildsCount = 10;
     this.tests = [];
     this.stability = {};
+    this.goLoading = false;
+    this.reFetchLoading = false;
     this.availableBuilds = {
       masters: ciStatusService.getJobs(),
       teams: ciStatusService.getJobs('teams')
@@ -47,10 +49,12 @@
   CIStabilityController.prototype = {
     fetchFailedOfBuild: function () {
       if (this.build.number) {
+        this.reFetchLoading = true;
         this.buildTestsService.fetch(this.build.name, this.build.number)
             .then(this.reFormatTestsStructure.bind(this))
             .then(this.appendToTests.bind(this))
-            .catch(this.handleError);
+            .catch(this.handleError)
+            .finally(() => this.reFetchLoading = false);
       }
     },
     reFormatTestsStructure: function (tests) {
@@ -176,10 +180,12 @@
       });
     },
     fetchStability: function () {
+      this.goLoading = true;
       this.buildTestsService.getStability(this.build.name, _.filter(this.tests, {selected: true}), this.buildsCount)
           .then(stability => this.stability = stability)
           .then(this.renderResults.bind(this))
-          .catch(this.handleError);
+          .catch(this.handleError)
+          .finally(() => this.goLoading = false);
     },
     handleError: console.error.bind(console)
   };

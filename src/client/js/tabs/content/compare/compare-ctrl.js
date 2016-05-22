@@ -11,6 +11,7 @@
     this.$state = $state;
     this.$q = $q;
     this.buildTestsService = buildTestsService;
+    this.loading = false;
     this.title = `Comparing build ${this.build.name}#${this.build.number} and ${this.toBuild.name}#${this.toBuild.number}`;
     this.availableBuilds = {
       masters: ciStatusService.getJobs(),
@@ -46,10 +47,12 @@
       }
     },
     getAllTests: function () {
+      this.loading = true;
       return this.getTests()
           .then(this.getTestsOfOther.bind(this))
           .then(this.assignToViewModel.bind(this))
-          .then(this.getSelectedTestResult.bind(this));
+          .then(this.getSelectedTestResult.bind(this))
+          .finally(() => this.loading = false);
     },
     getSelectedTestResult: function () {
       this.availableBuilds[this.selected.left.group].$loaded()
