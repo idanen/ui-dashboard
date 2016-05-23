@@ -15,7 +15,6 @@
           UNKNOWN: 'help-outline',
           running: 'alarm'
         })
-        //.directive('ciFreezeStateToggle', CiFreezeStateToggleDirectiveFactory)
         .component('ciFreezeStateToggle', {
           controller: CiFreezeStateToggleController,
           transclude: true,
@@ -76,66 +75,9 @@
     }
 
     CiStatusController.prototype = {
-        addJob: function (job) {
-            if (this.addJobResultButtonValue === 'Done') {
-                this.addJobFormSendBtn = 'btn btn-default';
-                this.addJobResultButtonValue = 'Add';
-                return;
-            }
-            var newJob = {
-              name: job.name,
-              alias: job.alias,
-              freeze: false
-            };
-            this.ciStatusService.addJob(newJob)
-                .then((function (res) {
-                    // handle response from server
-                    if (res === '3') {
-                        this.validateForm = true;
-                        this.validationErrorMessage = 'Invalid name: Job name required as in Jenkins';
-                    } else if (res === '2') {
-                        this.validateForm = true;
-                        this.validationErrorMessage = 'Job Already Exists..';
-                    } else if (res === '1') {
-                        this.validateForm = true;
-                        this.validationErrorMessage = 'Connection Problem , please try again..';
-                    } else {
-                        this.validateForm = false;
-                        this.dataDismiss = 'modal';
-                        this.addJobFormSendBtn = 'btn btn-success';
-                        this.addJobResultButtonValue = 'Done';
-                        this.updateAllJobs();
-                    }
-                }).bind(this));
-        },
-        loadJobs: function () {
-            if (!this.loading) {
-                this.loading = true;
-                this.ciStatusService.getJobs('masters').$loaded()
-                    //.then(this.determineInitialFreezeState.bind(this))
-                    //.then(this.ciStatusService.getBuildStatus.bind(this.ciStatusService, 'MaaS-SAW-USB-master'))
-                    //.then(this.extendResults.bind(this))
-                    .catch(this.networkError.bind(this))
-                    .finally((function () {
-                        this.loading = false;
-                    }).bind(this));
-            }
-        },
       filterJob: function (job) {
         job.filtered = !job.filtered;
       },
-        networkError: function () {
-            if (this.listOfJobs) {
-                angular.forEach(this.listOfJobs, function (job, key) {
-                    if (/^\$/g.test(key)) {
-                        // Ignore $ properties
-                        return;
-                    }
-                    job.building = false;
-                    job.result = 'error';
-                });
-            }
-        },
         addNewBuildNumber: function () {
           this.ciStatusService.addBuildNumber(this.newBuild.name, this.newBuild.number, 'masters').then(() => this.newBuild = {});
         },
@@ -152,28 +94,10 @@
 
             return jobs;
         },
-        extendResults: function (jobsFromFirebase) {
-            console.log(jobsFromFirebase);
-            if (jobsFromFirebase) {
-                //this.listOfJobs = jobsFromFirebase;
-                this.animateOnUpdate = 'fadeIn';
-            }
-        },
-        updateAllJobs: function () {
-            this.animateOnUpdate = 'fadeOut';
-            this.loadJobs();
-        },
         freezeState: function (jobName, state, group) {
             if (jobName in this.jobs[group || 'masters']) {
                 this.jobs[group || 'masters'][jobName].freeze = state;
             }
-        },
-        toDisplayArray: function (object) {
-          var displayArray = [];
-          _.map(object, (value, key) => {
-            displayArray.push(angular.extend({}, value, {jobNumber: key}));
-          });
-          return displayArray;
         },
         getBuilds: function (job) {
           return this.ciStatusService.getJobBuilds(job.$id, false, 3);
@@ -213,83 +137,19 @@
             toBuildNumber: (parseInt(jobNumber, 10) - 1)
           });
         },
-        selectJobImg:function(imgName){
-            if(imgName && imgName.indexOf('anime') > -1){
-                return '../images/' + imgName + '.gif';
-            }
-            return '../images/' + imgName + '.png';
-        },
-
-        chooseImg: function (job) {
-            if (job.building) {
-                return "../images/green_anime.gif";
-            } else {
-                return "../images/" + (job.result && job.result.toLowerCase() || 'unknown') + ".png";
-            }
-        },
-        trStatus: function (job) {
-            if (!job) {
-              return '';
-            }
-            if (job.building) {
-                return "active";
-            } else {
-                if (job.result === "SUCCESS") {
-                    return "success";
-                } else if (job.result === "FAILURE") {
-                    return "danger";
-                } else if (job.result === "UNSTABLE") {
-                    return "warning";
-                }
-            }
-        },
         resultToIconName: function (buildResult) {
           return this.ResultsToIconNames[buildResult] || '';
-        },
-        /**
-         * update the class value of the table rows , depending on trStatus() and 'animateOnUpdate' to make it fade if reuqired
-         * @param {object} job the job
-         */
-        styleJobRow: function (job) {
-            return this.trStatus(job);
         },
         setNewBuildName: function (value) {
           this.newBuild.name = value;
         }
     };
 
-    CiFreezeStateToggleDirectiveFactory.$inject = ['$parse'];
-    function CiFreezeStateToggleDirectiveFactory($parse) {
-        var ddo = {
-            restrict: 'A',
-            link: postLinkFn
-        };
-
-        function postLinkFn($scope, $element, $attrs) {
-            $element.on('iron-change', function (ev) {
-                $scope.$applyAsync(function () {
-                    $parse($attrs.ciFreezeStateToggle).assign($scope, ev.target.checked);
-                });
-            });
-
-            $element.on('$destroy', function () {
-                $element.off();
-            });
-
-            $scope.$watch($attrs.ciFreezeStateToggle, freezeStateToView, true);
-
-            function freezeStateToView(modelValue) {
-                $element[0].checked = modelValue;
-            }
-        }
-
-        return ddo;
+    CiFreezeStateToggleController.$inject = ['$element'];
+    function CiFreezeStateToggleController($element) {
+      this.$element = $element;
     }
 
-  CiFreezeStateToggleController.$inject = ['$element'];
-  function CiFreezeStateToggleController($element) {
-    this.$element = $element;
-  }
     CiFreezeStateToggleController.prototype = {
       $onInit: function () {
         this.$element.find('paper-toggle-button')[0].checked = this.freeze;

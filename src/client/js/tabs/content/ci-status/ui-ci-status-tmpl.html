@@ -4,10 +4,6 @@
         <div class="col-xs-12">
           <paper-fab class="pull-right" mini icon="expand-{{ciJobsCtrl.newBuildNumberFormOpen ? 'less' : 'more'}}" uib-tooltip="New Job"
                      ng-click="ciJobsCtrl.newBuildNumberFormOpen = !ciJobsCtrl.newBuildNumberFormOpen"></paper-fab>
-          <paper-button raised class="ladda-button mainBtns" ladda="loading" ng-click="ciJobsCtrl.updateAllJobs()">
-              <iron-icon icon="refresh"></iron-icon>
-              <span class="ladda-label">Refresh</span>
-          </paper-button>
           <div class="new-build-number-form" ng-class="{'new-build-number-form-open': ciJobsCtrl.newBuildNumberFormOpen}">
             <ci-awesomplete list="ciJobsCtrl.listOfJobs" selected="ciJobsCtrl.newBuild.name" on-change="ciJobsCtrl.setNewBuildName(value)"></ci-awesomplete>
             <paper-input-container>
@@ -52,7 +48,7 @@
       <fieldset class="form-group">
         <label class="col-md-2">Filter masters</label>
         <div class="col-md-10">
-          <div class="btn-group-xs">
+          <div class="btn-group btn-group-xs">
             <button class="btn btn-default" ng-repeat="job in ciJobsCtrl.jobs.masters" ng-click="ciJobsCtrl.filterJob(job)">
               <iron-icon icon="done" ng-show="job.filtered"></iron-icon>
               <iron-icon icon="check-box-outline-blank" ng-hide="job.filtered"></iron-icon>
@@ -64,7 +60,8 @@
       <fieldset class="form-group">
         <label class="col-md-2">Filter teams</label>
         <div class="col-md-10">
-          <div class="btn-group-xs">
+          <div class="btn-group btn-group-xs">
+          <div class="btn-group btn-group-xs">
             <button class="btn btn-default" ng-repeat="job in ciJobsCtrl.jobs.teams" ng-click="ciJobsCtrl.filterJob(job)">
               <iron-icon icon="done" ng-show="job.filtered"></iron-icon>
               <iron-icon icon="check-box-outline-blank" ng-hide="job.filtered"></iron-icon>
@@ -85,42 +82,6 @@
           <div class="row-fluid" ng-repeat="job in ciJobsCtrl.jobs.teams | filter:{filtered: true} track by job.$id">
             <build-status class="builds-group slide-in" build-name="job.$id" group="'teams'" jobs-limit="3"></build-status>
           </div>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div id="newJobModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <form novalidate class="simple-form" role="form" name="ciJobsCtrl.addJobForm">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Add New Job</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            Job Name: <input type="text" class="form-control required" name="jobName"
-                                             placeholder="e.g. MaaS-Platf-UI-Branch-master" ng-model="ciJobsCtrl.job.name"
-                                             required/><br/>
-
-                            <div style="color:red" ng-hide="!ciJobsCtrl.validateForm">{{ciJobsCtrl.validationErrorMessage}}</div>
-                        </div>
-                        <div class="form-group">
-                            Job Alias: <input type="text" class="form-control" ng-model="ciJobsCtrl.job.alias"/><br/>
-                            <span>* short name to use</span>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <input type="submit" ng-click="ciJobsCtrl.addJob(ciJobsCtrl.job)" ng-class="ciJobsCtrl.addJobFormSendBtn"
-                               value="{{ ciJobsCtrl.addJobResultButtonValue }}" data-dismiss="{{ ciJobsCtrl.dataDismiss }}"
-                               ng-disabled="ciJobsCtrl.addJobForm.$invalid"/>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </form>
         </div>
     </div>
 </div>
