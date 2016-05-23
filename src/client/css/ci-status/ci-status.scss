@@ -43,6 +43,19 @@
         padding-top: 0;
       }
     }
+    .build-status-result-setter {
+      display: inline-block;
+      overflow: hidden;
+      max-width: 0;
+      transition: all .2s ease-out;
+    }
+    .build-status-running-long {
+      &:hover {
+        .build-status-result-setter {
+          max-width: 100px;
+        }
+      }
+    }
   }
   .new-build-number-form {
     transition: all .3s ease-in-out;
@@ -55,7 +68,7 @@
   build-progress,
   .build-progress {
     display: inline-block;
-    width: 200px;
+    width: 300px;
     height: 100%;
     .build-progress {
       &.build-progress-running::before {

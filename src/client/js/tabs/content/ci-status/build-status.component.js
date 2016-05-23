@@ -20,6 +20,11 @@
     this.$state = $state;
     this.ResultsToIconNames = ResultsToIconNames;
     this.JENKINS_BASE_URL = JENKINS_BASE_URL;
+    this.config = {
+      buildTooLong: 1000 * 60 * 60 * 3
+    };
+
+    this.possibleResults = Object.keys(ResultsToIconNames);
 
     this._resultToClass = {
       SUCCESS: 'success',
@@ -35,6 +40,11 @@
 
       this.build.$loaded()
           .then((job) => this.determineInitialFreezeState(job));
+    },
+    $onDestroy: function () {
+      if (this.buildResults && _.isFunction(this.buildResults.$destroy)) {
+        this.buildResults.$destroy();
+      }
     },
     buildJenkinsLink: function (buildNumber) {
       return `${this.JENKINS_BASE_URL}${this.buildName}/${buildNumber}`;
@@ -71,6 +81,28 @@
     },
     buildsHiddenToggle: function () {
       this.buildsHidden = !this.buildsHidden;
+    },
+    isBuildTooLong: function (build) {
+      return build.result === 'running' && (Date.now() - build.lastUpdate) > this.config.buildTooLong;
+    },
+    setBuildResult: function (build, result) {
+      if (build) {
+        let boundBuild = this.buildResults.$getRecord(build.$id);
+        if (boundBuild) {
+          let subBuilds = this.ciStatusService.getRunningSubBuilds(this.buildName, build.$id, this.group);
+          boundBuild.result = result;
+          boundBuild.phase = 'FINISHED';
+          this.buildResults.$save(boundBuild);
+          subBuilds.$loaded().then(() => {
+            subBuilds.forEach((subBuild) => {
+              let bound = subBuilds.$getRecord(subBuild.$id);
+              bound.phase = 'FINISHED';
+              bound.result = result;
+              subBuilds.$save(bound);
+            });
+          });
+        }
+      }
     },
     onLimitChange: function () {
       if (this.buildResults && this.buildResults.$destroy) {

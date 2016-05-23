@@ -49,6 +49,10 @@
         masters: this.ciStatusService.getJobs(),
         teams: this.ciStatusService.getJobs('teams')
       };
+      this.filtered = {
+        masters: {},
+        teams: {}
+      };
       //this.listOfJobs = this.ciStatusService.getJobs();
       this.loading = false; // when it true , progress bar enabled and job list disabled..
       this.dataDismiss = ' '; // we change it to keep the modal open until response of the server
@@ -61,6 +65,11 @@
 
       //$q.all([this.jobs.masters.$loaded(), this.jobs.teams.$loaded()])
       //  .then(this.determineInitialFreezeState.bind(this));
+      $q.all([this.jobs.masters.$loaded(), this.jobs.teams.$loaded()])
+        .then(() => {
+            this.jobs.masters.forEach(job => this.filtered.masters[job.$id] = true);
+            this.jobs.teams.forEach(job => this.filtered.teams[job.$id] = true);
+          });
     }
 
     CiStatusController.prototype = {
@@ -109,6 +118,9 @@
                     }).bind(this));
             }
         },
+      filterJob: function (job) {
+        job.filtered = !job.filtered;
+      },
         networkError: function () {
             if (this.listOfJobs) {
                 angular.forEach(this.listOfJobs, function (job, key) {

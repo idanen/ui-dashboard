@@ -34,7 +34,7 @@
         </a>
         <em>{{ build.branchName }}</em>
       </div>
-      <div class="col-sm-4">
+      <div class="col-sm-4" ng-class="{'text-danger build-status-running-long': $ctrl.isBuildTooLong(build)}">
         <build-result result="build.result"></build-result>
         <em>
           (
@@ -44,6 +44,14 @@
           </time>
           )
         </em>
+        <div class="build-status-result-setter under-construction">
+          <button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Set <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li ng-repeat="result in $ctrl.possibleResults">
+              <a ng-click="$ctrl.setBuildResult(build, result)">{{ result }}</a>
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="col-sm-4">
         <build-progress build-name="$ctrl.buildName" build-number="build.$id" build-group="$ctrl.group" build-result="build.result"></build-progress>

@@ -16,6 +16,7 @@
     this.buildsCount = 10;
     this.tests = [];
     this.stability = {};
+    this.legendShown = false;
     this.goLoading = false;
     this.reFetchLoading = false;
     this.availableBuilds = {
@@ -67,6 +68,9 @@
       });
       reformated = _.map(testsByClass, (test) => _.extend({selected: true}, test));
       return reformated;
+    },
+    toggleLegend: function () {
+      this.legendShown = !this.legendShown;
     },
     appendToTests: function (tests) {
       if (!tests) {

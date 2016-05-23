@@ -25,6 +25,12 @@
                     };
                 }).bind(this));
             }
+        },
+        deleteLink: function (toDelete) {
+            let linkIdx = this.links.$indexFor(toDelete.$id);
+            if (linkIdx) {
+                this.links.$remove(linkIdx);
+            }
         }
     };
 })();

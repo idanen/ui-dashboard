@@ -4,7 +4,9 @@
     angular.module('ui')
         .service('UiFacadeService', UiFacadeService);
 
-    function UiFacadeService() {
+    UiFacadeService.$inject = ['authService'];
+    function UiFacadeService(authService) {
+        this.authService = authService;
         this.widgets = [
             {
                 id: 'cistatus',
@@ -16,6 +18,7 @@
                 id: 'pushqueue',
                 title: 'Push Queue',
                 contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-push-queue-tmpl.html',
+                requiresAuth: true,
                 columns: 12
             },
             {
@@ -23,18 +26,21 @@
                 title: 'Shout Outs!',
                 subTitle: 'Use \'em wisely',
                 contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-shout-outs-tmpl.html',
+                requiresAuth: true,
                 columns: 12
             },
             {
                 id: 'branchowners',
                 title: 'Branch Owners',
                 contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-branch-owner-queue-tmpl.html',
+                requiresAuth: true,
                 columns: 12
             },
             {
                 id: 'members',
                 title: 'Team Members',
                 contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-team-members-tmpl.html',
+                requiresAuth: true,
                 columns: 12
             },
             {
@@ -51,6 +57,13 @@
     UiFacadeService.prototype = {
         getWidgets: function () {
             return this.widgets;
+        },
+        getAuthWidgets: function () {
+            if (this.authService.getLoggedUser()) {
+                return this.widgets;
+            } else {
+                return _.filter(this.widgets, (widget) => !widget.requiresAuth);
+            }
         },
         setCurrent: function (idx) {
             this.currentWidget = this.widgets[idx];

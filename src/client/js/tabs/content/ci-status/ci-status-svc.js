@@ -108,7 +108,12 @@
         getJobSubBuilds: function (jobId, jobNumber, group) {
             var startRef = this._getRef(jobId, group);
 
-            return this.$firebaseObject(startRef.child('builds').child(jobNumber).child('subBuilds'));
+            return this.$firebaseArray(startRef.child('builds').child(jobNumber).child('subBuilds'));
+        },
+        getRunningSubBuilds: function (jobId, jobNumber, group) {
+            var buildRef = this._getRef(jobId, group);
+
+            return this.$firebaseArray(buildRef.child('builds').child(jobNumber).child('subBuilds').orderByChild('result').equalTo('running'));
         },
         getJobByName: function (jobName) {
             return this.$firebaseObject(this._jobsRef.child(jobName));

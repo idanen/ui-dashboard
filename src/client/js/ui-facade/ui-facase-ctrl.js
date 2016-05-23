@@ -19,7 +19,7 @@
                 contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-push-queue-tmpl.html'
             }
         ];
-        this.widgets = this.UiFacadeService.getWidgets();
+        this.widgets = this.UiFacadeService.getAuthWidgets();
 
         this.currentWidget = this.mainWidgets[0];
         this.currentStateWidget = this.widgets[0];

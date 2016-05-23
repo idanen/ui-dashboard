@@ -18,6 +18,7 @@
           </div>
         </div>
         -->
+      <h3 class="col-xs-6">Builds Status</h3>
       <div class="col-xs-4 pull-right compare-legend-container">
         <paper-icon-button class="pull-right compare-legend-opener" icon="help" title="Show legend" ng-click="ciJobsCtrl.toggleLegend()"></paper-icon-button>
         <div class="compare-legend" ng-class="ciJobsCtrl.legendShown ? 'compare-legend-open' : ''">
@@ -41,20 +42,48 @@
             <div class="sub-build build-state-unknown">
               <span class="sub-build-result"></span>
             </div>
-            <span> Unknown</span>
+            <span> Running / Unknown</span>
           </div>
         </div>
       </div>
     </div>
+  <div class="row">
+    <form class="form-horizontal col-xs-12">
+      <fieldset class="form-group">
+        <label class="col-md-2">Filter masters</label>
+        <div class="col-md-10">
+          <div class="btn-group-xs">
+            <button class="btn btn-default" ng-repeat="job in ciJobsCtrl.jobs.masters" ng-click="ciJobsCtrl.filterJob(job)">
+              <iron-icon icon="done" ng-show="job.filtered"></iron-icon>
+              <iron-icon icon="check-box-outline-blank" ng-hide="job.filtered"></iron-icon>
+              <span>{{ job.alias || job.$id }}</span>
+            </button>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="form-group">
+        <label class="col-md-2">Filter teams</label>
+        <div class="col-md-10">
+          <div class="btn-group-xs">
+            <button class="btn btn-default" ng-repeat="job in ciJobsCtrl.jobs.teams" ng-click="ciJobsCtrl.filterJob(job)">
+              <iron-icon icon="done" ng-show="job.filtered"></iron-icon>
+              <iron-icon icon="check-box-outline-blank" ng-hide="job.filtered"></iron-icon>
+              <span>{{ job.alias || job.$id }}</span>
+            </button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
     <div class="row">
         <div class="col-xs-12">
           <h4>Master Branches</h4>
-          <div class="row-fluid" ng-repeat="job in ciJobsCtrl.jobs.masters track by job.$id">
+          <div class="row-fluid" ng-repeat="job in ciJobsCtrl.jobs.masters | filter:{filtered: true} track by job.$id">
             <build-status class="builds-group slide-in" build-name="job.$id" group="'masters'" jobs-limit="3"></build-status>
           </div>
           <h4>Team Branches</h4>
-          <div class="row-fluid" ng-repeat="job in ciJobsCtrl.jobs.teams track by job.$id">
-            <build-status class="builds-group slide-in" build-name="job.$id" group="'teams'" jobs-limit="3"></build-status>
+          <div class="row-fluid" ng-repeat="job in ciJobsCtrl.jobs.teams | filter:{filtered: true} track by job.$id">
+            <build-status class="builds-group slide-in" build-name="job.$id" group="'teams'" jobs-limit="3" builds-hidden="job.owningTeam !== 'Infra-Services'"></build-status>
           </div>
         </div>
     </div>

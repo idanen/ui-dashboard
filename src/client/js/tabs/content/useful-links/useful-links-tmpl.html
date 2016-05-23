@@ -6,7 +6,7 @@
             <input is="iron-input" ng-model="usefulLinksCtrl.filter">
         </paper-input-container>
         <ul class="list-group">
-            <li class="list-group-item" ng-repeat="link in usefulLinksCtrl.links | filter:usefulLinksCtrl.filter"><a target="_blank" ng-href="{{ link.href }}">{{ link.name }}</a></li>
+            <li class="list-group-item" ng-repeat="link in usefulLinksCtrl.links | filter:usefulLinksCtrl.filter"><paper-icon-button icon="cancel" ng-click="usefulLinksCtrl.deleteLink(link)"></paper-icon-button><a target="_blank" ng-href="{{ link.href }}">{{ link.name }}</a></li>
         </ul>
         <div class="row">
             <div class="col-xs-12">
