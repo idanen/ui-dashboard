@@ -65,10 +65,13 @@
 
       //$q.all([this.jobs.masters.$loaded(), this.jobs.teams.$loaded()])
       //  .then(this.determineInitialFreezeState.bind(this));
-      $q.all([this.jobs.masters.$loaded(), this.jobs.teams.$loaded()])
+      this.jobs.masters.$loaded()
         .then(() => {
-            this.jobs.masters.forEach(job => this.filtered.masters[job.$id] = true);
-            this.jobs.teams.forEach(job => this.filtered.teams[job.$id] = true);
+            this.jobs.masters.forEach((job) => {
+              if (job.alias === 'master') {
+                job.filtered = true;
+              }
+            });
           });
     }
 
