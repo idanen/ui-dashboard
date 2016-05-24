@@ -94,7 +94,7 @@ module.exports = (function () {
       branchName = buildParams.GIT_BRANCH;
       // Paths with '.' cannot be saved to Firebase.
       // Replacing here
-      parentName = parentName.replace(/.+/g, '_');
+      parentName = parentName.replace(/\.+/g, '_');
       console.log('with parent build named "' + parentName + '" and number "' + parentNumber + '", group "' + group + '" (branch = ' + branchName + ')');
 
       if (isHead) {
