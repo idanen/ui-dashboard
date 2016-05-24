@@ -92,6 +92,9 @@ module.exports = (function () {
       parentNumber = buildParams.HEAD_BUILD_NUMBER;
       group = this.isMastersGroup(buildParams) ? 'masters' : 'teams';
       branchName = buildParams.GIT_BRANCH;
+      // Paths with '.' cannot be saved to Firebase.
+      // Replacing here
+      parentName = parentName.replace(/.+/g, '_');
       console.log('with parent build named "' + parentName + '" and number "' + parentNumber + '", group "' + group + '" (branch = ' + branchName + ')');
 
       if (isHead) {
