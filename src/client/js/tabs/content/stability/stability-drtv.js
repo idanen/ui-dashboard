@@ -43,8 +43,8 @@
     //  this.fetchFailedOfBuild();
     //});
     $q.all(this.availableBuilds.masters.$loaded(), this.availableBuilds.teams.$loaded())
-        .then(this.selectFirstOptions.bind(this))
-        .then(this.fetchFailedOfBuild.bind(this));
+        .then(this.selectFirstOptions.bind(this));
+        //.then(this.fetchFailedOfBuild.bind(this));
   }
 
   CIStabilityController.prototype = {
@@ -108,9 +108,9 @@
     },
     selectionChanged: function (prop, value) {
       this.build[prop] = value;
-      if (prop === 'number') {
-        this.fetchFailedOfBuild();
-      }
+      //if (prop === 'number') {
+      //  this.fetchFailedOfBuild();
+      //}
     },
     buildsCountUpdated: function (value) {
       this.$scope.$applyAsync(() => {
