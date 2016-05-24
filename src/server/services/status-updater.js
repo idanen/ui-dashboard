@@ -140,6 +140,7 @@ module.exports = (function () {
       if (toUpdate.isHead) {
         delete toUpdate.isHead;
         rootBuildUri = updateUri.replace(/\/builds\/\d+\/?$/, '');
+        console.log('Updating HEAD ref "' + rootBuildUri + '" with data ' + JSON.stringify(toUpdate));
         rootBuildUpdate = this.firebase.update(rootBuildUri, {
           lastUpdate: toUpdate.lastUpdate,
           result: toUpdate.result,

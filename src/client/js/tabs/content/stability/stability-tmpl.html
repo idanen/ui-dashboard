@@ -31,10 +31,6 @@
           <iron-icon icon="send"></iron-icon>
           <span>Go!</span>
         </paper-button>
-        <paper-button raised class="ladda-button" ladda="$ctrl.reFetchLoading" ng-click="$ctrl.fetchFailedOfBuild()">
-          <iron-icon icon="get-app"></iron-icon>
-          fetch failed tests
-        </paper-button>
         <paper-button raised ng-click="$ctrl.selectAll()">
           <iron-icon icon="done"></iron-icon>
           select all
@@ -76,11 +72,17 @@
     </fieldset>
     <fieldset class="form-group">
       <label class="col-md-2">Failed tests of</label>
-      <div class="col-md-10">
+      <div class="col-md-8">
         <build-selector groups="$ctrl.availableGroups"
                         builds="$ctrl.availableBuilds[$ctrl.build.group]"
                         selected="$ctrl.build"
                         on-change="$ctrl.selectionChanged(prop, value)"></build-selector>
+      </div>
+      <div class="col-md-2">
+        <paper-button raised class="ladda-button" ladda="$ctrl.reFetchLoading" ng-click="$ctrl.fetchFailedOfBuild()">
+          iron-icon icon="add"></iron-icon>
+          <span>Add</span>
+        </paper-button>
       </div>
     </fieldset>
     <div class="row" class="visible-md">

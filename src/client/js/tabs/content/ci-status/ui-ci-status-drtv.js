@@ -52,12 +52,7 @@
         masters: {},
         teams: {}
       };
-      //this.listOfJobs = this.ciStatusService.getJobs();
       this.loading = false; // when it true , progress bar enabled and job list disabled..
-      this.dataDismiss = ' '; // we change it to keep the modal open until response of the server
-      this.validateForm = false; // control visibility of the Error Message in the modal
-      this.addJobFormSendBtn = 'btn btn-default'; // 'Add' button style in the 'add job' modal
-      this.addJobResultButtonValue = 'Add'; // 'Add' button style in the 'add job' modal
       this.buildsLimit = 3;
       this.newBuild = {};
       this.legendShown = false;
@@ -68,15 +63,21 @@
         .then(() => {
             this.jobs.masters.forEach((job) => {
               if (job.alias === 'master') {
-                job.filtered = true;
+                //job.filtered = true;
+                this.filtered.masters[job.$id] = true;
               }
             });
           });
+      //$q.all([this.jobs.masters.$loaded(), this.jobs.teams.$loaded()])
+      //    .then(() => {
+      //      this.jobs.masters.forEach(job => this.filtered.masters[job.$id] = true);
+      //      this.jobs.teams.forEach(job => this.filtered.teams[job.$id] = true);
+      //    });
     }
 
     CiStatusController.prototype = {
-      filterJob: function (job) {
-        job.filtered = !job.filtered;
+      filterJob: function (group, job) {
+        this.filtered[group][job.$id] = !this.filtered[group][job.$id];
       },
         addNewBuildNumber: function () {
           this.ciStatusService.addBuildNumber(this.newBuild.name, this.newBuild.number, 'masters').then(() => this.newBuild = {});
