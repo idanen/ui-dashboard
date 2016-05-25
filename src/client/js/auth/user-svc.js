@@ -36,6 +36,7 @@
       return this.$q((resolve, reject) => {
         this.usersRef.child(userId).transaction((currentUserData) => {
           if (currentUserData === null) {
+            delete authData.auth.token;
             return authData;
           }
         }, (error, committed) => {
