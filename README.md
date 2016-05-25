@@ -1,2 +1,2 @@
-# ui-dashboard
-UI Team Dashboard
+# ci-dashboard
+CI Dashboard
