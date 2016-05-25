@@ -52,7 +52,7 @@
             <button class="btn btn-default" ng-repeat="job in ciJobsCtrl.jobs.masters" ng-click="ciJobsCtrl.filterJob('masters', job)">
               <iron-icon icon="check-box" ng-show="ciJobsCtrl.filtered.masters[job.$id]"></iron-icon>
               <iron-icon icon="check-box-outline-blank" ng-hide="ciJobsCtrl.filtered.masters[job.$id]"></iron-icon>
-              <span>{{ job.alias || job.$id }}</span>
+              <span>{{ job.alias || job.$id | releasever }}</span>
             </button>
           </div>
         </div>
@@ -64,7 +64,7 @@
             <button class="btn btn-default" ng-repeat="job in ciJobsCtrl.jobs.teams" ng-click="ciJobsCtrl.filterJob('teams', job)">
               <iron-icon icon="check-box" ng-show="ciJobsCtrl.filtered.teams[job.$id]"></iron-icon>
               <iron-icon icon="check-box-outline-blank" ng-hide="ciJobsCtrl.filtered.teams[job.$id]"></iron-icon>
-              <span>{{ job.alias || job.$id }}</span>
+              <span>{{ job.alias || job.$id | releasever }}</span>
             </button>
           </div>
         </div>

@@ -92,8 +92,9 @@
     <fieldset class="form-group slide-in" ng-repeat="test in $ctrl.tests">
       <div class="col-md-4">
         <paper-icon-button icon="clear" ng-click="$ctrl.removeTest(test.testClass)"></paper-icon-button>
-        <label class="under-construction">
-          <input type="checkbox" ng-model="test.selected"><span> {{ test.testClass | className }}</span>
+        <label>
+          <input class="under-construction" type="checkbox" ng-model="test.selected">
+          <span> {{ test.testClass | className }}</span>
         </label>
       </div>
       <div class="col-md-4">

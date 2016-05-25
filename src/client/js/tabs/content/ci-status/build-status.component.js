@@ -14,11 +14,12 @@
         }
       });
 
-  BuildStatusController.$inject = ['ciStatusService', '$state', 'ResultsToIconNames', 'JENKINS_BASE_URL'];
-  function BuildStatusController(ciStatusService, $state, ResultsToIconNames, JENKINS_BASE_URL) {
+  BuildStatusController.$inject = ['ciStatusService', '$state', 'ResultsToIconNames', '$filter', 'JENKINS_BASE_URL'];
+  function BuildStatusController(ciStatusService, $state, ResultsToIconNames, $filter, JENKINS_BASE_URL) {
     this.ciStatusService = ciStatusService;
     this.$state = $state;
     this.ResultsToIconNames = ResultsToIconNames;
+    this.$filter = $filter;
     this.JENKINS_BASE_URL = JENKINS_BASE_URL;
     this.config = {
       buildTooLong: 1000 * 60 * 60 * 3
@@ -47,7 +48,8 @@
       }
     },
     buildJenkinsLink: function (buildNumber) {
-      return `${this.JENKINS_BASE_URL}${this.buildName}/${buildNumber}`;
+      let buildName = this.$filter('releasever')(this.buildName);
+      return `${this.JENKINS_BASE_URL}${buildName}/${buildNumber}`;
     },
     buildCompareLink: function (buildNumber) {
       return this.$state.href('compare', {
