@@ -54,22 +54,23 @@
               </div>
             </div>
           </uib-accordion-heading>
+          <div class="btn-group btn-group-sm">
+            <a class="btn" uib-tooltip="stability" ng-click="compare.goToStability(testList, 'left')">
+              <iron-icon icon="assessment"></iron-icon>
+              <span>Add these tests to stability</span>
+            </a>
+          </div>
           <ul class="list-group">
             <li class="list-group-item" ng-repeat="test in testList.tests | orderBy:'testName'">
               <strong ng-class="test.markedUnstable ? 'text-warning' : ''"><iron-icon ng-show="test.markedUnstable" icon="bug-report"></iron-icon> {{ test.testName | className }}</strong>
               <paper-badge icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'" alt="Connection exception"></paper-badge>
               <em ng-if="!testList.alien"> {{ test.errorMessage }}</em>
-              <div class="btn-group btn-group-sm">
-                <a class="btn" uib-tooltip="stability" ng-click="compare.goToStability(testList, 'left')">
-                  <iron-icon icon="assessment"></iron-icon>
-                </a>
-                <a class="btn" ng-href="{{ test.testReportUrl }}testReport" target="_blank" uib-tooltip="Go to report (server)" ng-disabled="!test.testReportUrl">
-                  <iron-icon icon="launch"></iron-icon>
-                </a>
-                <a class="btn" ng-href="{{ test.testReportUrl }}artifact/target/reports/test-results.html" target="_blank" uib-tooltip="Go to report (UI)" ng-disabled="!test.testReportUrl">
-                  <iron-icon icon="launch"></iron-icon>
-                </a>
-              </div>
+              <a class="btn" ng-href="{{ test.testReportUrl }}testReport" target="_blank" uib-tooltip="Go to report (server)" ng-disabled="!test.testReportUrl">
+                <iron-icon icon="launch"></iron-icon>
+              </a>
+              <a class="btn" ng-href="{{ test.testReportUrl }}artifact/target/reports/test-results.html" target="_blank" uib-tooltip="Go to report (UI)" ng-disabled="!test.testReportUrl">
+                <iron-icon icon="launch"></iron-icon>
+              </a>
             </li>
           </ul>
         </uib-accordion-group>

@@ -25,11 +25,7 @@
       </div>
     </fieldset>
     <fieldset class="form-group">
-      <div class="col-xs-12">
-        <paper-button raised class="btn-run-stability ladda-button" ladda="$ctrl.goLoading" ng-click="$ctrl.fetchStability()">
-          <iron-icon icon="send"></iron-icon>
-          <span>Go!</span>
-        </paper-button>
+      <div class="col-xs-10">
         <paper-button raised ng-click="$ctrl.selectAll()">
           <iron-icon icon="done"></iron-icon>
           select all
@@ -45,6 +41,12 @@
         <paper-button class="text-danger" raised ng-click="$ctrl.clearAll()">
           <iron-icon icon="block"></iron-icon>
           clear all
+        </paper-button>
+      </div>
+      <div class="col-xs-2">
+        <paper-button raised class="btn-run-stability ladda-button" ladda="$ctrl.goLoading" ng-click="$ctrl.fetchStability()">
+          <iron-icon icon="send"></iron-icon>
+          <span>Go!</span>
         </paper-button>
       </div>
     </fieldset>
@@ -65,7 +67,7 @@
       <div class="col-xs-2">
         <paper-button raised ng-click="$ctrl.addNewTest()">
           <iron-icon icon="add"></iron-icon>
-          <span>Add</span>
+          <span>Add test</span>
         </paper-button>
       </div>
     </fieldset>
@@ -78,9 +80,9 @@
                         on-change="$ctrl.selectionChanged(prop, value)"></build-selector>
       </div>
       <div class="col-md-2">
-        <paper-button raised class="ladda-button" ladda="$ctrl.reFetchLoading" ng-click="$ctrl.fetchFailedOfBuild()">
+        <paper-button raised class="ladda-button" ladda="$ctrl.reFetchLoading" ng-click="$ctrl.fetchFailedOfBuild()" uib-tooltip="Add all build&apos;s failed tests">
           <iron-icon icon="add"></iron-icon>
-          <span>Add</span>
+          <span>Add all</span>
         </paper-button>
       </div>
     </fieldset>
@@ -116,7 +118,7 @@
       </div>
     </fieldset>
     <fieldset class="form-group">
-      <div class="col-xs-12">
+      <div class="col-xs-offset-10 col-xs-2">
         <paper-button raised class="btn-run-stability ladda-button" ladda="$ctrl.goLoading" ng-click="$ctrl.fetchStability()">
           <iron-icon icon="send"></iron-icon>
           <span>Go!</span>
