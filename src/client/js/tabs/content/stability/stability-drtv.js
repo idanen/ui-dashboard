@@ -30,7 +30,7 @@
       number: build.number || ''
     };
 
-    if ($stateParams.tests && $stateParams.tests.length) {
+    if ($stateParams.tests) {
       let testsFromState = $stateParams.tests;
       if (!Array.isArray(testsFromState)) {
         testsFromState = [testsFromState];
