@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('tabs')
+  angular.module('ci-site')
     .filter('className', function () {
         return function (fullQuallifiedName) {
           if (!fullQuallifiedName) {

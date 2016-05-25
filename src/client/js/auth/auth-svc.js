@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('tabs')
+  angular.module('ci-site')
       .constant('GOOGLE_AUTH_SCOPES', 'profile,email,https://www.googleapis.com/auth/plus.login,https://www.googleapis.com/auth/plus.profile.emails.read')
       .service('authService', AuthService);
 

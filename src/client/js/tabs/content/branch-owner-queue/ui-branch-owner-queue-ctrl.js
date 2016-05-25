@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('tabs')
+    angular.module('ci-site')
         .controller('BranchOwnerQueueCtrl', BranchOwnerQueueController);
 
     BranchOwnerQueueController.$inject = ['BranchOwnerQueueService', 'TeamMembersService', 'DATE_FORMAT', '$scope'];

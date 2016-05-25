@@ -1,7 +1,7 @@
 (function (angular) {
     'use strict';
 
-    angular.module('tabs').service('PushQueueService', PushQueueService);
+    angular.module('ci-site').service('PushQueueService', PushQueueService);
 
     PushQueueService.$inject = ['TeamMembersService', 'FirebaseService', 'NotificationService'];
 

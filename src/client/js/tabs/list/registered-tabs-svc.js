@@ -1,7 +1,7 @@
 (function (angular, undefined) {
     'use strict';
 
-    angular.module('tabs').service('RegisteredTabsList', [function () {
+    angular.module('ci-site').service('RegisteredTabsList', [function () {
 
         var registeredTabs = {
             pushQueue: {

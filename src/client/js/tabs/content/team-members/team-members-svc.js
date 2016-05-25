@@ -1,7 +1,7 @@
 (function (angular) {
     'use strict';
 
-    angular.module('tabs').service('TeamMembersService', ['FirebaseService', function (FirebaseService) {
+    angular.module('ci-site').service('TeamMembersService', ['FirebaseService', function (FirebaseService) {
         var svc = this;
         this.members = FirebaseService.getMembers();
 

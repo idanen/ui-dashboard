@@ -1,7 +1,7 @@
 (function (angular) {
     'use strict';
 
-    angular.module('tabs').service('ShoutOutsService', ShoutOutsService).constant('SHOUT_TITLE', 'Shout Out!');
+    angular.module('ci-site').service('ShoutOutsService', ShoutOutsService).constant('SHOUT_TITLE', 'Shout Out!');
 
     ShoutOutsService.$inject = ['FirebaseService', 'NotificationService', 'SHOUT_TITLE'];
 

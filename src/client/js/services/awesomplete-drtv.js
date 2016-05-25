@@ -1,7 +1,7 @@
 (function (Awesomplete) {
   'use strict';
 
-  angular.module('tabs')
+  angular.module('ci-site')
     .component('ciAwesomplete', {
         controller: CiAwesompleteController,
         bindings: {

@@ -1,7 +1,7 @@
 (function (angular) {
     'use strict';
 
-    angular.module('tabs')
+    angular.module('ci-site')
         .directive('uiPushQueue', function () {
             return {
                 restrict: 'E',

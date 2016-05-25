@@ -1,7 +1,7 @@
 (function (angular) {
     'use strict';
 
-    angular.module('tabs').service('MasterStatusService', MasterStatusService);
+    angular.module('ci-site').service('MasterStatusService', MasterStatusService);
 
     MasterStatusService.$inject = ['FirebaseService', 'NotificationService', '$filter', 'DATE_FORMAT'];
 

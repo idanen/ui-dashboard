@@ -1,7 +1,7 @@
 (function (angular) {
     'use strict';
 
-    angular.module('tabs').directive('uiTeamMembers', [function () {
+    angular.module('ci-site').directive('uiTeamMembers', [function () {
         return {
             restrict: 'E',
             controllerAs: 'teamMembersCtrl',

@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('tabs')
+  angular.module('ci-site')
     .component('buildResult', {
         controller: BuildResultController,
         bindings: {

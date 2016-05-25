@@ -1,7 +1,7 @@
 (function (angular) {
     'use strict';
 
-    angular.module('tabs').factory('FirebaseService', ['$firebaseArray', '$firebaseObject', '$q', 'Ref',
+    angular.module('ci-site').factory('FirebaseService', ['$firebaseArray', '$firebaseObject', '$q', 'Ref',
         function ($firebaseArray, $firebaseObject, $q, ref) {
 
             // create a reference to the database where we will store our data

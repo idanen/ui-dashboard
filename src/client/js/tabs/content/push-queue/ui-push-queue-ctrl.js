@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('tabs')
+    angular.module('ci-site')
         .controller('PushQueueCtrl', PushQueueController);
 
     PushQueueController.$inject = ['PushQueueService', 'TeamMembersService', 'MasterStatusService', 'DATE_FORMAT', '$scope'];

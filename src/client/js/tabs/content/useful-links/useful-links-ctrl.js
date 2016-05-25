@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('tabs').controller('UsefulLinksCtrl', UsefulLinksController);
+    angular.module('ci-site').controller('UsefulLinksCtrl', UsefulLinksController);
 
     UsefulLinksController.$inject = ['UsefulLinksService'];
 

@@ -1,7 +1,7 @@
 (function (angular) {
     'use strict';
 
-    angular.module('tabs').service('BranchOwnerQueueService', BranchOwnerQueueService);
+    angular.module('ci-site').service('BranchOwnerQueueService', BranchOwnerQueueService);
 
     BranchOwnerQueueService.$inject = ['TeamMembersService', 'FirebaseService', 'NotificationService', 'NotificationTags'];
     function BranchOwnerQueueService(TeamMembersService, FirebaseService, NotificationService, NotificationTags) {

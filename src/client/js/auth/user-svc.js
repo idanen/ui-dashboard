@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('tabs')
+  angular.module('ci-site')
     .service('userService', UserService);
 
   UserService.$inject = ['Ref', '$q', '$firebaseObject'];

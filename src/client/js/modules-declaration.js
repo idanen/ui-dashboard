@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('tabs', ['firebase', 'ngAnimate', 'ngSanitize', 'ngResource', 'ui.router', 'ui.select', 'ui.bootstrap', 'angular-ladda', 'ngclipboard', 'ui-dash.filters', 'collapsiblePanel'])
+    angular.module('ci-site', ['firebase', 'ngAnimate', 'ngSanitize', 'ngResource', 'ui.router', 'ui.select', 'ui.bootstrap', 'angular-ladda', 'ngclipboard', 'ui-dash.filters', 'collapsiblePanel'])
         .constant('ENV', {
             HOST: 'myd-vm08383.hpswlabs.adapps.hp.com',
             //HOST: 'localhost',
@@ -15,7 +15,7 @@
         })
         .config(config)
         .run(initApp);
-    angular.module('ui', ['tabs']);
+    angular.module('ui', ['ci-site']);
 
     config.$inject = ['$uibTooltipProvider'];
     function config($uibTooltipProvider) {

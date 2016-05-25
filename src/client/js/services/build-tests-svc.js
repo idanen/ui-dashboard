@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('tabs')
+  angular.module('ci-site')
     .service('buildTestsService', BuildTestsService);
 
   BuildTestsService.$inject = ['$resource', 'ENV'];

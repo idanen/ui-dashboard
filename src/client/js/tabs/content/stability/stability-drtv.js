@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('tabs')
+  angular.module('ci-site')
     .controller('CIStabilityCtrl', CIStabilityController)
     .component('ciStability', {
         controller: CIStabilityController,

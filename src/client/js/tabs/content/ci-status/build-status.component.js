@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('tabs')
+  angular.module('ci-site')
     .component('buildStatus', {
         controller: BuildStatusController,
         templateUrl: 'js/tabs/content/ci-status/build-status-tmpl.html',

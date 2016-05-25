@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('tabs')
+        .module('ci-site')
         .constant('JenkinsBaseUrl', 'http://mydtbld0022.hpeswlab.net:8080/jenkins/')
         .service('JenkinsService', JenkinsService);
 

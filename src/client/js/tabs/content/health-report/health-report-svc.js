@@ -1,7 +1,7 @@
 (function (angular) {
     'use strict';
 
-    angular.module('tabs').service('HealthReportService', HealthReportService);
+    angular.module('ci-site').service('HealthReportService', HealthReportService);
 
     HealthReportService.$inject = ['JenkinsService'];
 

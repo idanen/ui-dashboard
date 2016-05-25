@@ -2,7 +2,7 @@
   'use strict';
 
   angular
-      .module('tabs')
+      .module('ci-site')
       .service('NotificationService', NotificationService)
       .run(runFn);
 

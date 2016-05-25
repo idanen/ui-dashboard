@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('tabs').controller('ShoutOutsCtrl', ShoutOutsController);
+  angular.module('ci-site').controller('ShoutOutsCtrl', ShoutOutsController);
 
   ShoutOutsController.$inject = ['ShoutOutsService', 'DATE_FORMAT'];
 

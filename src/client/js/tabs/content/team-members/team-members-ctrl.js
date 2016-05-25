@@ -3,7 +3,7 @@
  */
 (function () {
     'use strict';
-    angular.module('tabs').controller('TeamMembersCtrl', TeamMembersController);
+    angular.module('ci-site').controller('TeamMembersCtrl', TeamMembersController);
 
     TeamMembersController.$inject = ['TeamMembersService'];
 

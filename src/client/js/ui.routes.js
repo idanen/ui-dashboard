@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('tabs')
+  angular.module('ci-site')
     .config(configRoutes);
 
   configRoutes.$inject = ['$stateProvider', '$urlRouterProvider', 'laddaProvider'];

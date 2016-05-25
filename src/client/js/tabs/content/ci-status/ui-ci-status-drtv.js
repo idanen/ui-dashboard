@@ -5,7 +5,7 @@
 (function () {
     'use strict';
 
-    angular.module('tabs')
+    angular.module('ci-site')
         .constant('CiJobsRefreshInterval', 1000 * 60 * 5)
         .constant('ResultsToIconNames', {
           SUCCESS: 'done',

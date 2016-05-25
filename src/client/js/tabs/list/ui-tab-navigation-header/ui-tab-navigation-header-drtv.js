@@ -1,7 +1,7 @@
 (function (angular) {
     'use strict';
 
-    angular.module('tabs').directive('uiTabNavigationHeader', ['RegisteredTabsList', function (RegisteredTabsList) {
+    angular.module('ci-site').directive('uiTabNavigationHeader', ['RegisteredTabsList', function (RegisteredTabsList) {
         return {
             restrict: 'A',
             templateUrl: 'js/tabs/list/ui-tab-navigation-header/ui-tab-navigation-header-tmpl.html',

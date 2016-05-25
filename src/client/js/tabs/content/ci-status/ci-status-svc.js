@@ -12,7 +12,7 @@
      if the key === false then no filtering will be performed
      * @return {array}
      */
-    angular.module('tabs')
+    angular.module('ci-site')
         .filter('duration', function () {
             return function (duration, format) {
                 if (angular.isNumber(duration)) {
