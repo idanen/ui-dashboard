@@ -1,12 +1,18 @@
+@import './ci-status/ci-status';
+
+$body-top-padding: 70px;
+$body-bottom-padding: 10px;
+
 html {
   height: 100%;
 }
+
 /*
  * This is added to support fixed navbar
  */
 body {
-  padding-top: 70px;
-  padding-bottom: 10px;
+  padding-top: $body-top-padding;
+  padding-bottom: $body-bottom-padding;
   height: 100%;
 }
 
@@ -15,8 +21,19 @@ body {
   height: 100%;
 }
 
+[ui-view] {
+  height: 100%;
+  .inner-title {
+    text-align: center;
+  }
+}
+
 .container {
   height: 100%;
+}
+
+.under-construction {
+  display: none !important;
 }
 
 .fixed-widgets-container {
@@ -25,7 +42,7 @@ body {
 }
 
 .dynamic-widgets-container {
-  height: 48%;
+  height: 100%;
   min-height: 200px;
 }
 
@@ -46,23 +63,6 @@ body {
 
 .widget-link {
   cursor: pointer;
-}
-
-@media (max-width: 991px) {
-  .fixed-widgets-container,
-  .dynamic-widgets-container {
-    height: auto;
-    .widget-container {
-      height: 34rem;
-      margin-top: .8rem;
-    }
-  }
-}
-
-.tabs-navigation-list {
-    background-color: gainsboro;
-    height: 700px;
-    box-shadow: inset -10px 0 25px -17px rgba(0, 0, 0, .3);
 }
 
 .single-tab-navigation-header {
@@ -93,6 +93,13 @@ body {
 .profile-image {
     width: 30px;
     margin-right: 20px;
+    height: auto;
+}
+
+login-btn {
+    .profile-image {
+        margin: auto;
+    }
 }
 
 .push-queue {
@@ -139,10 +146,6 @@ ui-ci-status .table tbody td:first-child {
     width: 25px;
 }
 
-.dynamic-widgets-container {
-    margin-top: 10px;
-}
-
 .head-mark > img {
     width: 30px;
 }
@@ -156,21 +159,98 @@ ui-ci-status .table tbody td:first-child {
     margin-bottom: 5px;
 }
 
+.build-selector {
+  [uib-dropdown] {
+    cursor: pointer;
+  }
+  .ind-build-result-aborted {
+    color: red;
+  }
+}
+
+.compare-content {
+  h3, .h3 {
+    margin-bottom: 20px;
+  }
+  uib-accordion {
+    .panel-title > a,
+    [uib-accordion-header] {
+      outline: 0;
+    }
+  }
+  .test-compare-accordion-heading {
+    outline: 0;
+    cursor: pointer;
+  }
+}
+
+.compare-legend-container {
+  position: relative;
+  .compare-legend {
+    position: absolute;
+    top: 50%;
+    right: 50px;
+    z-index: 1;
+    min-width: 150px;
+    padding: 7px 12px;
+    background: white;
+    line-height: 2.4em;
+    box-shadow: 0 3px 5px rgba(0,0,0,.3);
+    transition: all 250ms ease-out;
+    transform: scale(0);
+    transform-origin: top right;
+    &.compare-legend-open {
+      transform: scale(1);
+    }
+  }
+}
+
+.stability-container {
+  .progress {
+    margin-bottom: 5px;
+    .test-result-stable {
+      white-space: nowrap;
+    }
+  }
+}
+
 .fadeOut {
     opacity: 0.5;
 }
 
 .fadeIn {
-    -webkit-transition: opacity .25s ease-in-out;
-    -moz-transition: opacity .25s ease-in-out;
-    -ms-transition: opacity .25s ease-in-out;
-    -o-transition: opacity .25s ease-in-out;
     transition: opacity .25s ease-in-out;
     opacity: 1;
 }
 
 [ngclipboard] {
     cursor: pointer;
+}
+
+.slide-in {
+  &.ng-animate {
+    transition: all 0.3s ease-in-out;
+  }
+  &.ng-enter-stagger {
+    transition-delay: .1s;
+    transition-duration: 0s;
+  }
+  &.ng-enter {
+    opacity: 0;
+    transform: translate3d(-50px,0,0);
+    &.ng-enter-active {
+      opacity: 1;
+      transform: translate3d(0,0,0);
+    }
+  }
+  &.ng-leave {
+    opacity: 1;
+    transform: translate3d(0,0,0);
+    &.ng-leave-active {
+      opacity: 0;
+      transform: translate3d(50px,0,0);
+    }
+  }
 }
 
 #floatingCirclesG {
@@ -180,10 +260,6 @@ ui-ci-status .table tbody td:first-child {
     margin: auto;
     align-content: center;
     transform: scale(0.6);
-    -o-transform: scale(0.6);
-    -ms-transform: scale(0.6);
-    -webkit-transform: scale(0.6);
-    -moz-transform: scale(0.6);
 }
 
 .f_circleG {
@@ -192,110 +268,58 @@ ui-ci-status .table tbody td:first-child {
     height: 22px;
     width: 22px;
     border-radius: 12px;
-    -o-border-radius: 12px;
-    -ms-border-radius: 12px;
-    -webkit-border-radius: 12px;
-    -moz-border-radius: 12px;
     animation-name: f_fadeG;
-    -o-animation-name: f_fadeG;
-    -ms-animation-name: f_fadeG;
-    -webkit-animation-name: f_fadeG;
-    -moz-animation-name: f_fadeG;
     animation-duration: 1.2s;
-    -o-animation-duration: 1.2s;
-    -ms-animation-duration: 1.2s;
-    -webkit-animation-duration: 1.2s;
-    -moz-animation-duration: 1.2s;
     animation-iteration-count: infinite;
-    -o-animation-iteration-count: infinite;
-    -ms-animation-iteration-count: infinite;
-    -webkit-animation-iteration-count: infinite;
-    -moz-animation-iteration-count: infinite;
     animation-direction: normal;
-    -o-animation-direction: normal;
-    -ms-animation-direction: normal;
-    -webkit-animation-direction: normal;
-    -moz-animation-direction: normal;
 }
 
 #frotateG_01 {
     left: 0;
     top: 51px;
     animation-delay: 0.45s;
-    -o-animation-delay: 0.45s;
-    -ms-animation-delay: 0.45s;
-    -webkit-animation-delay: 0.45s;
-    -moz-animation-delay: 0.45s;
 }
 
 #frotateG_02 {
     left: 15px;
     top: 15px;
     animation-delay: 0.6s;
-    -o-animation-delay: 0.6s;
-    -ms-animation-delay: 0.6s;
-    -webkit-animation-delay: 0.6s;
-    -moz-animation-delay: 0.6s;
 }
 
 #frotateG_03 {
     left: 51px;
     top: 0;
     animation-delay: 0.75s;
-    -o-animation-delay: 0.75s;
-    -ms-animation-delay: 0.75s;
-    -webkit-animation-delay: 0.75s;
-    -moz-animation-delay: 0.75s;
 }
 
 #frotateG_04 {
     right: 15px;
     top: 15px;
     animation-delay: 0.9s;
-    -o-animation-delay: 0.9s;
-    -ms-animation-delay: 0.9s;
-    -webkit-animation-delay: 0.9s;
-    -moz-animation-delay: 0.9s;
 }
 
 #frotateG_05 {
     right: 0;
     top: 51px;
     animation-delay: 1.05s;
-    -o-animation-delay: 1.05s;
-    -ms-animation-delay: 1.05s;
-    -webkit-animation-delay: 1.05s;
-    -moz-animation-delay: 1.05s;
 }
 
 #frotateG_06 {
     right: 15px;
     bottom: 15px;
     animation-delay: 1.2s;
-    -o-animation-delay: 1.2s;
-    -ms-animation-delay: 1.2s;
-    -webkit-animation-delay: 1.2s;
-    -moz-animation-delay: 1.2s;
 }
 
 #frotateG_07 {
     left: 51px;
     bottom: 0;
     animation-delay: 1.35s;
-    -o-animation-delay: 1.35s;
-    -ms-animation-delay: 1.35s;
-    -webkit-animation-delay: 1.35s;
-    -moz-animation-delay: 1.35s;
 }
 
 #frotateG_08 {
     left: 15px;
     bottom: 15px;
     animation-delay: 1.5s;
-    -o-animation-delay: 1.5s;
-    -ms-animation-delay: 1.5s;
-    -webkit-animation-delay: 1.5s;
-    -moz-animation-delay: 1.5s;
 }
 
 @keyframes f_fadeG {
@@ -308,42 +332,32 @@ ui-ci-status .table tbody td:first-child {
     }
 }
 
-@-o-keyframes f_fadeG {
-    0% {
-        background-color: rgb(0, 0, 0);
-    }
-
-    100% {
-        background-color: rgb(255, 255, 255);
-    }
+@keyframes scan {
+  from {
+    transform: skew(-25deg) translate3d(-10px,0,0);
+  }
+  to {
+    transform: skew(-25deg) translate3d(300px,0,0);
+  }
 }
 
-@-ms-keyframes f_fadeG {
-    0% {
-        background-color: rgb(0, 0, 0);
-    }
-
-    100% {
-        background-color: rgb(255, 255, 255);
-    }
-}
-
-@-webkit-keyframes f_fadeG {
-    0% {
-        background-color: rgb(0, 0, 0);
-    }
-
-    100% {
-        background-color: rgb(255, 255, 255);
-    }
-}
-
-@-moz-keyframes f_fadeG {
-    0% {
-        background-color: rgb(0, 0, 0);
-    }
-
-    100% {
-        background-color: rgb(255, 255, 255);
-    }
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.1);
+  }
+  40% {
+    transform: scale(1.25);
+  }
+  55% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

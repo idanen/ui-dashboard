@@ -10,11 +10,12 @@
         <div class="row">
           <div class="col-md-9">
             <ui-select ng-model="pushQueueCtrl.selected" theme="selectize">
-              <ui-select-match class="member-selector" placeholder="Select or search a member...">
+              <ui-select-match class="member-selector ui-select-match" placeholder="Select or search a member...">
                 <img class="profile-image" ng-src="{{$select.selected.img}}"/>
                 <span ng-bind-html="$select.selected.fname | highlight: $select.search"></span>
               </ui-select-match>
               <ui-select-choices
+                  class="ui-select-choices"
                   repeat="member in pushQueueCtrl.members | filter: $select.search">
                 <img class="profile-image" ng-src="{{member.img}}"/>
                 <span ng-bind-html="member.fname | highlight: $select.search"></span>
@@ -35,11 +36,11 @@
         <span>Last master merge was </span>
         <span>
           <time is="time-ago" datetime="{{ pushQueueCtrl.lastMasterMerge() | date:'yyyy-MM-ddTHH:mmZ' }}"
-                title="{{ pushQueueCtrl.lastMasterMerge() | date:pushQueueCtrl.dateFormat }}">
+                uib-tooltip="{{ pushQueueCtrl.lastMasterMerge() | date:pushQueueCtrl.dateFormat }}">
             {{ pushQueueCtrl.lastMasterMerge() | date:pushQueueCtrl.dateFormat }}
           </time>
         </span>
-        <paper-button class="colorful" raised ng-click="pushQueueCtrl.updateMergedToMaster()" title="Click to update to now">
+        <paper-button class="colorful" raised ng-click="pushQueueCtrl.updateMergedToMaster()" uib-tooltip="Click to update to now">
           <iron-icon icon="refresh"></iron-icon>
         </paper-button>
       </div>

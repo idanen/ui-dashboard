@@ -1,60 +1,39 @@
 (function () {
     'use strict';
 
-    angular.module('tabs', ['firebase', 'ngSanitize', 'ui.router', 'ui.select', 'angular-ladda', 'ngclipboard'])
+    angular.module('tabs', ['firebase', 'ngAnimate', 'ngSanitize', 'ngResource', 'ui.router', 'ui.select', 'ui.bootstrap', 'angular-ladda', 'ngclipboard', 'ui-dash.filters', 'collapsiblePanel'])
         .constant('ENV', {
-            //HOST: 'myd-vm01818.hpswlabs.adapps.hp.com',
-            HOST: 'localhost',
+            HOST: 'myd-vm08383.hpswlabs.adapps.hp.com',
+            //HOST: 'localhost',
             PORT: '4000'
         })
+        .constant('JENKINS_BASE_URL', 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/')
         .constant('DATE_FORMAT', 'HH:mm dd/MM/yyyy')
         .constant('NotificationTags', {
           PUSH_Q: 'PushQueueNotification',
           BRANCH_OWNER_Q: 'BranchOwnerNotification'
         })
-        .config(configApp)
+        .config(config)
         .run(initApp);
     angular.module('ui', ['tabs']);
 
-    configApp.$inject = ['$stateProvider', '$urlRouterProvider', 'laddaProvider'];
-    function configApp($stateProvider, $urlRouterProvider, laddaProvider) {
-        var home = {
-                name: 'home',
-                url: '/?:teamId',
-                templateUrl: '/js/ui-facade/ui-facade-tmpl.html',
-                controller: 'UiFacadeCtrl',
-                controllerAs: 'facade'
-            },
-            widget = {
-                name: 'widget',
-                url: '/widget/{widgetId:int}',
-                template: '<div ng-include="widgetCtrl.widget.contentUrl"></div>',
-                controller: 'WidgetCtrl',
-                controllerAs: 'widgetCtrl',
-                resolve: {
-                    widget: widgetResolver
-                }
-            };
-
-        laddaProvider.setOption({
-            style: 'expand-right'
-        });
-
-        //$locationProvider.html5Mode(true);
-
-        $stateProvider.state(home);
-        $stateProvider.state(widget);
-
-        $urlRouterProvider.otherwise('/widget/0');
+    config.$inject = ['$uibTooltipProvider'];
+    function config($uibTooltipProvider) {
+      $uibTooltipProvider.options({
+        placement: 'bottom', appendToBody: true
+      });
     }
 
-    widgetResolver.$inject = ['$stateParams', 'UiFacadeService'];
-    function widgetResolver($stateParams, UiFacadeService) {
-        return UiFacadeService.getById($stateParams.widgetId);
-    }
-
-    initApp.$inject = ['ShoutOutsService'];
-    function initApp(shoutOutsService) {
+    initApp.$inject = ['$rootScope', '$state', 'ShoutOutsService'];
+    function initApp($rootScope, $state, shoutOutsService) {
         shoutOutsService.init();
+
+        $rootScope.$on('$routeChangeError', function (event, next, previous, error) {
+            console.log(error);
+            //event.preventDefault();
+            //if (error === 'AUTH_REQUIRED') {
+            //    $state.go('login');
+            //}
+        });
     }
 })();

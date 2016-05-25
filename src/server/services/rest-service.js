@@ -1,37 +1,47 @@
 module.exports = (function () {
-  var Promise = require('promise'),
-      request = require('request');
+  'use strict';
 
-  function RestService() {
+  var Promise = require('promise'),
+      request = require('request-promise'),
+      _ = require('lodash');
+
+  function RestService(pOptions) {
+    var options = {
+      baseUrl: '',
+      params: {},
+      headers: {},
+      json: true
+    };
+    this.options = _.extend(options, pOptions);
   }
 
   RestService.prototype = {
-    fetch: function (url) {
-      return new Promise(function (resolve, reject) {
-        request.get(url, function (error, response, body) {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(JSON.parse(body));
-          }
-        });
-      });
+    fetch: function (uri) {
+      var options = _.extend({}, this.options);
+      options.uri = this.options.baseUrl + uri;
+      options.qs = this.options.params;
+
+      delete options.baseUrl;
+
+      return request(options);
     },
-    update: function (url, data) {
-      return new Promise(function (resolve, reject) {
-        request.put({
-          headers: {'content-type': 'application/json'},
-          url: url,
-          body: JSON.stringify(data)
-        }, function (error, response, body) {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(JSON.parse(body));
-          }
-        });
-      });
+    save: function (uri, data, method) {
+      var options = _.extend({}, this.options);
+      options.method = RestService.WriteMethods[method.toUpperCase()] || 'PUT';
+      options.uri = this.options.baseUrl + uri;
+      options.qs = this.options.params;
+      options.body = data;
+
+      delete options.baseUrl;
+
+      return request(options);
     }
+  };
+
+  RestService.WriteMethods = {
+    PUT: 'PUT',
+    PATCH: 'PATCH',
+    POST: 'POST'
   };
 
   return RestService;

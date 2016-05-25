@@ -1,0 +1,176 @@
+.ci-status {
+  .build-status-wrap {
+    padding: 10px;
+    box-shadow: 0 1px 5px rgba(0,0,0,.3);
+    margin-bottom: 5px;
+    overflow: hidden;
+    .build-status-header {
+      line-height: 3em;
+      .build-name-column {
+        white-space: nowrap;
+        overflow: hidden;
+        strong {
+          max-width: 80%;
+          text-overflow: ellipsis;
+          display: block;
+          overflow: hidden;
+          float: left;
+        }
+        paper-icon-button {
+          float: left;
+        }
+      }
+      paper-toggle-button {
+        display: inline-block;
+      }
+    }
+    .build-status-rows {
+      line-height: 2.5em;
+      padding-top: 5px;
+      box-shadow: inset 0 5px 10px -7px rgba(0,0,0,.4);
+      overflow-x: hidden;
+      max-height: 400px;
+      transition: all .3s ease-in-out;
+      transform: translate3d(0,0,0);
+      .row:not(:last-of-type) {
+        border-bottom: 1px solid silver;
+      }
+    }
+    &.build-status-close {
+      .build-status-rows {
+        max-height: 0;
+        transform: translate3d(0,0,0);
+        padding-top: 0;
+      }
+    }
+    .build-status-result-setter {
+      display: inline-block;
+      overflow: hidden;
+      max-width: 0;
+      transition: all .2s ease-out;
+    }
+    .build-status-running-long {
+      &:hover {
+        .build-status-result-setter {
+          max-width: 100px;
+        }
+      }
+    }
+  }
+  .new-build-number-form {
+    transition: all .3s ease-in-out;
+    height: 0;
+    overflow: hidden;
+    &.new-build-number-form-open {
+      height: 170px;
+    }
+  }
+  build-progress,
+  .build-progress {
+    display: inline-block;
+    width: 300px;
+    height: 100%;
+    .build-progress {
+      &.build-progress-running::before {
+        //content: '';
+        width: 0;
+        height: 50%;
+        top: 7px;
+        position: absolute;
+        background: white;
+        z-index: 3;
+        box-shadow: 0 0 7px 5px rgb(255,255,255);
+        transform: skew(-25deg) translate3d(-10px,0,0);
+        //animation: scan 1.4s infinite cubic-bezier(0.13, 0.23, 0, 0.96);
+      }
+    }
+  }
+  .sub-build {
+    width: 10%;
+    height: 20px;
+    display: inline-block;
+    color: #ccc;
+    vertical-align: middle;
+    &.build-state-running {
+      animation-name: pulse;
+      animation-iteration-count: infinite;
+      animation-duration: 2s;
+    }
+    .sub-build-result {
+      position: absolute;
+      background: transparent;
+      top: 0;
+      z-index: 1;
+      color: white;
+      font-size: 1.2rem;
+      text-align: center;
+      text-transform: lowercase;
+      visibility: hidden;
+    }
+    &:hover {
+      .sub-build-result {
+        visibility: visible;
+      }
+    }
+    &.build-state-running:hover {
+      .sub-build-result {
+        top: -7px;
+      }
+    }
+    &::before,
+    &::after {
+      content: '';
+      height: 50%;
+      width: 100%;
+      display: block;
+      position: relative;
+      bottom: 0;
+      left: 0;
+      background-color: currentColor;
+    }
+    &::before {
+      transform: skewX(25deg);
+    }
+    &::after {
+      transform: skewX(-25deg);
+    }
+    &:not(:first-child) {
+      &::before,
+      &::after {
+        border-left: 1px solid #747474;
+      }
+    }
+  }
+  .sub-build {
+    &.build-state-success {
+      color: #0fd74a;
+    }
+    &.build-state-unstable {
+      color: #f7f10c;
+    }
+    &.build-state-failure {
+      color: #d13422;
+    }
+    &.build-state-aborted {
+      color: #a1a1a1;
+    }
+    &.build-state-unknown {
+      color: rgba(161,161,161,.5);
+    }
+  }
+}
+
+.job-result-icon {
+  &.job-result-icon-done {
+    color: darkgreen;
+  }
+  &.job-result-icon-warning {
+    color: gold;
+  }
+  &.job-result-icon-error {
+    color: darkred;
+  }
+  &.job-result-icon-block {
+    color: silver;
+  }
+}

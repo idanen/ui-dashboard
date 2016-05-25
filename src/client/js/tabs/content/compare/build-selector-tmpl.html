@@ -1,0 +1,34 @@
+<div class="build-selector">
+  <span uib-dropdown>
+    <span uib-dropdown-toggle>
+      {{ $ctrl.group }} <iron-icon icon="arrow-drop-down"></iron-icon>
+    </span>
+    <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+      <li ng-repeat="group in $ctrl.groups">
+        <a ng-click="$ctrl.change('group', group)">{{group}}</a>
+      </li>
+    </ul>
+  </span>
+  <span uib-dropdown>
+    <span uib-dropdown-toggle>
+      {{ $ctrl.name }} <iron-icon icon="arrow-drop-down"></iron-icon>
+    </span>
+    <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+      <li ng-repeat="build in $ctrl.builds track by build.$id">
+        <a ng-click="$ctrl.change('name', build.$id)">{{build.$id}}</a>
+      </li>
+    </ul>
+  </span>
+  <span>#</span>
+  <span uib-dropdown>
+    <span uib-dropdown-toggle>
+      {{ $ctrl.number }} <iron-icon icon="arrow-drop-down"></iron-icon>
+    </span>
+    <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+      <li ng-repeat="buildNumber in $ctrl.buildResults | limitTo:20 track by $index">
+        <a ng-click="$ctrl.change('number', buildNumber.id)">{{ buildNumber.id }} {{ buildNumber.branch }} <build-result result="buildNumber.result"></build-result></a>
+      </li>
+    </ul>
+  </span>
+  (<build-result result="$ctrl.selectedBuildResult"></build-result>)
+</div>

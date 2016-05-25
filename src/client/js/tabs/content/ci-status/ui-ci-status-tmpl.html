@@ -1,101 +1,86 @@
-<div class="bs-example" ng-app="tabs" ng-init="ciJobsCtrl.loadJobs()">
+<div class="ci-status" ng-app="tabs">
+    <div class="row">
+        <!--
+        <div class="col-xs-12">
+          <paper-fab class="pull-right" mini icon="expand-{{ciJobsCtrl.newBuildNumberFormOpen ? 'less' : 'more'}}" uib-tooltip="New Job"
+                     ng-click="ciJobsCtrl.newBuildNumberFormOpen = !ciJobsCtrl.newBuildNumberFormOpen"></paper-fab>
+          <div class="new-build-number-form" ng-class="{'new-build-number-form-open': ciJobsCtrl.newBuildNumberFormOpen}">
+            <ci-awesomplete list="ciJobsCtrl.listOfJobs" selected="ciJobsCtrl.newBuild.name" on-change="ciJobsCtrl.setNewBuildName(value)"></ci-awesomplete>
+            <paper-input-container>
+              <label>Build number</label>
+              <input is="iron-input" ng-model="ciJobsCtrl.newBuild.number">
+            </paper-input-container>
+            <paper-button raised ng-click="ciJobsCtrl.addNewBuildNumber()">OK</paper-button>
+          </div>
+        </div>
+        -->
+      <h3 class="col-xs-6">Builds Status</h3>
+      <div class="col-xs-4 pull-right compare-legend-container">
+        <paper-icon-button class="pull-right compare-legend-opener" icon="help" title="Show legend" ng-click="ciJobsCtrl.toggleLegend()"></paper-icon-button>
+        <div class="compare-legend" ng-class="ciJobsCtrl.legendShown ? 'compare-legend-open' : ''">
+          <div class="text-success">
+            <div class="sub-build build-state-success"></div>
+            <span> Success</span>
+          </div>
+          <div class="text-warning">
+            <div class="sub-build build-state-unstable"></div>
+            <span> Unstable</span>
+          </div>
+          <div class="text-danger">
+            <div class="sub-build build-state-failure"></div>
+            <span> Failure</span>
+          </div>
+          <div class="text-muted">
+            <div class="sub-build build-state-aborted"></div>
+            <span> Aborted</span>
+          </div>
+          <div class="text-muted">
+            <div class="sub-build build-state-unknown">
+              <span class="sub-build-result"></span>
+            </div>
+            <span> Running / Unknown</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  <div class="row">
+    <form class="form-horizontal col-xs-12">
+      <fieldset class="form-group">
+        <label class="col-md-2">Filter masters</label>
+        <div class="col-md-10">
+          <div class="btn-group btn-group-xs">
+            <button class="btn btn-default" ng-repeat="job in ciJobsCtrl.jobs.masters" ng-click="ciJobsCtrl.filterJob('masters', job)">
+              <iron-icon icon="check-box" ng-show="ciJobsCtrl.filtered.masters[job.$id]"></iron-icon>
+              <iron-icon icon="check-box-outline-blank" ng-hide="ciJobsCtrl.filtered.masters[job.$id]"></iron-icon>
+              <span>{{ job.alias || job.$id | releasever }}</span>
+            </button>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="form-group">
+        <label class="col-md-2">Filter teams</label>
+        <div class="col-md-10">
+          <div class="btn-group btn-group-xs">
+            <button class="btn btn-default" ng-repeat="job in ciJobsCtrl.jobs.teams" ng-click="ciJobsCtrl.filterJob('teams', job)">
+              <iron-icon icon="check-box" ng-show="ciJobsCtrl.filtered.teams[job.$id]"></iron-icon>
+              <iron-icon icon="check-box-outline-blank" ng-hide="ciJobsCtrl.filtered.teams[job.$id]"></iron-icon>
+              <span>{{ job.alias || job.$id | releasever }}</span>
+            </button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
     <div class="row">
         <div class="col-xs-12">
-            <!-- Trigger the modal with a button -->
-            <paper-fab class=" pull-right" mini icon="add" title="New Job" data-toggle="modal"
-                       data-target="#newJobModal" ng-click="ciJobsCtrl.dataDismiss = ' '"></paper-fab>
-            <!-- Refresh The Job List -->
-            <paper-button raised class="ladda-button mainBtns" ladda="loading" ng-click="ciJobsCtrl.updateAllJobs()">
-                <iron-icon icon="refresh"></iron-icon>
-                <span class="ladda-label">Refresh</span>
-            </paper-button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-12">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th colspan="4">Master Branches</th>
-                    </tr>
-                    <tr>
-                        <th>Job Name</th>
-                        <th>Build Status</th>
-                        <th>Duration</th>
-                        <th>Freeze</th>
-                    </tr>
-                </thead>
-                <tbody ng-repeat="(jobName, job) in ciJobsCtrl.listOfJobs">
-                <tr>
-                    <td data-toggle="tooltip" title="{{ job.alias }}">
-                        <a ng-href="{{job.url}}" target="_blank">{{ job.alias }}</a>
-                    </td>
-                    <td>
-                        <img class="statusImg" ng-src="{{ ciJobsCtrl.selectJobImg(job.result) }}">
-                        <span>{{ job.result }}</span>
-                    </td>
-                    <td>
-                        <time is="time-ago" datetime="{{ job.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
-                              title="{{ job.lastUpdate | date }}">
-                            {{ job.lastUpdate | date }}
-                        </time>
-                    </td>
-                    <td>
-                        <div class="btn-group">
-                            <paper-toggle-button ci-freeze-state-toggle="job.freeze"></paper-toggle-button>
-                        </div>
-                    </td>
-                </tr>
-                <tr ng-class="ciJobsCtrl.styleJobRow(results)" ng-repeat="(jobNumber, results) in job.builds">
-                    <td>
-                        {{ jobNumber }}
-                    </td>
-                    <td>
-                        <img class="statusImg" ng-src="{{ ciJobsCtrl.selectJobImg(results.result) }}">
-                        <span>{{ results.result }}</span>
-                    </td>
-                    <td colspan="2">
-                        {{ results.duration | duration }}
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div id="newJobModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <form novalidate class="simple-form" role="form" name="ciJobsCtrl.addJobForm">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Add New Job</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            Job Name: <input type="text" class="form-control required" name="jobName"
-                                             placeholder="e.g. MaaS-Platf-UI-Branch-master" ng-model="ciJobsCtrl.job.name"
-                                             required/><br/>
-
-                            <div style="color:red" ng-hide="!ciJobsCtrl.validateForm">{{ciJobsCtrl.validationErrorMessage}}</div>
-                        </div>
-                        <div class="form-group">
-                            Job Alias: <input type="text" class="form-control" ng-model="ciJobsCtrl.job.alias"/><br/>
-                            <span>* short name to use</span>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <input type="submit" ng-click="ciJobsCtrl.addJob(ciJobsCtrl.job)" ng-class="ciJobsCtrl.addJobFormSendBtn"
-                               value="{{ ciJobsCtrl.addJobResultButtonValue }}" data-dismiss="{{ ciJobsCtrl.dataDismiss }}"
-                               ng-disabled="ciJobsCtrl.addJobForm.$invalid"/>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </form>
+          <h4>Master Branches</h4>
+          <div class="row-fluid" ng-repeat="job in ciJobsCtrl.jobs.masters | multivalue:'$id':ciJobsCtrl.filtered.masters track by job.$id">
+            <build-status class="builds-group slide-in" build-name="job.$id" group="'masters'" jobs-limit="3"></build-status>
+          </div>
+          <h4>Team Branches</h4>
+          <div class="row-fluid" ng-repeat="job in ciJobsCtrl.jobs.teams | multivalue:'$id':ciJobsCtrl.filtered.teams track by job.$id">
+            <build-status class="builds-group slide-in" build-name="job.$id" group="'teams'" jobs-limit="3"></build-status>
+          </div>
         </div>
     </div>
 </div>

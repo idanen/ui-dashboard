@@ -8,7 +8,7 @@ var pagespeed = require('psi');
 var reload = browserSync.reload;
 var inject = require('gulp-inject');
 var nodemon = require('gulp-nodemon');
-var isProd = require('yargs').argv.state === 'prod';
+var isProd = require('yargs').argv.stage === 'prod';
 
 // we'd need a slight delay to reload browsers
 // connected to browser-sync after restarting nodemon
@@ -90,7 +90,7 @@ gulp.task('styles', function () {
 // Concatenate and minify JavaScript. Optionally transpiles ES2015 code to ES5.
 // to enables ES2015 support remove the line `"only": "gulpfile.babel.js",` in the
 // `.babelrc` file.
-gulp.task('scripts', function (cb) {
+gulp.task('scripts', ['jshint'], function (cb) {
   gulp.src([
     // Note: Since we are not using useref in the scripts build pipeline,
     //       you need to explicitly list your scripts here in the right order
@@ -172,8 +172,9 @@ gulp.task('templatecopy', function () {
 
 // Inject app *.js files to index.html
 gulp.task('inject', ['templatecopy', 'html'], function () {
+  var scriptsSrc = 'dist/scripts/' + (isProd ? 'main.min.js' : '**/*.js');
   return gulp.src('dist/index.html')
-    .pipe(inject(gulp.src('dist/scripts/**/*.js', {read: false}), {relative: true}))
+    .pipe(inject(gulp.src(scriptsSrc, {read: false}), {relative: true}))
     //.pipe($.angularFilesort())
     //// Minify any HTML
     //.pipe($.htmlmin({
@@ -208,12 +209,16 @@ gulp.task('nodemon', function (cb) {
       });
 });
 
+gulp.task('build', function (cb) {
+  runSequence('clean', ['jslib', 'styles', 'copy', 'images', 'inject'], cb);
+});
+
 // Watch files for changes & reload
-gulp.task('serve', ['jslib', 'styles', 'copy', 'images', 'inject'], function () {
+gulp.task('serve', ['build'], function () {
   browserSync({
     notify: false,
     // Customize the BrowserSync console logging prefix
-    logPrefix: 'dash',
+    logPrefix: 'ci-dash',
     // Run as an https by uncommenting 'https: true'
     // Note: this uses an unsigned certificate which on first access
     //       will present a certificate warning in the browser.
@@ -221,9 +226,9 @@ gulp.task('serve', ['jslib', 'styles', 'copy', 'images', 'inject'], function () 
     server: ['.tmp', 'dist']
   });
 
-  gulp.watch(['src/client/**/*.html'], ['templatecopy', reload]);
-  gulp.watch(['src/client/css/**/*.{scss,css}'], ['styles', reload]);
-  gulp.watch(['src/client/js/**/*.js'], ['jshint', 'jslib', 'scripts']);
+  gulp.watch(['src/client/**/*.html'], ['templatecopy'], reload);
+  gulp.watch(['src/client/**/*.{scss,css}'], ['styles', 'inject'], reload);
+  gulp.watch(['src/client/js/**/*.js'], ['jshint', 'jslib', 'scripts', 'inject'], reload);
   gulp.watch(['src/client/images/**/*'], reload);
 });
 

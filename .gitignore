@@ -2,6 +2,7 @@
 .idea/
 src/server/resources/*.*
 node_modules
+bower_components
 ui-dashboard.iml
 firebase.json
 dist/

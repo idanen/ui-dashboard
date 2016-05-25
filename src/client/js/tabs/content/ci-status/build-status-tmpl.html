@@ -1,0 +1,61 @@
+<div class="build-status-wrap" ng-class="{'build-status-close': $ctrl.buildsHidden}">
+  <div class="build-status-header">
+    <div class="row">
+      <div class="col-sm-4 build-name-column">
+        <paper-icon-button icon="unfold-more" raised toggles ng-click="$ctrl.buildsHiddenToggle()"></paper-icon-button>
+        <strong uib-tooltip="{{ $ctrl.build.$id | releasever }}"> {{ $ctrl.build.alias || $ctrl.build.$id | releasever }}</strong>
+      </div>
+      <div class="col-sm-4">
+        <iron-icon class="job-result-icon" icon="{{ $ctrl.resultToIconName($ctrl.build.result) }}"
+                   ng-class="'job-result-icon-' + $ctrl.resultToIconName($ctrl.build.result)"></iron-icon>
+        <span> {{ $ctrl.build.result }} (</span>
+        <em>
+          <time is="time-ago" datetime="{{ $ctrl.build.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
+                uib-tooltip="{{ $ctrl.build.lastUpdate | date }}">
+            {{ $ctrl.build.lastUpdate | date }}
+          </time>
+        </em>
+        <span>)</span>
+      </div>
+      <div class="col-sm-3">
+        <ci-freeze-state-toggle freeze="$ctrl.build.freeze" on-update="$ctrl.freezeState(freeze)"></ci-freeze-state-toggle>
+      </div>
+      <div class="col-sm-1">
+        <input type="number" class="form-control" ng-model="$ctrl.jobsLimit" ng-change="$ctrl.onLimitChange()">
+      </div>
+    </div>
+  </div>
+  <div class="build-status-rows">
+    <div class="row builds-group slide-in" ng-repeat="build in $ctrl.buildResults | orderBy:'$id':true track by $index">
+      <div class="col-sm-4">
+        <a ng-href="{{ $ctrl.buildCompareLink(build.$id) }}" uib-tooltip="Compare this build to another">{{ build.$id }}</a>
+        <a ng-href="{{ $ctrl.buildJenkinsLink(build.$id) }}" uib-tooltip="Open in Jenkins" target="_blank">
+          <iron-icon icon="open-in-new"></iron-icon>
+        </a>
+        <em>{{ build.branchName }}</em>
+      </div>
+      <div class="col-sm-4" ng-class="{'text-danger build-status-running-long': $ctrl.isBuildTooLong(build)}">
+        <build-result result="build.result"></build-result>
+        <em>
+          (
+          <time is="time-ago" datetime="{{ build.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
+                uib-tooltip="{{ build.lastUpdate | date }}">
+            {{ build.lastUpdate | date }}
+          </time>
+          )
+        </em>
+        <div class="build-status-result-setter under-construction">
+          <button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Set <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li ng-repeat="result in $ctrl.possibleResults">
+              <a ng-click="$ctrl.setBuildResult(build, result)">{{ result }}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <build-progress build-name="$ctrl.buildName" build-number="build.$id" build-group="$ctrl.group" build-result="build.result"></build-progress>
+      </div>
+    </div>
+  </div>
+</div>

@@ -60,31 +60,75 @@
         })
         .service('ciStatusService', CiStatusService);
 
-    CiStatusService.$inject = ['$http', 'Ref', '$firebaseObject', '$firebaseArray', '$stateParams', 'ENV'];
-    function CiStatusService($http, ref, $firebaseObject, $firebaseArray, $stateParams, ENV) {
+    CiStatusService.$inject = ['$http', '$q', 'Ref', '$firebaseObject', '$firebaseArray', 'ENV'];
+    function CiStatusService($http, $q, ref, $firebaseObject, $firebaseArray, ENV) {
         this._jobsUrl = '//' + ENV.HOST + ':' + ENV.PORT;
         this._jobsRef = ref.child('allJobs');
         this._statusRef = ref.child('ciStatus');
         this._mastersRef = this._statusRef.child('masters');
         this._teamsRef = this._statusRef.child('teams');
         this.$http = $http;
+        this.$q = $q;
         this.$firebaseObject = $firebaseObject;
         this.$firebaseArray = $firebaseArray;
     }
 
     CiStatusService.prototype = {
-        getJobs: function (group) {
-            return this.$firebaseObject(group ? this._statusRef.child(group) : this._statusRef.child('masters'));
+        getJobs: function (group = 'masters') {
+            var ref = (group !== 'masters') ? this._statusRef.child(group) : this._statusRef.child(group);
+            return this.$firebaseArray(ref);
         },
-        getJob: function (jobId, teamId) {
-            if (teamId) {
-                return this.$firebaseObject(this._teamsRef.child(teamId).child(jobId));
+        getLastBuildNumber: function (group = 'masters', buildName = 'MaaS-SAW-USB-master') {
+            return this.$q((resolve) => {
+                this._statusRef.child(group).child(buildName)
+                    .child('builds').orderByKey().limitToLast(1)
+                    .once('value', function (snapshot) {
+                        snapshot.forEach(function (innerSnapshot) {
+                            resolve(innerSnapshot.key());
+                        });
+                    });
+            });
+        },
+        getJob: function (jobId, group) {
+            if (group) {
+                return this.$firebaseObject(this._statusRef.child(group).child(jobId));
             }
 
             return this.$firebaseObject(this._mastersRef.child(jobId));
         },
+        getJobBuilds: function (jobId, group = 'masters', limit = 10) {
+            var startRef = this._getRef(jobId, group);
+
+            if (limit && angular.isNumber(limit)) {
+                return this.$firebaseArray(startRef.child('builds').orderByKey().limitToLast(limit));
+            }
+
+            return this.$firebaseArray(startRef.child('builds'));
+        },
+        getJobSubBuilds: function (jobId, jobNumber, group) {
+            var startRef = this._getRef(jobId, group);
+
+            return this.$firebaseArray(startRef.child('builds').child(jobNumber).child('subBuilds'));
+        },
+        getRunningSubBuilds: function (jobId, jobNumber, group) {
+            var buildRef = this._getRef(jobId, group);
+
+            return this.$firebaseArray(buildRef.child('builds').child(jobNumber).child('subBuilds').orderByChild('result').equalTo('running'));
+        },
         getJobByName: function (jobName) {
             return this.$firebaseObject(this._jobsRef.child(jobName));
+        },
+        addBuildNumber: function (buildName, newBuildNumber, group = 'masters') {
+            var newBuild = {};
+            newBuild[newBuildNumber] = {
+                result: 'UNKNOWN',
+                lastUpdate: Date.now()
+            };
+            return this.$q((resolve) => {
+                this._statusRef.child(group).child(buildName).child('builds').update(newBuild, () => {
+                    resolve(newBuild);
+                });
+            });
         },
         addJob: function (toAdd) {
             return this.$http.post(this._jobsUrl + '/addJob', toAdd)
@@ -100,6 +144,13 @@
         },
         _processResponse: function (response) {
             return response.data;
+        },
+        _getRef: function (jobId, group) {
+            if (group) {
+                return this._statusRef.child(group).child(jobId);
+            }
+
+            return this._mastersRef.child(jobId);
         }
     };
 

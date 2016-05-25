@@ -19,7 +19,7 @@
                 contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-push-queue-tmpl.html'
             }
         ];
-        this.widgets = this.UiFacadeService.getWidgets();
+        this.widgets = this.UiFacadeService.getAuthWidgets();
 
         this.currentWidget = this.mainWidgets[0];
         this.currentStateWidget = this.widgets[0];
@@ -30,6 +30,14 @@
             this.currentStateWidget = widget;
         },
         gotoState: function (widgetId) {
+            if (widgetId === 'compare') {
+                this.$state.go(widgetId, {group: 'masters', buildName: 'MaaS-SAW-USB-master'});
+                return;
+            }
+            if (widgetId === 'stability') {
+                this.$state.go(widgetId);
+                return;
+            }
             this.$state.go('widget', { widgetId: widgetId });
             this.setWidgetState(this.UiFacadeService.getById(widgetId));
         },
