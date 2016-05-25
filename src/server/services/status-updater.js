@@ -108,6 +108,7 @@ module.exports = (function () {
         };
       }
 
+      buildName = buildName.replace(/\.+/g, '_');
       return {
         ref: group + '/' + parentName + '/builds/' + parentNumber + '/subBuilds/' + buildName,
         phase: buildStatus.build.phase,
