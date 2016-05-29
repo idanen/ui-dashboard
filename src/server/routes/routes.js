@@ -12,7 +12,7 @@ module.exports = function (app) {
 
     app.post('/buildTests/:buildName/:buildNumber', controller.getSpecificBuildTests.bind(controller));
 
-    app.post('/stability/:buildName/:buildCount', controller.getTestsStability.bind(controller));
+    app.post('/stability/:buildName/:buildCount/:startFromNumber', controller.getTestsStability.bind(controller));
 
     app.post('/updateStatus/:group', controller.updateStatus.bind(controller));
 };

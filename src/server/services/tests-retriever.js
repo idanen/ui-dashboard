@@ -101,13 +101,14 @@ module.exports = (function () {
       }
       return this._promisize('aggregate', aggregations);
     },
-    fetchStability: function (buildName, tests, buildCount) {
+    fetchStability: function (buildName, tests, buildCount, startFromNumber) {
       // console.log('buildName: \"' + buildName + '", buildCount: ' + buildCount + ', tests: ', tests);
-      var classesAndMethods;
+      var classesAndMethods, buildIdsRange;
       classesAndMethods = _.transform(tests, function (result, value) {
         result.classes.push(value.testClass);
         result.methods = result.methods.concat(value.methods);
       }, { classes: [], methods: [] });
+      buildIdsRange = this._arrayWithReverse(buildCount, startFromNumber);
       return this._promisize('aggregate', [
         {
           $sort: {
@@ -122,6 +123,9 @@ module.exports = (function () {
             },
             testName: {
               $in: classesAndMethods.methods
+            },
+            buildId: {
+              $in: buildIdsRange
             }
           }
         },
@@ -257,6 +261,19 @@ module.exports = (function () {
           resolve(results);
         });
       }.bind(this));
+    },
+    _arrayWithReverse: function (length, startWith) {
+      var arr = [], i;
+
+      if (isNaN(length) || isNaN(startWith)) {
+        throw new Error('Both arguments should be numbers');
+      }
+
+      for (i = 0; i < length; i++) {
+        arr.push(startWith - i);
+      }
+
+      return arr;
     }
   };
 

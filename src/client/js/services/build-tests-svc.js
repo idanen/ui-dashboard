@@ -12,7 +12,7 @@
         isArray: true
       }
     });
-    this.Stability = $resource(`http://${ENV.HOST}:${ENV.PORT}/stability/:buildName/:buildCount`, {}, {
+    this.Stability = $resource(`http://${ENV.HOST}:${ENV.PORT}/stability/:buildName/:buildCount/:startFromNumber`, {}, {
       query: {
         method: 'POST',
         isArray: true
@@ -28,8 +28,8 @@
       // console.log('sending request to get tests ', tests);
       return this.BuildTests.specific({buildName, buildNumber}, tests).$promise;
     },
-    getStability: function (buildName, tests, buildCount = 10) {
-      return this.Stability.query({buildName, buildCount}, tests).$promise;
+    getStability: function (buildName, tests, startFromNumber, buildCount = 10) {
+      return this.Stability.query({buildName, buildCount, startFromNumber}, tests).$promise;
     }
   };
 }());

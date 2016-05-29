@@ -85,7 +85,7 @@
         if (existing) {
           let methodsToAdd = [];
           _.forEach(newMethods, (method) => {
-            if (!_.includes(existing.methods(method))) {
+            if (!_.includes(existing.methods, method)) {
               methodsToAdd.push(method);
             }
           });
@@ -157,7 +157,7 @@
       this.tests.forEach((test) => test.selected = false);
     },
     clearResults: function () {
-      this.tests.forEach((test) => test.results = []);
+      this.tests.forEach((test) => test.results = {});
     },
     clearAll: function () {
       this.tests = [];
@@ -166,6 +166,7 @@
       this.tests = _.filter(this.tests, test => test.testClass !== testClass);
     },
     renderResults: function () {
+      this.clearResults();
       _.forEach(this.tests, (test) => {
         let stability = _.filter(this.stability, (testStability) => {
           return testStability._id.testClassName === test.testClass;
@@ -185,7 +186,7 @@
     },
     fetchStability: function () {
       this.goLoading = true;
-      this.buildTestsService.getStability(this.build.name, _.filter(this.tests, {selected: true}), this.buildsCount)
+      this.buildTestsService.getStability(this.build.name, _.filter(this.tests, {selected: true}), this.build.number, this.buildsCount)
           .then(stability => this.stability = stability)
           .then(this.renderResults.bind(this))
           .catch(this.handleError)

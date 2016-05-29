@@ -74,6 +74,7 @@
         this.onChange({prop: 'number', value: this.number});
       } else {
         this.onChange({prop: prop, value: value});
+        this.selectedBuildResult = _.find(this.buildResults, {id: this.number}).result;
       }
     },
     buildResultsData: function (builds, selectedName) {

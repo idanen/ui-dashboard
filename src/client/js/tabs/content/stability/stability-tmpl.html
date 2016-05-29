@@ -1,4 +1,4 @@
-<div class="stability-container">
+<div class="stability-container container-fluid">
   <!--<h2>build: {{ $ctrl.build.name }}#{{ $ctrl.build.number }}</h2>-->
   <div class="row">
     <h3 class="col-xs-6">Tests Stability</h3>
@@ -16,38 +16,12 @@
 
   <form class="form-horizontal" name="$ctrl.settings">
     <fieldset class="form-group">
-      <label class="col-md-3">Previous builds count <iron-icon icon="announcement" uib-tooltip="Calculate stability of the last {{$ctrl.buildsCount}} builds (NOTE: that this is not related to the selected build id below)"></iron-icon></label>
-      <div class="col-md-1">
-        <input class="form-control" type="number" ng-model="$ctrl.buildsCount">
-      </div>
-      <div class="col-md-8">
+      <label class="col-md-3">Previous builds count <iron-icon icon="info-outline" uib-tooltip="Calculate stability of the last {{$ctrl.buildsCount}} builds (NOTE: that this is not related to the selected build id below)"></iron-icon></label>
+      <div class="col-md-3">
         <paper-slider pin min="10" max="50" bind-from="$ctrl.buildsCount" on-update="$ctrl.buildsCountUpdated(value)" style="width: 100%;"></paper-slider>
       </div>
-    </fieldset>
-    <fieldset class="form-group">
-      <div class="col-xs-10">
-        <paper-button raised ng-click="$ctrl.selectAll()">
-          <iron-icon icon="done"></iron-icon>
-          select all
-        </paper-button>
-        <paper-button raised ng-click="$ctrl.selectNone()">
-          <iron-icon icon="clear"></iron-icon>
-          select none
-        </paper-button>
-        <paper-button raised ng-click="$ctrl.clearResults()">
-          <iron-icon icon="block"></iron-icon>
-          clear results
-        </paper-button>
-        <paper-button class="text-danger" raised ng-click="$ctrl.clearAll()">
-          <iron-icon icon="block"></iron-icon>
-          clear all
-        </paper-button>
-      </div>
-      <div class="col-xs-2">
-        <paper-button raised class="btn-run-stability ladda-button" ladda="$ctrl.goLoading" ng-click="$ctrl.fetchStability()">
-          <iron-icon icon="send"></iron-icon>
-          <span>Go!</span>
-        </paper-button>
+      <div class="col-md-offset-5 col-md-1">
+        <input class="form-control" type="number" ng-model="$ctrl.buildsCount">
       </div>
     </fieldset>
     <fieldset class="form-group">
@@ -86,35 +60,66 @@
         </paper-button>
       </div>
     </fieldset>
-    <div class="row" class="visible-md">
-      <div class="col-md-4">Test Class</div>
-      <div class="col-md-4">Test Name (method)</div>
-      <div class="col-md-4">Results</div>
+    <fieldset class="form-group">
+      <div class="col-xs-10">
+        <paper-button class="under-construction" raised ng-click="$ctrl.selectAll()">
+          <iron-icon icon="done"></iron-icon>
+          select all
+        </paper-button>
+        <paper-button class="under-construction" raised ng-click="$ctrl.selectNone()">
+          <iron-icon icon="clear"></iron-icon>
+          select none
+        </paper-button>
+        <paper-button class="text-danger" raised ng-click="$ctrl.clearAll()">
+          <iron-icon icon="block"></iron-icon>
+          clear all
+        </paper-button>
+      </div>
+      <div class="col-xs-2">
+        <paper-button raised class="btn-run-stability ladda-button" ladda="$ctrl.goLoading" ng-click="$ctrl.fetchStability()">
+          <iron-icon icon="send"></iron-icon>
+          <span>Go!</span>
+        </paper-button>
+      </div>
+    </fieldset>
+    <div class="row">
+      <div class="col-md-4">
+        <strong>Test Class</strong>
+      </div>
+      <div class="col-md-4">
+        <strong>Test Name (method)</strong>
+      </div>
+      <div class="col-md-4">
+        <strong>Results</strong>
+        <paper-icon-button raised icon="block" ng-click="$ctrl.clearResults()" uib-tooltip="Clear results"></paper-icon-button>
+      </div>
     </div>
-    <fieldset class="form-group slide-in" ng-repeat="test in $ctrl.tests">
-      <div class="col-md-4">
-        <paper-icon-button icon="clear" ng-click="$ctrl.removeTest(test.testClass)"></paper-icon-button>
-        <label>
-          <input class="under-construction" type="checkbox" ng-model="test.selected">
-          <span> {{ test.testClass | className }}</span>
-        </label>
-      </div>
-      <div class="col-md-4">
-        <ul class="list-group">
-          <li class="list-group-item" ng-repeat="testMethod in test.methods track by $index">
-            <span>{{ testMethod }}</span>
-          </li>
-        </ul>
-      </div>
-      <div class="col-md-4">
-        <ul class="list-group" ng-if="test.results">
-          <li class="list-group-item" ng-repeat="(testName, result) in test.results">
-            <uib-progressbar class="progress-striped" max="result.count" value="result.failed" type="{{result.stability > 0.3 ? 'danger' : 'warning'}}">
-              <span class="text-success test-result-stable" ng-if="result.failed === 0"><iron-icon icon="done-all"></iron-icon> Stable</span>
-              <em ng-if="result.failed > 0" uib-tooltip="{{ result.failed }} / {{ result.count }} ({{ result.stability | percentage:0 }})">{{ result.failed }} / {{ result.count }} ({{ result.stability | percentage:0 }})</em>
-            </uib-progressbar>
-          </li>
-        </ul>
+    <fieldset class="form-group">
+      <div class="row slide-in" ng-repeat="test in $ctrl.tests">
+        <div class="col-md-4">
+          <paper-icon-button icon="clear" ng-click="$ctrl.removeTest(test.testClass)"></paper-icon-button>
+          <label>
+            <input class="under-construction" type="checkbox" ng-model="test.selected">
+            <span> {{ test.testClass | className }}</span>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <ul class="list-group borderless">
+            <li class="list-group-item" ng-repeat="testMethod in test.methods track by $index">
+              <span>{{ testMethod }}</span>
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <ul class="list-group" ng-if="test.results">
+            <li class="list-group-item" ng-repeat="(testName, result) in test.results">
+              <uib-progressbar class="progress-striped" max="result.count" value="result.failed" type="{{result.stability > 0.3 ? 'danger' : 'warning'}}">
+                <span class="text-success test-result-stable" ng-if="result.failed === 0"><iron-icon icon="done-all"></iron-icon> Stable</span>
+                <em ng-if="result.failed > 0" uib-tooltip="{{ result.failed }} / {{ result.count }} ({{ result.stability | percentage:0 }})">{{ result.failed }} / {{ result.count }} ({{ result.stability | percentage:0 }})</em>
+              </uib-progressbar>
+            </li>
+          </ul>
+        </div>
       </div>
     </fieldset>
     <fieldset class="form-group">

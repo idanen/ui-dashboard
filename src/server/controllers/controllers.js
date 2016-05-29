@@ -95,7 +95,7 @@ module.exports = (function () {
 
       getTestsStability: function (request, response) {
         return this._handleRequest(request, response, function () {
-          return this.testsRetriever.fetchStability(request.params.buildName, request.body, request.params.buildCount)
+          return this.testsRetriever.fetchStability(request.params.buildName, request.body, request.params.buildCount, parseInt(request.params.startFromNumber, 10))
         }.bind(this));
       },
 
