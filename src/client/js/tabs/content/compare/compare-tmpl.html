@@ -35,7 +35,7 @@
   </div>
   <div class="row">
     <div class="col-md-6">
-      <h4><strong>My build</strong><paper-spinner active ng-show="compare.loading"></paper-spinner></h4>
+      <h4><strong>My build </strong><paper-spinner active ng-show="compare.loading"></paper-spinner></h4>
       <build-selector groups="compare.availableGroups"
                       builds="compare.availableBuilds[compare.selected.left.group]"
                       selected="compare.selected.left"
@@ -77,7 +77,7 @@
       </uib-accordion>
     </div>
     <div class="col-md-6">
-      <h4><strong>Compare to (default is previous build)</strong><paper-spinner active ng-show="compare.loading"></paper-spinner></h4>
+      <h4><strong>Compare to (default is previous build) </strong><paper-spinner active ng-show="compare.loading"></paper-spinner></h4>
       <build-selector groups="compare.availableGroups"
                       builds="compare.availableBuilds[compare.selected.right.group]"
                       selected="compare.selected.right"
@@ -96,19 +96,23 @@
               </div>
             </div>
           </uib-accordion-heading>
+          <div class="btn-group btn-group-sm">
+            <a class="btn" uib-tooltip="stability" ng-click="compare.goToStability(testList, 'right')">
+              <iron-icon icon="assessment"></iron-icon>
+              <span>Add these tests to stability</span>
+            </a>
+          </div>
           <ul class="list-group">
             <li class="list-group-item" ng-repeat="test in testList.tests | orderBy:'testName'">
               <strong> {{ test.testName | className }}</strong>
               <paper-badge icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'" alt="Connection exception"></paper-badge>
               <em ng-if="!testList.alien"> {{ test.errorMessage }}</em>
-              <div class="btn-group btn-group-sm">
-                <a class="btn btn-link" uib-tooltip="stability" ng-click="compare.goToStability(testList, 'right')">
-                  <iron-icon icon="assessment"></iron-icon>
-                </a>
-                <a class="btn btn-link" ng-href="{{ test.testReportUrl }}" target="_blank" uib-tooltip="Go to report" ng-disabled="!test.testReportUrl">
-                  <iron-icon icon="launch"></iron-icon>
-                </a>
-              </div>
+              <a class="btn" ng-href="{{ test.testReportUrl }}testReport" target="_blank" uib-tooltip="Go to report (server)" ng-disabled="!test.testReportUrl">
+                <iron-icon icon="launch"></iron-icon>
+              </a>
+              <a class="btn" ng-href="{{ test.testReportUrl }}artifact/target/reports/test-results.html" target="_blank" uib-tooltip="Go to report (UI)" ng-disabled="!test.testReportUrl">
+                <iron-icon icon="launch"></iron-icon>
+              </a>
             </li>
           </ul>
         </uib-accordion-group>
