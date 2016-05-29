@@ -203,7 +203,7 @@
       }
       // Remove irrelevant fields
       origTests = testWrap.tests.map(this._omitIrrelevantFieldsFromTest);
-      otherTests = testWrap.tests.map(this._omitIrrelevantFieldsFromTest);
+      otherTests = otherTestWrap.tests.map(this._omitIrrelevantFieldsFromTest);
 
       return _.isEqual(origTests, otherTests);
     },

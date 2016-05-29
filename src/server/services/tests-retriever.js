@@ -241,7 +241,8 @@ module.exports = (function () {
       }
       console.log(JSON.stringify(aggregations));
       return this._promisize('aggregate', aggregations)
-          .then(this.secondGroup);
+          .then(this.secondGroup)
+          .then(this.fetchComplementingTests.bind(this));
     },
     secondGroup: function (aggregated) {
       if (aggregated) {
@@ -250,6 +251,78 @@ module.exports = (function () {
         });
       }
       return aggregated;
+    },
+    fetchComplementingTests: function (failedOfBoth) {
+      var leftTests = failedOfBoth[0],
+          rightTests = failedOfBoth[1],
+          addToLeft = {},
+          addToRight = {};
+
+      _.forEach(rightTests, function (tests, testClassName) {
+        if (!(testClassName in leftTests)) {
+          addToLeft[testClassName] = _.map(tests, function (test) {
+            return _.extend({alien: true}, test);
+          });
+        } else {
+          tests.forEach(function (test) {
+            var exists = _.find(leftTests[testClassName], function (existing) {
+              return this._testEquals(existing, test)
+            }.bind(this));
+            if (!exists) {
+              addToLeft[testClassName].push(_.extend({alien: true}, test));
+            }
+          }.bind(this));
+        }
+      }.bind(this));
+      _.forEach(leftTests, function (tests, testClassName) {
+        if (!(testClassName in rightTests)) {
+          addToRight[testClassName] = _.map(tests, function (test) {
+            return _.extend({alien: true}, test);
+          });
+        } else {
+          tests.forEach(function (test) {
+            var exists = _.find(rightTests[testClassName], function (existing) {
+              return this._testEquals(existing, test)
+            }.bind(this));
+            if (!exists) {
+              addToRight[testClassName].push(_.extend({alien: true}, test));
+            }
+          }.bind(this));
+        }
+      }.bind(this));
+
+      _.forEach(addToLeft, function (tests, testClassName) {
+        if (testClassName in leftTests) {
+          leftTests[testClassName].push(tests);
+        } else {
+          leftTests[testClassName] = tests;
+        }
+      });
+      _.forEach(addToRight, function (tests, testClassName) {
+        if (testClassName in rightTests) {
+          rightTests[testClassName].push(tests);
+        } else {
+          rightTests[testClassName] = tests;
+        }
+      });
+
+      return {
+        left: leftTests,
+        right: rightTests
+      };
+    },
+    _testsEquals: function (testWrap, otherTestWrap) {
+
+      return _.isEqualWith(testWrap, otherTestWrap, this._testEquals.bind(this));
+    },
+    _testEquals: function (test, otherTest) {
+      return test.testClassName === otherTest.testClassName && test.testName === otherTest.testName;
+    },
+    _omitIrrelevantFieldsFromTest: (test) => {
+      return _.pick(test, ['testClassName', 'testName']);
+    },
+    _alienize: function (testWrap) {
+      return _.extend({alien: true}, testWrap);
     },
     _promisize: function (method, data) {
       return new Promise(function (resolve, reject) {
