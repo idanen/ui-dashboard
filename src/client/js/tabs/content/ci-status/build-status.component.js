@@ -75,7 +75,9 @@
       return this.ResultsToIconNames[buildResult] || '';
     },
     determineInitialFreezeState: function (job) {
-      this.build.freeze = Boolean(job.freeze);
+      if (Boolean(job.freeze) !== this.build.freeze) {
+        this.build.freeze = Boolean(job.freeze);
+      }
     },
     freezeState: function (state) {
       this.build.freeze = state;

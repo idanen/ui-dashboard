@@ -4,7 +4,7 @@ src/server/resources/*.*
 node_modules
 bower_components
 ui-dashboard.iml
-firebase.json
+firebase-debug.log
 dist/
 .tmp/
 npm-debug.log
