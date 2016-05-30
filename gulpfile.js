@@ -104,9 +104,9 @@ gulp.task('scripts', ['jshint'], function (cb) {
         presets: ['es2015']
       }))
       .pipe($.sourcemaps.write())
-      .pipe(gulp.dest('dist/scripts'))
       .pipe($.if(isProd, $.concat('main.min.js')))
       .pipe($.if(isProd, $.uglify({preserveComments: 'some'})))
+      .pipe(gulp.dest('dist/scripts'))
     // Output files
       .pipe($.size({title: 'scripts'}))
       .pipe($.sourcemaps.write('.'))
@@ -233,7 +233,7 @@ gulp.task('serve', ['build'], function () {
 });
 
 // Build and serve the output from the dist build
-gulp.task('serve:dist', ['default'], function () {
+gulp.task('serve:dist', ['clear', 'build'], function () {
   browserSync({
     notify: false,
     logPrefix: 'dash',
