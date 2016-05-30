@@ -343,8 +343,8 @@ module.exports = (function () {
                   testClassName: test.testClassName,
                   testName: test.testName
                 });
-                delete foundTest.alien;
                 _.extend(foundTest, test);
+                delete foundTest.alien;
               });
             });
 

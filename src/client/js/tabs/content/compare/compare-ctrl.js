@@ -49,26 +49,8 @@
     getAllTests: function () {
       this.loading = true;
       return this.getTests()
-          .then(this.getTestsOfOther.bind(this))
           .then(this.assignToViewModel.bind(this))
-          .then(this.getSelectedTestResult.bind(this))
           .finally(() => this.loading = false);
-    },
-    getSelectedTestResult: function () {
-      this.availableBuilds[this.selected.left.group].$loaded()
-        .then(() => {
-            let selectedLeft = _.find(this.availableBuilds[this.selected.left.group], {$id: this.selected.left.name});
-            if (selectedLeft) {
-              this.selected.left.result = selectedLeft.builds[this.selected.left.number].result;
-            }
-          });
-      this.availableBuilds[this.selected.right.group].$loaded()
-        .then(() => {
-            let selectedRight = _.find(this.availableBuilds[this.selected.right.group], {$id: this.selected.right.name});
-            if (selectedRight) {
-              this.selected.right.result = selectedRight.builds[this.selected.right.number].result;
-            }
-          });
     },
     updateState: function () {
       this.$state.go('compare', {
@@ -103,72 +85,44 @@
       }
     },
     getTests: function () {
-      var promises = [];
-      promises.push(this.buildTestsService.fetch(this.selected.left.name, this.selected.left.number, true));
-      promises.push(this.buildTestsService.fetch(this.selected.right.name, this.selected.right.number, true));
-
-      return this.$q.all(promises);
+      return this.buildTestsService.fetchCompare(this.selected.left.name, this.selected.left.number, this.selected.right.name, this.selected.right.number);
     },
     panelClass: function (aTest) {
-      if (aTest.alien) {
+      if (this.hasAliens(aTest)) {
         return '';
       }
       return aTest.tests.some((test) => test.testFailed) ? 'panel-danger' : 'panel-success';
     },
     testIcon: function (aTest) {
-      if (aTest.alien) {
+      if (this.hasAliens(aTest)) {
         return 'help-outline';
       }
       return aTest.tests.some((test) => test.testFailed) ? 'error-outline' : 'check';
     },
     testIconClass: function (aTest) {
-      if (aTest.alien) {
+      if (this.hasAliens(aTest)) {
         return 'text-muted';
       }
       return aTest.tests.some((test) => test.testFailed)  ? 'text-danger' : 'text-success';
     },
-    getTestsOfOther: function (both) {
-      var leftTests = both[0],
-          rightTests = both[1],
-          diffsPromises = [],
-          addToRight, addToLeft;
-
-      // Get diffs from each side
-      // console.log('on left: ', leftTests.length);
-      addToLeft = _.differenceWith(rightTests, leftTests, this._testEquals.bind(this));
-      // console.log('need to add to left: ', addToLeft.length);
-      // console.log('on right: ', rightTests.length);
-      addToRight = _.differenceWith(leftTests, rightTests, this._testEquals.bind(this));
-      // console.log('need to add to right: ', addToRight.length);
-
-      // Assign middle result
-      this.leftTests = leftTests.concat(_.map(addToLeft, this._alienize));
-      this.rightTests = rightTests.concat(_.map(addToRight, this._alienize));
-
-      // Request tests status
-      diffsPromises.push(
-          this.buildTestsService.fetchSpecific(this.selected.left.name, this.selected.left.number, this._groupByClass(addToLeft))
-      );
-      diffsPromises.push(
-          this.buildTestsService.fetchSpecific(this.selected.right.name, this.selected.right.number, this._groupByClass(addToRight))
-      );
-
-      return this.$q.all(diffsPromises);
+    hasAliens: function (testWrap) {
+      return testWrap && testWrap.tests.length && _.find(testWrap.tests, { alien: true });
     },
     toggleTestList: function ($event, whichTest) {
       $event.preventDefault();
       this.openTestLists[whichTest] = !this.openTestLists[whichTest];
     },
     assignToViewModel: function (both) {
-      this._extendingWithServerResults(this.leftTests, both[0], this._testEquals.bind(this));
-      this._extendingWithServerResults(this.rightTests, both[1], this._testEquals.bind(this));
-    },
-    buildStabilityLink: function (testsList) {
-      return this.$state.href('stability', {
-        buildName: testsList.tests[0].jobName,
-        buildNumber: testsList.tests[0].buildId,
-        tests: testsList.tests
-      });
+      var leftGrouped = _.groupBy(both.left, 'testClassName'),
+          rightGrouped = _.groupBy(both.right, 'testClassName');
+
+      if (both.left[0].jobName === this.selected.left.name && both.left[0].buildId === this.selected.left.number) {
+        this.leftTests = this._toArray(leftGrouped);
+        this.rightTests = this._toArray(rightGrouped);
+      } else {
+        this.leftTests = this._toArray(rightGrouped);
+        this.rightTests = this._toArray(leftGrouped);
+      }
     },
     goToStability: function (testsList, side) {
       return this.$state.go('stability', {
@@ -185,42 +139,16 @@
     toggleLegend: function () {
       this.legendShown = !this.legendShown;
     },
-    _groupByClass: function (tests) {
+    _toArray: function (tests) {
       var testsByClass = [];
-      tests.forEach((test) => {
+      _.forEach(tests, (tests, testClassName) => {
         testsByClass.push({
-          testClass: test._id.testClassName,
-          methods: _.map(test.tests, 'testName')
+          testClassName: testClassName,
+          tests: tests
         });
       });
 
       return testsByClass;
-    },
-    _testEquals: function (testWrap, otherTestWrap) {
-      var origTests, otherTests;
-      if (testWrap._id.testClassName !== otherTestWrap._id.testClassName) {
-        return false;
-      }
-      // Remove irrelevant fields
-      origTests = testWrap.tests.map(this._omitIrrelevantFieldsFromTest);
-      otherTests = otherTestWrap.tests.map(this._omitIrrelevantFieldsFromTest);
-
-      return _.isEqual(origTests, otherTests);
-    },
-    _omitIrrelevantFieldsFromTest: (test) => {
-      return _.pick(test, ['testClassName', 'testName']);
-    },
-    _alienize: function (testWrap) {
-      return _.extend({alien: true}, testWrap);
-    },
-    _extendingWithServerResults: function (original, serverResults, equalizer) {
-      serverResults.forEach((testFromServer) => {
-        var found = _.find(original, (test) => equalizer(test, testFromServer));
-        if (found) {
-          delete found.alien;
-          _.extend(found, testFromServer);
-        }
-      });
     }
   };
 }());

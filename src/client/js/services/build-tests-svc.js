@@ -18,11 +18,20 @@
         isArray: true
       }
     });
+    this.Compare = $resource(`http://${ENV.HOST}:${ENV.PORT}/compareBuildTests/:buildName/:buildNumber/:toBuildName/:toBuildNumber`, {}, {
+      get: {
+        method: 'GET',
+        isArray: false
+      }
+    });
   }
 
   BuildTestsService.prototype = {
     fetch: function (buildName, buildNumber, onlyFailed = true) {
       return this.BuildTests.query({buildName, buildNumber, onlyFailed}).$promise;
+    },
+    fetchCompare: function (buildName, buildNumber, toBuildName, toBuildNumber) {
+      return this.Compare.get({buildName, buildNumber, toBuildName, toBuildNumber}).$promise;
     },
     fetchSpecific: function (buildName, buildNumber, tests) {
       // console.log('sending request to get tests ', tests);

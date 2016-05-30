@@ -41,10 +41,10 @@
                       selected="compare.selected.left"
                       on-change="compare.selectionChanged('left', prop, value)"></build-selector>
       <uib-accordion close-others="false">
-        <uib-accordion-group ng-repeat="testList in compare.leftTests | orderBy:[('_id.' + compare.sortField), '_id.testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}" is-open="compare.openTestLists[testList._id.testClassName]">
+        <uib-accordion-group ng-repeat="testList in compare.leftTests | orderBy:[compare.sortField, 'testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}" is-open="compare.openTestLists[testList.testClassName]">
           <uib-accordion-heading>
-            <div class="test-compare-accordion-heading" ng-click="compare.toggleTestList($event, testList._id.testClassName)">
-              <span ng-class="compare.testIconClass(testList)">{{ testList._id.testClassName | className }}</span>
+            <div class="test-compare-accordion-heading" ng-click="compare.toggleTestList($event, testList.testClassName)">
+              <span ng-class="compare.testIconClass(testList)">{{ testList.testClassName | className }}</span>
               <span class="badge" ng-class="compare.testIconClass(testList)" ng-bind="testList.tests.length"></span>
               <div class="pull-right" ng-class="compare.testIconClass(testList)">
                 <iron-icon icon="{{ compare.testIcon(testList) }}"></iron-icon>
@@ -64,7 +64,7 @@
             <li class="list-group-item" ng-repeat="test in testList.tests | orderBy:'testName'">
               <strong ng-class="test.markedUnstable ? 'text-warning' : ''"><iron-icon ng-show="test.markedUnstable" icon="bug-report"></iron-icon> {{ test.testName | className }}</strong>
               <paper-badge icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'" alt="Connection exception"></paper-badge>
-              <em ng-if="!testList.alien"> {{ test.errorMessage }}</em>
+              <em ng-if="!test.alien"> {{ test.errorMessage }}</em>
               <a class="btn" ng-href="{{ test.testReportUrl }}testReport" target="_blank" uib-tooltip="Go to report (server)" ng-disabled="!test.testReportUrl">
                 <iron-icon icon="launch"></iron-icon>
               </a>
@@ -83,10 +83,10 @@
                       selected="compare.selected.right"
                       on-change="compare.selectionChanged('right', prop, value)"></build-selector>
       <uib-accordion close-others="false">
-        <uib-accordion-group ng-repeat="testList in compare.rightTests | orderBy:[('_id.' + compare.sortField), '_id.testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}" is-open="compare.openTestLists[testList._id.testClassName]">
+        <uib-accordion-group ng-repeat="testList in compare.rightTests | orderBy:[compare.sortField, 'testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}" is-open="compare.openTestLists[testList.testClassName]">
           <uib-accordion-heading>
-            <div class="test-compare-accordion-heading" ng-click="compare.toggleTestList($event, testList._id.testClassName)">
-              <span ng-class="compare.testIconClass(testList)"> {{ testList._id.testClassName | className }}</span>
+            <div class="test-compare-accordion-heading" ng-click="compare.toggleTestList($event, testList.testClassName)">
+              <span ng-class="compare.testIconClass(testList)"> {{ testList.testClassName | className }}</span>
               <span class="badge" ng-bind="testList.tests.length" ng-class="compare.testIconClass(testList)"></span>
               <div class="pull-right" ng-class="compare.testIconClass(testList)">
                 <iron-icon icon="{{ compare.testIcon(testList) }}"></iron-icon>
@@ -106,7 +106,7 @@
             <li class="list-group-item" ng-repeat="test in testList.tests | orderBy:'testName'">
               <strong> {{ test.testName | className }}</strong>
               <paper-badge icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'" alt="Connection exception"></paper-badge>
-              <em ng-if="!testList.alien"> {{ test.errorMessage }}</em>
+              <em ng-if="!test.alien"> {{ test.errorMessage }}</em>
               <a class="btn" ng-href="{{ test.testReportUrl }}testReport" target="_blank" uib-tooltip="Go to report (server)" ng-disabled="!test.testReportUrl">
                 <iron-icon icon="launch"></iron-icon>
               </a>
