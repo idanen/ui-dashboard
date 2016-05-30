@@ -1,6 +1,7 @@
 (function () {
     'use strict';
 
+    angular.module('ci-site.filters', []);
     angular.module('ci-site', ['firebase', 'ngAnimate', 'ngSanitize', 'ngResource', 'ui.router', 'ui.select', 'ui.bootstrap', 'angular-ladda', 'ngclipboard', 'ci-site.filters', 'collapsiblePanel'])
         .constant('ENV', {
             HOST: 'myd-vm08383.hpswlabs.adapps.hp.com',
