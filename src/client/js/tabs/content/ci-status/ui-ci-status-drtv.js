@@ -68,6 +68,10 @@
               }
             });
           });
+      this.jobs.teams.$loaded()
+          .then(() => {
+            this.jobs.teams.forEach(job => this.filtered.teams[job.$id] = true);
+          });
       //$q.all([this.jobs.masters.$loaded(), this.jobs.teams.$loaded()])
       //    .then(() => {
       //      this.jobs.masters.forEach(job => this.filtered.masters[job.$id] = true);
@@ -78,6 +82,9 @@
     CiStatusController.prototype = {
       filterJob: function (group, job) {
         this.filtered[group][job.$id] = !this.filtered[group][job.$id];
+      },
+      unfilter: function (group, jobId) {
+        this.filtered[group][jobId] = false;
       },
         addNewBuildNumber: function () {
           this.ciStatusService.addBuildNumber(this.newBuild.name, this.newBuild.number, 'masters').then(() => this.newBuild = {});

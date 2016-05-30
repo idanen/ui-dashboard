@@ -80,8 +80,10 @@
       }
     },
     freezeState: function (state) {
-      this.build.freeze = state;
-      this.build.$save();
+      if (this.build.freeze !== state) {
+        this.build.freeze = state;
+        this.build.$save();
+      }
     },
     buildsHiddenToggle: function () {
       this.buildsHidden = !this.buildsHidden;
