@@ -216,12 +216,6 @@ module.exports = (function () {
           }
         },
         {
-          $sort: {
-            category: 1,
-            testClassName: 1
-          }
-        },
-        {
           $group: {
             _id: {
               jobName: '$jobName',
@@ -254,8 +248,8 @@ module.exports = (function () {
       return aggregated;
     },
     addComplementingTests: function (failedOfBoth) {
-      var leftTests = failedOfBoth[0].tests,
-          rightTests = failedOfBoth[1].tests,
+      var leftTests = failedOfBoth[0] && failedOfBoth[0].tests || [],
+          rightTests = failedOfBoth[1] && failedOfBoth[1].tests || [],
           addToLeft,
           addToRight;
 
@@ -280,6 +274,11 @@ module.exports = (function () {
       var leftAlienTests = _.filter(allTests.left, { alien: true }),
           rightAlienTests = _.filter(allTests.right, { alien: true }),
           aggregations;
+
+      if (!leftAlienTests.length || !rightAlienTests.length) {
+        return allTests;
+      }
+
       var classesAndMethods = _.transform(leftAlienTests, function (result, value) {
         if (!_.includes(result.classes, value.testClassName)) {
           result.classes.push(value.testClassName);
@@ -351,15 +350,6 @@ module.exports = (function () {
             return allTests;
           });
     },
-    _testEquals: function (test, otherTest) {
-      return test.testClassName === otherTest.testClassName && test.testName === otherTest.testName;
-    },
-    _omitIrrelevantFieldsFromTest: (test) => {
-      return _.pick(test, ['testClassName', 'testName']);
-    },
-    _alienize: function (testWrap) {
-      return _.extend({alien: true}, testWrap);
-    },
     _promisize: function (method, data) {
       return new Promise(function (resolve, reject) {
         this.TestResult[method](data, function (err, results) {
@@ -387,6 +377,10 @@ module.exports = (function () {
   };
 
   function _testEquals(test, otherTest) {
+    if (!test || !otherTest) {
+      return false;
+    }
+
     return test.testClassName === otherTest.testClassName && test.testName === otherTest.testName;
   }
 

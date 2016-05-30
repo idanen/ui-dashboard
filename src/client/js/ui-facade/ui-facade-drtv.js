@@ -9,7 +9,10 @@
             restrict: 'E',
             templateUrl: '/js/ui-facade/ui-facade-tmpl.html',
             controller: 'UiFacadeCtrl',
-            controllerAs: 'facade'
+            controllerAs: 'facade',
+            link: function ($scope, $element, $attrs, $ctrl) {
+              $scope.$on('$stateChangeSuccess', $ctrl.closeDrawer.bind($ctrl));
+            }
         };
     }
 })(window.angular);

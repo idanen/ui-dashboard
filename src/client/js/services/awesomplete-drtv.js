@@ -32,7 +32,8 @@
         this.plugin = new Awesomplete(this.$element[0]);
       }
       if (changes.list && changes.list.currentValue) {
-        this.plugin.list = Object.keys(changes.list.currentValue);
+        //this.plugin.list = changes.list.currentValue;
+        this.plugin.list = changes.list.currentValue.map((job) => _.extend(job, {label: job.$id, value: job.$id}));
       }
       if (changes.selected) {
         this.value = changes.selected.currentValue;
@@ -41,6 +42,10 @@
     $postLink: function () {
       var $input = this.$element.find('input');
       this.plugin = new Awesomplete($input[0]);
+      this.list.$loaded()
+          .then(() => {
+            this.plugin.list = this.list.map((job) => _.extend(job, {label: job.$id, value: job.$id}));
+          });
       $input.on('awesomplete-selectcomplete', () => {
         this.value = $input.val();
         this.onChange({value: $input.val()});

@@ -31,7 +31,7 @@
       this.build.number = '1370';
     }
 
-    this.sortFields = ['category', 'testClassName', 'markedUnstable', 'insertionTime'];
+    this.sortFields = ['category', 'testClassName', 'markedUnstable'];
     this.sortField = this.sortFields[0];
 
     $q.all(this.availableBuilds.masters.$loaded(), this.availableBuilds.teams.$loaded())
@@ -106,7 +106,10 @@
       return aTest.tests.some((test) => test.testFailed)  ? 'text-danger' : 'text-success';
     },
     hasAliens: function (testWrap) {
-      return testWrap && testWrap.tests.length && _.find(testWrap.tests, { alien: true });
+      return testWrap && testWrap.tests.length && !!_.find(testWrap.tests, { alien: true });
+    },
+    allAliens: function (tests) {
+      return tests.every(test => test.alien);
     },
     toggleTestList: function ($event, whichTest) {
       $event.preventDefault();
@@ -116,7 +119,7 @@
       var leftGrouped = _.groupBy(both.left, 'testClassName'),
           rightGrouped = _.groupBy(both.right, 'testClassName');
 
-      if (both.left[0].jobName === this.selected.left.name && both.left[0].buildId === this.selected.left.number) {
+      if (both.left[0].jobName === this.selected.left.name && String(both.left[0].buildId) === this.selected.left.number && !this.allAliens(both.left)) {
         this.leftTests = this._toArray(leftGrouped);
         this.rightTests = this._toArray(rightGrouped);
       } else {
@@ -144,6 +147,8 @@
       _.forEach(tests, (tests, testClassName) => {
         testsByClass.push({
           testClassName: testClassName,
+          category: tests[0].category,
+          markedUnstable: tests[0].markedUnstable,
           tests: tests
         });
       });

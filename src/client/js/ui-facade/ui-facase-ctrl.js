@@ -4,10 +4,11 @@
     angular.module('ui')
         .controller('UiFacadeCtrl', UiFacadeController);
 
-    UiFacadeController.$inject = ['$state', 'UiFacadeService'];
-    function UiFacadeController($state, UiFacadeService) {
+    UiFacadeController.$inject = ['$state', '$element', 'UiFacadeService'];
+    function UiFacadeController($state, $element, UiFacadeService) {
         this.UiFacadeService = UiFacadeService;
         this.$state = $state;
+        this.$element = $element;
 
         this.mainWidgets = [
             {
@@ -30,6 +31,7 @@
             this.currentStateWidget = widget;
         },
         gotoState: function (widgetId) {
+            this.closeDrawer();
             if (widgetId === 'compare') {
                 this.$state.go(widgetId, {group: 'masters', buildName: 'MaaS-SAW-USB-master'});
                 return;
@@ -43,6 +45,9 @@
         },
         setMainWidget: function (index) {
             this.currentWidget = this.mainWidgets[index];
+        },
+        closeDrawer: function () {
+            this.$element.find('paper-drawer-panel')[0].closeDrawer();
         }
     };
 })(window.angular);

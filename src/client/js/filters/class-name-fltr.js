@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('ci-site')
+  angular.module('ci-site.filters')
     .filter('className', function () {
         return function (fullQuallifiedName) {
           if (!fullQuallifiedName) {

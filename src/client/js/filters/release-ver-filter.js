@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('ui-dash.filters', [])
+  angular.module('ci-site.filters')
       .filter('releasever', function () {
         return function (releaseVer) {
           if (releaseVer && _.isString(releaseVer) && /release-\d+_\d+/.test(releaseVer)) {

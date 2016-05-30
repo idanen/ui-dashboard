@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('ci-site')
+  angular.module('ci-site.filters')
       .filter('multivalue', function () {
         return function (arr, fieldName, values) {
           if (!Array.isArray(arr) || !fieldName || !values) {

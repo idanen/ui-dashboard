@@ -69,11 +69,12 @@
       if (prop === 'name') {
         this.buildResults = this.buildResultsData(this.builds, this.name);
         this.number = this.buildResults[0].id;
-        this.selectedBuildResult = _.find(this.buildResults, {id: this.number}).result;
         this.onChange({prop: prop, value: value});
         this.onChange({prop: 'number', value: this.number});
       } else {
         this.onChange({prop: prop, value: value});
+      }
+      if (prop === 'number') {
         this.selectedBuildResult = _.find(this.buildResults, {id: this.number}).result;
       }
     },

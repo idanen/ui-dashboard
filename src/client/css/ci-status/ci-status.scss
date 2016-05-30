@@ -7,6 +7,7 @@
     .build-status-header {
       line-height: 3em;
       .build-name-column {
+        position: relative;
         white-space: nowrap;
         overflow: hidden;
         strong {
@@ -14,10 +15,10 @@
           text-overflow: ellipsis;
           display: block;
           overflow: hidden;
-          float: left;
+          margin-left: 45px;
         }
         paper-icon-button {
-          float: left;
+          position: absolute;
         }
       }
       paper-toggle-button {
