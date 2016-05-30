@@ -239,12 +239,13 @@ module.exports = (function () {
           $limit: pageSize
         });
       }
-      console.log(JSON.stringify(aggregations));
+      //console.log(JSON.stringify(aggregations));
       return this._promisize('aggregate', aggregations)
-          .then(this.secondGroup)
+          //.then(this.groupTests)
+          .then(this.addComplementingTests.bind(this))
           .then(this.fetchComplementingTests.bind(this));
     },
-    secondGroup: function (aggregated) {
+    groupTests: function (aggregated) {
       if (aggregated) {
         return aggregated.map(function (testsWrap) {
           return _.groupBy(testsWrap.tests, 'testClassName');
@@ -252,68 +253,103 @@ module.exports = (function () {
       }
       return aggregated;
     },
-    fetchComplementingTests: function (failedOfBoth) {
-      var leftTests = failedOfBoth[0],
-          rightTests = failedOfBoth[1],
-          addToLeft = {},
-          addToRight = {};
+    addComplementingTests: function (failedOfBoth) {
+      var leftTests = failedOfBoth[0].tests,
+          rightTests = failedOfBoth[1].tests,
+          addToLeft,
+          addToRight;
 
-      _.forEach(rightTests, function (tests, testClassName) {
-        if (!(testClassName in leftTests)) {
-          addToLeft[testClassName] = _.map(tests, function (test) {
-            return _.extend({alien: true}, test);
-          });
-        } else {
-          tests.forEach(function (test) {
-            var exists = _.find(leftTests[testClassName], function (existing) {
-              return this._testEquals(existing, test)
-            }.bind(this));
-            if (!exists) {
-              addToLeft[testClassName].push(_.extend({alien: true}, test));
-            }
-          }.bind(this));
-        }
-      }.bind(this));
-      _.forEach(leftTests, function (tests, testClassName) {
-        if (!(testClassName in rightTests)) {
-          addToRight[testClassName] = _.map(tests, function (test) {
-            return _.extend({alien: true}, test);
-          });
-        } else {
-          tests.forEach(function (test) {
-            var exists = _.find(rightTests[testClassName], function (existing) {
-              return this._testEquals(existing, test)
-            }.bind(this));
-            if (!exists) {
-              addToRight[testClassName].push(_.extend({alien: true}, test));
-            }
-          }.bind(this));
-        }
-      }.bind(this));
+      addToLeft = _.differenceWith(rightTests, leftTests, _testEquals);
+      addToRight = _.differenceWith(leftTests, rightTests, _testEquals);
 
-      _.forEach(addToLeft, function (tests, testClassName) {
-        if (testClassName in leftTests) {
-          leftTests[testClassName].push(tests);
-        } else {
-          leftTests[testClassName] = tests;
-        }
+      addToLeft = _.map(addToLeft, function (test) {
+        return _.extend({alien: true}, test);
       });
-      _.forEach(addToRight, function (tests, testClassName) {
-        if (testClassName in rightTests) {
-          rightTests[testClassName].push(tests);
-        } else {
-          rightTests[testClassName] = tests;
-        }
+      addToRight = _.map(addToRight, function (test) {
+        return _.extend({alien: true}, test);
       });
+      leftTests = leftTests.concat(addToLeft);
+      rightTests = rightTests.concat(addToRight);
 
       return {
         left: leftTests,
         right: rightTests
       };
     },
-    _testsEquals: function (testWrap, otherTestWrap) {
+    fetchComplementingTests: function (allTests) {
+      var leftAlienTests = _.filter(allTests.left, { alien: true }),
+          rightAlienTests = _.filter(allTests.right, { alien: true }),
+          aggregations;
+      var classesAndMethods = _.transform(leftAlienTests, function (result, value) {
+        if (!_.includes(result.classes, value.testClassName)) {
+          result.classes.push(value.testClassName);
+        }
+        if (!_.includes(result.methods, value.testName)) {
+          result.methods.push(value.testName);
+        }
+      }, { classes: [], methods: [] });
+      classesAndMethods = _.transform(rightAlienTests, function (result, value) {
+        if (!_.includes(result.classes, value.testClassName)) {
+          result.classes.push(value.testClassName);
+        }
+        if (!_.includes(result.methods, value.testName)) {
+          result.methods.push(value.testName);
+        }
+      }, classesAndMethods);
 
-      return _.isEqualWith(testWrap, otherTestWrap, this._testEquals.bind(this));
+      aggregations = [
+        {
+          $match: {
+            jobName: {
+              $in: [leftAlienTests[0].jobName, rightAlienTests[0].jobName]
+            },
+            buildId: {
+              $in: [leftAlienTests[0].buildId, rightAlienTests[0].buildId]
+            },
+            testClassName: {
+              $in: classesAndMethods.classes
+            },
+            testName: {
+              $in: classesAndMethods.methods
+            }
+          }
+        },
+        {
+          $sort: {
+            category: 1,
+            testClassName: 1
+          }
+        },
+        {
+          $group: {
+            _id: {
+              jobName: '$jobName',
+              buildId: '$buildId'
+            },
+            tests: { $push: '$$ROOT' }
+          }
+        }
+      ];
+
+      return this._promisize('aggregate', aggregations)
+          .then(function (groupedTests) {
+            groupedTests.forEach(function (groupedTest) {
+              var side = 'left';
+              if (groupedTest._id.jobName === allTests.right[0].jobName && groupedTest._id.buildId === allTests.right[0].buildId) {
+                side = 'right'
+              }
+              groupedTest.tests.forEach(function (test) {
+                var foundTest = _.find(allTests[side], {
+                  testClassName: test.testClassName,
+                  testName: test.testName
+                });
+                delete foundTest.alien;
+                _.extend(foundTest, test);
+              });
+            });
+
+            return allTests;
+          });
     },
     _testEquals: function (test, otherTest) {
       return test.testClassName === otherTest.testClassName && test.testName === otherTest.testName;
@@ -349,6 +385,10 @@ module.exports = (function () {
       return arr;
     }
   };
+
+  function _testEquals(test, otherTest) {
+    return test.testClassName === otherTest.testClassName && test.testName === otherTest.testName;
+  }
 
   return TestsRetriever;
 }());
