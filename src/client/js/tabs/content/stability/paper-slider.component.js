@@ -10,6 +10,7 @@
         }
       });
 
+  PaperSliderCtrl.$inject = ['$element'];
   function PaperSliderCtrl($element) {
     this.$element = $element;
   }
