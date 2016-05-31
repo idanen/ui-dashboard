@@ -101,6 +101,34 @@ module.exports = (function () {
       }
       return this._promisize('aggregate', aggregations);
     },
+    fetchFailedOfLastBuilds: function (buildName, buildCount, startFromNumber) {
+      var buildIdsRange = this._arrayWithReverse(buildCount, startFromNumber);
+      return this._promisize('aggregate', [
+        {
+          $sort: {
+            buildId: -1
+          }
+        },
+        {
+          $match: {
+            jobName: buildName,
+            buildId: {
+              $in: buildIdsRange
+            },
+            testFailed: true
+          }
+        },
+        {
+          $group: {
+            _id: {
+              testClassName: '$testClassName',
+              category: '$category'
+            },
+            tests: { $push: '$$ROOT' }
+          }
+        }
+      ]);
+    },
     fetchStability: function (buildName, tests, buildCount, startFromNumber) {
       // console.log('buildName: \"' + buildName + '", buildCount: ' + buildCount + ', tests: ', tests);
       var classesAndMethods, buildIdsRange;

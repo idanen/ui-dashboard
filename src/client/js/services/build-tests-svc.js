@@ -12,6 +12,12 @@
         isArray: true
       }
     });
+    this.LastFailedTests = $resource(`http://${ENV.HOST}:${ENV.PORT}/failedOfLastBuilds/:buildName/:buildCount/:startFromNumber`, {}, {
+      specific: {
+        method: 'GET',
+        isArray: true
+      }
+    });
     this.Stability = $resource(`http://${ENV.HOST}:${ENV.PORT}/stability/:buildName/:buildCount/:startFromNumber`, {}, {
       query: {
         method: 'POST',
@@ -36,6 +42,9 @@
     fetchSpecific: function (buildName, buildNumber, tests) {
       // console.log('sending request to get tests ', tests);
       return this.BuildTests.specific({buildName, buildNumber}, tests).$promise;
+    },
+    fetchLastFailedOfBuild: function (buildName, startFromNumber, buildCount = 10) {
+      return this.LastFailedTests.query({buildName, buildCount, startFromNumber}).$promise;
     },
     getStability: function (buildName, tests, startFromNumber, buildCount = 10) {
       return this.Stability.query({buildName, buildCount, startFromNumber}, tests).$promise;

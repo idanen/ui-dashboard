@@ -52,6 +52,7 @@
       if (this.build.number) {
         this.reFetchLoading = true;
         this.buildTestsService.fetch(this.build.name, this.build.number)
+        //this.buildTestsService.fetchLastFailedOfBuild(this.build.name, this.build.number, this.buildsCount)
             .then(this.reFormatTestsStructure.bind(this))
             .then(this.appendToTests.bind(this))
             .catch(this.handleError)

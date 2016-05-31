@@ -99,6 +99,12 @@ module.exports = (function () {
         }.bind(this));
       },
 
+      getFailedOfLast: function (request, response) {
+        return this._handleRequest(request, response, function () {
+          return this.testsRetriever.fetchFailedOfLastBuilds(request.params.buildName, request.params.buildCount, parseInt(request.params.startFromNumber, 10))
+        }.bind(this));
+      },
+
         // get the job list from the DB ('filter' unused for now)
         getJobsFromDatabase: function (filter) {
             return new Promise(function (resolve, reject) {
