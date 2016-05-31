@@ -62,7 +62,7 @@
       let testsByClass = [], reformated;
       tests.forEach((test) => {
         let testByClass = {};
-        testByClass.testClass = test._id.testClassName;
+        testByClass.testClass = test.testClassName || test._id && test._id.testClassName;
         testByClass.methods = _.map(test.tests, 'testName');
         testsByClass.push(testByClass);
       });
@@ -118,37 +118,11 @@
       });
     },
     addNewTest: function () {
-      this.addTests(this.newTest);
+      this.appendToTests(this.newTest);
       this.newTest = {
         testClass: '',
         methods: ''
       };
-    },
-    addTests: function (toAdd) {
-      if (!toAdd) {
-        return;
-      }
-      if (!Array.isArray(toAdd)) {
-        toAdd = [toAdd];
-      }
-      _.forEach(toAdd, (test) => {
-        let existing = _.find(this.tests, {testClass: test.testClass}),
-        newMethods = test.methods.split(/,\s*/);
-        if (existing) {
-          let methodsToAdd = [];
-          _.forEach(newMethods, (method) => {
-            if (!_.includes(existing.methods(method))) {
-              methodsToAdd.push(method);
-            }
-          });
-          existing.methods = existing.methods.concat(methodsToAdd);
-        } else {
-          this.tests = this.tests.concat(_.extend({selected: true}, {
-            testClass: test.testClass,
-            methods: newMethods
-          }));
-        }
-      });
     },
     selectAll: function () {
       this.tests.forEach((test) => test.selected = true);

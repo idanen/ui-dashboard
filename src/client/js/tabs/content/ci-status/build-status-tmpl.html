@@ -35,7 +35,7 @@
         </a>
         <em>{{ build.branchName }}</em>
       </div>
-      <div class="col-sm-4" ng-class="{'text-danger build-status-running-long': $ctrl.isBuildTooLong(build)}">
+      <div class="col-sm-4"><!-- ng-class="{'text-danger build-status-running-long': $ctrl.isBuildTooLong(build)}"> ** performs poorly ** -->
         <build-result result="build.result"></build-result>
         <em>
           (

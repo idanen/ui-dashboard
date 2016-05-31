@@ -66,10 +66,13 @@
       max-width: 350px;
     }
   }
+  .selected-filter-container {
+    padding: 10px;
+  }
   .selected-filter {
     display: inline-block;
     padding: 3px 5px;
-    box-shadow: 0 1px 5px rgba(0,0,0,.3);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, .3);
     margin: 2px;
     font-size: 75%;
     max-width: 140px;

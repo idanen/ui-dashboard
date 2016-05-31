@@ -149,7 +149,12 @@ module.exports = (function () {
             },
             stability: { $avg: '$failedCount' },
             failed: { $sum: '$failedCount' },
-            buildIds: { $push: '$buildId' }/*,
+            buildIds: {
+              $push: {
+                buildId: '$buildId',
+                testFailed: '$testFailed'
+              }
+            }/*,
             tests: {$push: '$$ROOT'}*/
           }
         }

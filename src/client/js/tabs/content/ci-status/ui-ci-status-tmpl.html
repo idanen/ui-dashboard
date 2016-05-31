@@ -46,55 +46,47 @@
   <div class="row">
     <form class="form-horizontal col-xs-12">
       <fieldset class="form-group">
-        <label class="col-md-2">Filter masters</label>
-        <div class="col-md-10">
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="btn-group" uib-dropdown auto-close="disabled">
-                <paper-icon-button icon="filter-list" uib-dropdown-toggle></paper-icon-button>
-                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                  <li role="menuitem" ng-repeat="job in ciJobsCtrl.jobs.masters">
-                    <a ng-click="ciJobsCtrl.filterJob('masters', job)">
-                      <iron-icon icon="check-box" ng-show="ciJobsCtrl.filtered.masters[job.$id]"></iron-icon>
-                      <iron-icon icon="check-box-outline-blank" ng-hide="ciJobsCtrl.filtered.masters[job.$id]"></iron-icon>
-                      <span>{{ job.alias || job.$id | releasever }}</span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
+        <div class="col-md-3">
+          <div class="btn-group" uib-dropdown auto-close="disabled">
+            <paper-button raised uib-dropdown-toggle>
+              <iron-icon icon="filter-list"></iron-icon>
+              <span>Filter masters</span>
+            </paper-button>
+            <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+              <li role="menuitem" ng-repeat="job in ciJobsCtrl.jobs.masters">
+                <a ng-click="ciJobsCtrl.filterJob('masters', job)">
+                  <iron-icon icon="check-box" ng-show="ciJobsCtrl.filtered.masters[job.$id]"></iron-icon>
+                  <iron-icon icon="check-box-outline-blank" ng-hide="ciJobsCtrl.filtered.masters[job.$id]"></iron-icon>
+                  <span>{{ job.alias || job.$id | releasever }}</span>
+                </a>
+              </li>
+            </ul>
           </div>
-          <div class="row">
-            <div class="col-xs-12">
-              <a class="selected-filter slide-in" ng-repeat="(filtered, value) in ciJobsCtrl.filtered.masters" ng-click="ciJobsCtrl.unfilter('masters', filtered)" ng-if="value" uib-tooltip="{{  filtered }}">&times; {{ filtered }}</a>
-            </div>
-          </div>
+        </div>
+        <div class="col-md-9">
+            <a class="selected-filter slide-in" ng-repeat="(filtered, value) in ciJobsCtrl.filtered.masters" ng-click="ciJobsCtrl.unfilter('masters', filtered)" ng-if="value" uib-tooltip="{{  filtered }}">&times; {{ filtered }}</a>
         </div>
       </fieldset>
       <fieldset class="form-group">
-        <label class="col-md-2">Filter teams</label>
-        <div class="col-md-10">
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="btn-group" uib-dropdown auto-close="disabled">
-                <paper-icon-button icon="filter-list" uib-dropdown-toggle></paper-icon-button>
-                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                  <li role="menuitem" ng-repeat="job in ciJobsCtrl.jobs.teams">
-                    <a ng-click="ciJobsCtrl.filterJob('teams', job)">
-                      <iron-icon icon="check-box" ng-show="ciJobsCtrl.filtered.teams[job.$id]"></iron-icon>
-                      <iron-icon icon="check-box-outline-blank" ng-hide="ciJobsCtrl.filtered.teams[job.$id]"></iron-icon>
-                      <span>{{ job.alias || job.$id | releasever }}</span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
+        <div class="col-md-3">
+          <div class="btn-group" uib-dropdown auto-close="disabled">
+            <paper-button raised uib-dropdown-toggle>
+              <iron-icon icon="filter-list"></iron-icon>
+              <span>Filter teams</span>
+            </paper-button>
+            <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+              <li role="menuitem" ng-repeat="job in ciJobsCtrl.jobs.teams">
+                <a ng-click="ciJobsCtrl.filterJob('teams', job)">
+                  <iron-icon icon="check-box" ng-show="ciJobsCtrl.filtered.teams[job.$id]"></iron-icon>
+                  <iron-icon icon="check-box-outline-blank" ng-hide="ciJobsCtrl.filtered.teams[job.$id]"></iron-icon>
+                  <span>{{ job.alias || job.$id | releasever }}</span>
+                </a>
+              </li>
+            </ul>
           </div>
-          <div class="row">
-            <div class="col-xs-12">
-              <a class="selected-filter slide-in" ng-repeat="(filtered, value) in ciJobsCtrl.filtered.teams" ng-click="ciJobsCtrl.unfilter('teams', filtered)" ng-if="value" uib-tooltip="{{  filtered }}">&times; {{ filtered }}</a>
-            </div>
-          </div>
+        </div>
+        <div class="col-md-9">
+          <a class="selected-filter slide-in" ng-repeat="(filtered, value) in ciJobsCtrl.filtered.teams" ng-click="ciJobsCtrl.unfilter('teams', filtered)" ng-if="value" uib-tooltip="{{  filtered }}">&times; {{ filtered }}</a>
         </div>
       </fieldset>
     </form>

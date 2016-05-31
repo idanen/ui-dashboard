@@ -49,7 +49,7 @@
               <div class="pull-right" ng-class="compare.testIconClass(testList)">
                 <iron-icon icon="{{ compare.testIcon(testList) }}"></iron-icon>
               </div>
-              <div class="pull-right text-warning" ng-if="compare.hasMarkedUnstable(testList)">
+              <div class="pull-right text-warning" ng-if="compare.hasMarkedUnstable(testList)" uib-tooltip="Marked as unstable">
                 <iron-icon icon="bug-report"></iron-icon>
               </div>
             </div>
@@ -62,17 +62,17 @@
           </div>
           <ul class="list-group">
             <li class="list-group-item" ng-repeat="test in testList.tests | orderBy:'testName'">
-              <strong ng-class="test.markedUnstable ? 'text-warning' : ''"><iron-icon ng-show="test.markedUnstable" icon="bug-report"></iron-icon> {{ test.testName | className }}</strong>
+              <strong ng-class="test.markedUnstable ? 'text-warning' : ''" uib-tooltip="Marked as unstable"><iron-icon ng-show="test.markedUnstable" icon="bug-report"></iron-icon> {{ test.testName | className }}</strong>
               <paper-badge icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'" alt="Connection exception"></paper-badge>
               <em ng-if="!test.alien"> {{ test.errorMessage }}</em>
               <div class="links">
                 <a class="btn btn-link" ng-href="{{ test.testReportUrl }}testReport" target="_blank" uib-tooltip="" ng-disabled="!test.testReportUrl">
                   <iron-icon icon="assignment"></iron-icon><span> Server report</span>
                 </a>
-                <a class="btn btn-link" ng-href="{{ test.testReportUrl }}artifact/target/jbehave/view/index.html" target="_blank" uib-tooltip="Go to report (UI)" ng-disabled="!test.testReportUrl">
+                <a class="btn btn-link" ng-href="{{ test.testReportUrl }}artifact/target/jbehave/view/index.html" target="_blank" ng-disabled="!test.testReportUrl">
                   <iron-icon icon="dashboard"></iron-icon><span> Server test report</span>
                 </a>
-                <a class="btn btn-link" ng-href="{{ test.testReportUrl }}artifact/target/reports/test-results.html" target="_blank" uib-tooltip="Go to report (UI)" ng-disabled="!test.testReportUrl">
+                <a class="btn btn-link" ng-href="{{ test.testReportUrl }}artifact/target/reports/test-results.html" target="_blank" ng-disabled="!test.testReportUrl">
                   <iron-icon icon="important-devices"></iron-icon><span> UI test report</span>
                 </a>
               </div>
@@ -96,7 +96,7 @@
               <div class="pull-right" ng-class="compare.testIconClass(testList)">
                 <iron-icon icon="{{ compare.testIcon(testList) }}"></iron-icon>
               </div>
-              <div class="pull-right text-warning" ng-if="compare.hasMarkedUnstable(testList)">
+              <div class="pull-right text-warning" ng-if="compare.hasMarkedUnstable(testList)" uib-tooltip="Marked as unstable">
                 <iron-icon icon="bug-report"></iron-icon>
               </div>
             </div>
@@ -109,17 +109,17 @@
           </div>
           <ul class="list-group">
             <li class="list-group-item" ng-repeat="test in testList.tests | orderBy:'testName'">
-              <strong ng-class="test.markedUnstable ? 'text-warning' : ''"><iron-icon ng-show="test.markedUnstable" icon="bug-report"></iron-icon> {{ test.testName | className }}</strong>
+              <strong ng-class="test.markedUnstable ? 'text-warning' : ''" uib-tooltip="Marked as unstable"><iron-icon ng-show="test.markedUnstable" icon="bug-report"></iron-icon> {{ test.testName | className }}</strong>
               <paper-badge icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'" alt="Connection exception"></paper-badge>
               <em ng-if="!test.alien"> {{ test.errorMessage }}</em>
               <div class="links">
                 <a class="btn btn-link" ng-href="{{ test.testReportUrl }}testReport" target="_blank" uib-tooltip="" ng-disabled="!test.testReportUrl">
                   <iron-icon icon="assignment"></iron-icon><span> Server report</span>
                 </a>
-                <a class="btn btn-link" ng-href="{{ test.testReportUrl }}artifact/target/jbehave/view/index.html" target="_blank" uib-tooltip="Go to report (UI)" ng-disabled="!test.testReportUrl">
+                <a class="btn btn-link" ng-href="{{ test.testReportUrl }}artifact/target/jbehave/view/index.html" target="_blank" ng-disabled="!test.testReportUrl">
                   <iron-icon icon="dashboard"></iron-icon><span> Server test report</span>
                 </a>
-                <a class="btn btn-link" ng-href="{{ test.testReportUrl }}artifact/target/reports/test-results.html" target="_blank" uib-tooltip="Go to report (UI)" ng-disabled="!test.testReportUrl">
+                <a class="btn btn-link" ng-href="{{ test.testReportUrl }}artifact/target/reports/test-results.html" target="_blank" ng-disabled="!test.testReportUrl">
                   <iron-icon icon="important-devices"></iron-icon><span> UI test report</span>
                 </a>
               </div>
