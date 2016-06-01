@@ -3,14 +3,15 @@
 
   angular.module('ci-site')
       .filter('stabilityFilter', function () {
-        return function (tests, limit) {
-          let idxToRemove = [];
+        return function stabilityFilter(tests, limit) {
+          let mapped;
 
           if (!tests || !Array.isArray(tests) || isNaN(limit) || limit < 0 || limit > 1) {
+            console.log('filter aborted', tests, limit);
             return tests;
           }
 
-          return tests.map((test) => {
+          mapped = tests.map((test) => {
             let testsToFilter = [];
             if (!test.results) {
               return test;
@@ -29,12 +30,13 @@
             });
 
             if (test.methods.length === 0) {
-              // TODO idanen: remove nulls in the end (use [].filter(Boolean))
               return null;
             }
 
             return test;
           });
+
+          return mapped.filter(Boolean);
         };
       });
 }());
