@@ -24,8 +24,12 @@
       }.bind(this));
     },
     $onChanges: function (changes) {
-      if (changes && changes.bindFrom && (/\d+/).test(changes.bindFrom.currentValue)) {
-        this.$element[0].value = parseInt(changes.bindFrom.currentValue, 10);
+      if (changes && changes.bindFrom) {
+        if ((/^[+\-]?\d+$/).test(changes.bindFrom.currentValue)) {
+          this.$element[0].value = parseInt(changes.bindFrom.currentValue, 10);
+        } else if ((/^[+\-]?\d*\.\d+$/).test(changes.bindFrom.currentValue)) {
+          this.$element[0].value = parseFloat(changes.bindFrom.currentValue);
+        }
       }
     }
   };

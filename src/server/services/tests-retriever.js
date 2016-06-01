@@ -163,11 +163,9 @@ module.exports = (function () {
             buildId: 1,
             testClassName: 1,
             testName: 1,
+            testFailed: 1,
             failedCount: { $cond: ['$testFailed', 1, 0] }
           }
-        },
-        {
-          $limit: buildCount * classesAndMethods.methods.length
         },
         {
           $group: {

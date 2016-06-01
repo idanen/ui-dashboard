@@ -4,7 +4,7 @@ module.exports = function(app){
     var cors = require('cors');
 
     app.use(cors());
-    app.use(bodyParser.json());
+    app.use(bodyParser.json({ limit: '50mb' }));
 
     // setup routes
     require('./routes/routes.js')(app);

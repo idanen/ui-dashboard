@@ -82,6 +82,10 @@
         </paper-button>
       </div>
     </fieldset>
+    <fieldset class="form-group">
+      <label class="col-xs-12">Show above</label>
+      <paper-slider pin min="0" max="1" step="0.1" bind-from="$ctrl.filterFailedPercent" on-update="$ctrl.filterFailedPercentChanged(value)"></paper-slider>
+    </fieldset>
     <div class="row">
       <div class="col-md-4">
         <strong>Test Class</strong>
@@ -95,7 +99,7 @@
       </div>
     </div>
     <fieldset class="form-group">
-      <div class="row slide-in" ng-repeat="test in $ctrl.tests">
+      <div class="row slide-in" ng-repeat="test in $ctrl.tests | stabilityFilter:$ctrl.filterFailedPercent">
         <div class="col-md-4">
           <paper-icon-button icon="clear" ng-click="$ctrl.removeTest(test.testClass)"></paper-icon-button>
           <label>

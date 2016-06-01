@@ -14,6 +14,7 @@
     this.buildTestsService = buildTestsService;
     this.ciStatusService = ciStatusService;
     this.buildsCount = 10;
+    this.filterFailedPercent = 0.09;
     this.tests = [];
     this.stability = {};
     this.legendShown = false;
@@ -51,8 +52,8 @@
     fetchFailedOfBuild: function () {
       if (this.build.number) {
         this.reFetchLoading = true;
-        this.buildTestsService.fetch(this.build.name, this.build.number)
-        //this.buildTestsService.fetchLastFailedOfBuild(this.build.name, this.build.number, this.buildsCount)
+        //this.buildTestsService.fetch(this.build.name, this.build.number)
+        this.buildTestsService.fetchLastFailedOfBuild(this.build.name, this.build.number, this.buildsCount)
             .then(this.reFormatTestsStructure.bind(this))
             .then(this.appendToTests.bind(this))
             .catch(this.handleError)
@@ -116,6 +117,11 @@
     buildsCountUpdated: function (value) {
       this.$scope.$applyAsync(() => {
         this.buildsCount = value;
+      });
+    },
+    filterFailedPercentChanged: function (value) {
+      this.$scope.$applyAsync(() => {
+        this.filterFailedPercent = value;
       });
     },
     addNewTest: function () {
