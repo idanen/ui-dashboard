@@ -5,13 +5,14 @@
     .component('buildResult', {
         controller: BuildResultController,
         bindings: {
-          result: '<'
+          result: '<',
+          showLabel: '<?'
         },
         template: `
         <span>
           <iron-icon class="job-result-icon" icon="{{ $ctrl.resultToIconName() }}"
                      ng-class="'job-result-icon-' + $ctrl.resultToIconName()"></iron-icon>
-          <span>{{ $ctrl.result }}</span>
+          <span ng-show="$ctrl.showLabel">{{ $ctrl.result }}</span>
         </span>
         `
       });

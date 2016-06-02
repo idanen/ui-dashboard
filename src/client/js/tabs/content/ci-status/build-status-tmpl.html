@@ -36,7 +36,7 @@
         <em>{{ build.branchName }}</em>
       </div>
       <div class="col-sm-4"><!-- ng-class="{'text-danger build-status-running-long': $ctrl.isBuildTooLong(build)}"> ** performs poorly ** -->
-        <build-result result="build.result"></build-result>
+        <build-result result="build.result" show-label="true"></build-result>
         <em>
           (
           <time is="time-ago" datetime="{{ build.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
