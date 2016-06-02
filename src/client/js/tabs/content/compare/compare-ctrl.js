@@ -4,13 +4,14 @@
   angular.module('ci-site')
     .controller('CompareCtrl', CompareController);
 
-  CompareController.$inject = ['build', 'toBuild', '$state', '$q', 'ciStatusService', 'buildTestsService'];
-  function CompareController(build, toBuild, $state, $q, ciStatusService, buildTestsService) {
+  CompareController.$inject = ['build', 'toBuild', '$state', '$q', 'ciStatusService', 'buildTestsService', 'stabilityService'];
+  function CompareController(build, toBuild, $state, $q, ciStatusService, buildTestsService, stabilityService) {
     this.build = build;
     this.toBuild = toBuild;
     this.$state = $state;
     this.$q = $q;
     this.buildTestsService = buildTestsService;
+    this.stabilityService = stabilityService;
     this.loading = false;
     this.title = `Comparing build ${this.build.name}#${this.build.number} and ${this.toBuild.name}#${this.toBuild.number}`;
     this.availableBuilds = {
@@ -126,6 +127,25 @@
         this.leftTests = this._toArray(rightGrouped);
         this.rightTests = this._toArray(leftGrouped);
       }
+    },
+    getTestStability: function (testsList) {
+      this.buildTestsService.getStability(testsList.tests[0].jobName, this.stabilityService.reFormatTestsStructure([testsList]), testsList.tests[0].buildId, 10)
+          .then(this.addStabilityResultsToTestsList.bind(this, testsList));
+    },
+    addStabilityResultsToTestsList: function (testsList, stabilityResults) {
+      let grouped = _.groupBy(stabilityResults, (stabilityResult) => stabilityResult._id.testClassName);
+      let stability = grouped[testsList.testClassName];
+      if (!testsList.results) {
+        testsList.results = {};
+      }
+      _.forEach(stability, (results) => {
+        testsList.results[results._id.testName] = {
+          testName: results._id.testName,
+          stability: results.stability,
+          failed: results.failed,
+          count: results.buildIds.length
+        };
+      });
     },
     goToStability: function (testsList, side) {
       return this.$state.go('stability', {

@@ -214,13 +214,16 @@ ui-ci-status .table tbody td:first-child {
   }
 }
 
-.stability-container {
+test-stability {
   .progress {
     margin-bottom: 5px;
     .test-result-stable {
       white-space: nowrap;
     }
   }
+}
+
+.stability-container {
   .btn-run-stability {
     background-color: $green-color;
     color: white;

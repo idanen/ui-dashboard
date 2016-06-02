@@ -55,7 +55,7 @@
             </div>
           </uib-accordion-heading>
           <div class="btn-group btn-group-sm">
-            <a class="btn" uib-tooltip="stability" ng-click="compare.goToStability(testList, 'left')">
+            <a class="btn" uib-tooltip="stability" ng-click="compare.getTestStability(testList)">
               <iron-icon icon="assessment"></iron-icon>
               <span>Check stability of these tests</span>
             </a>
@@ -78,6 +78,7 @@
               </div>
             </li>
           </ul>
+          <test-stability test-results="testList.results"></test-stability>
         </uib-accordion-group>
       </uib-accordion>
     </div>
@@ -102,7 +103,7 @@
             </div>
           </uib-accordion-heading>
           <div class="btn-group btn-group-sm">
-            <a class="btn" uib-tooltip="stability" ng-click="compare.goToStability(testList, 'right')">
+            <a class="btn" uib-tooltip="stability" ng-click="compare.getTestStability(testList)">
               <iron-icon icon="assessment"></iron-icon>
               <span>Check stability of these tests</span>
             </a>
@@ -125,6 +126,7 @@
               </div>
             </li>
           </ul>
+          <test-stability test-results="testList.results"></test-stability>
         </uib-accordion-group>
       </uib-accordion>
     </div>

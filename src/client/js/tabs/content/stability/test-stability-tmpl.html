@@ -1,0 +1,8 @@
+<ul class="list-group" ng-if="$ctrl.testResults">
+  <li class="list-group-item" ng-repeat="(testName, result) in $ctrl.testResults track by $index">
+    <uib-progressbar class="progress-striped" max="result.count" value="result.failed" type="{{result.stability > 0.3 ? 'danger' : 'warning'}}">
+      <span class="text-success test-result-stable" ng-if="result.failed === 0"><iron-icon icon="done-all"></iron-icon> Stable</span>
+      <em ng-if="result.failed > 0" uib-tooltip="{{ result.failed }} / {{ result.count }} ({{ result.stability | percentage:0 }})">{{ result.failed }} / {{ result.count }} ({{ result.stability | percentage:0 }})</em>
+    </uib-progressbar>
+  </li>
+</ul>

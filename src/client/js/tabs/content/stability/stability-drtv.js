@@ -8,10 +8,11 @@
         templateUrl: 'js/tabs/content/stability/stability-tmpl.html'
       });
 
-  CIStabilityController.$inject = ['$q', '$scope', '$stateParams', 'buildTestsService', 'ciStatusService', 'build', '$filter'];
-  function CIStabilityController($q, $scope, $stateParams, buildTestsService, ciStatusService, build, $filter) {
+  CIStabilityController.$inject = ['$q', '$scope', '$stateParams', 'buildTestsService', 'stabilityService', 'ciStatusService', 'build', '$filter'];
+  function CIStabilityController($q, $scope, $stateParams, buildTestsService, stabilityService, ciStatusService, build, $filter) {
     this.$scope = $scope;
     this.buildTestsService = buildTestsService;
+    this.stabilityService = stabilityService;
     this.ciStatusService = ciStatusService;
     this.$filter = $filter;
     this.buildsCount = 10;
@@ -62,13 +63,8 @@
       }
     },
     reFormatTestsStructure: function (tests) {
-      let testsByClass = [], selected;
-      tests.forEach((test) => {
-        let testByClass = {};
-        testByClass.testClass = test.testClassName || test._id && test._id.testClassName;
-        testByClass.methods = _.map(test.tests, 'testName');
-        testsByClass.push(testByClass);
-      });
+      let testsByClass, selected;
+      testsByClass = this.stabilityService.reFormatTestsStructure(tests);
       selected = _.map(testsByClass, (test) => _.extend({selected: true}, test));
       return selected;
     },
