@@ -11,7 +11,8 @@
         template: `
         <span>
           <iron-icon class="job-result-icon" icon="{{ $ctrl.resultToIconName() }}"
-                     ng-class="'job-result-icon-' + $ctrl.resultToIconName()"></iron-icon>
+                     ng-class="'job-result-icon-' + $ctrl.resultToIconName()"
+                     uib-tooltip="{{ $ctrl.result }}"></iron-icon>
           <span ng-show="$ctrl.showLabel">{{ $ctrl.result }}</span>
         </span>
         `

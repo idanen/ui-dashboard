@@ -8,11 +8,12 @@
         templateUrl: 'js/tabs/content/stability/stability-tmpl.html'
       });
 
-  CIStabilityController.$inject = ['$q', '$scope', '$stateParams', 'buildTestsService', 'ciStatusService', 'build'];
-  function CIStabilityController($q, $scope, $stateParams, buildTestsService, ciStatusService, build) {
+  CIStabilityController.$inject = ['$q', '$scope', '$stateParams', 'buildTestsService', 'ciStatusService', 'build', '$filter'];
+  function CIStabilityController($q, $scope, $stateParams, buildTestsService, ciStatusService, build, $filter) {
     this.$scope = $scope;
     this.buildTestsService = buildTestsService;
     this.ciStatusService = ciStatusService;
+    this.$filter = $filter;
     this.buildsCount = 10;
     this.filterFailedPercent = 0.09;
     this.tests = [];
@@ -61,15 +62,15 @@
       }
     },
     reFormatTestsStructure: function (tests) {
-      let testsByClass = [], reformated;
+      let testsByClass = [], selected;
       tests.forEach((test) => {
         let testByClass = {};
         testByClass.testClass = test.testClassName || test._id && test._id.testClassName;
         testByClass.methods = _.map(test.tests, 'testName');
         testsByClass.push(testByClass);
       });
-      reformated = _.map(testsByClass, (test) => _.extend({selected: true}, test));
-      return reformated;
+      selected = _.map(testsByClass, (test) => _.extend({selected: true}, test));
+      return selected;
     },
     toggleLegend: function () {
       this.legendShown = !this.legendShown;
@@ -95,6 +96,7 @@
         } else {
           this.tests = this.tests.concat(_.extend({selected: true}, {
             testClass: test.testClass,
+            testJustClass: this.$filter('className')(test.testClass),
             methods: newMethods
           }));
         }

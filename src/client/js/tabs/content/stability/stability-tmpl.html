@@ -83,8 +83,13 @@
       </div>
     </fieldset>
     <fieldset class="form-group">
-      <label class="col-xs-12">Show above</label>
-      <paper-slider pin min="0" max="1" step="0.1" bind-from="$ctrl.filterFailedPercent" on-update="$ctrl.filterFailedPercentChanged(value)"></paper-slider>
+      <label class="col-xs-2">Show above</label>
+      <div class="col-xs-4">
+        <paper-slider pin min="0" max="1" step="0.1" bind-from="$ctrl.filterFailedPercent" on-update="$ctrl.filterFailedPercentChanged(value)"></paper-slider>
+      </div>
+      <div class="col-xs-1">
+        <output>{{ $ctrl.filterFailedPercent * 100 }}&#37;</output>
+      </div>
     </fieldset>
     <div class="row">
       <div class="col-md-4">
@@ -99,7 +104,7 @@
       </div>
     </div>
     <fieldset class="form-group">
-      <div class="row slide-in" ng-repeat="test in $ctrl.tests | stabilityFilter:$ctrl.filterFailedPercent">
+      <div class="row slide-in" ng-repeat="test in $ctrl.tests | orderBy:'testJustClass' | stabilityFilter:$ctrl.filterFailedPercent track by $index">
         <div class="col-md-4">
           <paper-icon-button icon="clear" ng-click="$ctrl.removeTest(test.testClass)"></paper-icon-button>
           <label>
@@ -116,7 +121,7 @@
         </div>
         <div class="col-md-4">
           <ul class="list-group" ng-if="test.results">
-            <li class="list-group-item" ng-repeat="(testName, result) in test.results">
+            <li class="list-group-item" ng-repeat="(testName, result) in test.results track by $index">
               <uib-progressbar class="progress-striped" max="result.count" value="result.failed" type="{{result.stability > 0.3 ? 'danger' : 'warning'}}">
                 <span class="text-success test-result-stable" ng-if="result.failed === 0"><iron-icon icon="done-all"></iron-icon> Stable</span>
                 <em ng-if="result.failed > 0" uib-tooltip="{{ result.failed }} / {{ result.count }} ({{ result.stability | percentage:0 }})">{{ result.failed }} / {{ result.count }} ({{ result.stability | percentage:0 }})</em>

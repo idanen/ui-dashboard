@@ -29,7 +29,7 @@
               delete test.results[testToFilter];
             });
 
-            if (test.methods.length === 0) {
+            if (_.isEmpty(test.results)) {
               return null;
             }
 
