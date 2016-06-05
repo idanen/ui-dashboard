@@ -4,14 +4,13 @@
   angular.module('ci-site')
     .controller('CompareCtrl', CompareController);
 
-  CompareController.$inject = ['build', 'toBuild', '$state', '$q', 'ciStatusService', 'buildTestsService', 'stabilityService'];
-  function CompareController(build, toBuild, $state, $q, ciStatusService, buildTestsService, stabilityService) {
+  CompareController.$inject = ['build', 'toBuild', '$state', '$q', 'ciStatusService', 'buildTestsService'];
+  function CompareController(build, toBuild, $state, $q, ciStatusService, buildTestsService) {
     this.build = build;
     this.toBuild = toBuild;
     this.$state = $state;
     this.$q = $q;
     this.buildTestsService = buildTestsService;
-    this.stabilityService = stabilityService;
     this.loading = false;
     this.title = `Comparing build ${this.build.name}#${this.build.number} and ${this.toBuild.name}#${this.toBuild.number}`;
     this.availableBuilds = {
@@ -128,9 +127,9 @@
         this.rightTests = this._toArray(leftGrouped);
       }
     },
-    getTestStability: function (testsList) {
-      this.buildTestsService.getStability(testsList.tests[0].jobName, this.stabilityService.reFormatTestsStructure([testsList]), testsList.tests[0].buildId, 10)
-          .then(this.addStabilityResultsToTestsList.bind(this, testsList));
+    getTestStability: function (testsWrap) {
+      this.buildTestsService.getStability(testsWrap.tests[0].jobName, this.buildTestsService.prepareTestsForSending([testsWrap]), testsWrap.tests[0].buildId, 10)
+          .then(this.addStabilityResultsToTestsList.bind(this, testsWrap));
     },
     addStabilityResultsToTestsList: function (testsList, stabilityResults) {
       let grouped = _.groupBy(stabilityResults, (stabilityResult) => stabilityResult._id.testClassName);

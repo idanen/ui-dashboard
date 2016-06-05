@@ -26,8 +26,8 @@
   <div class="row">
     <form class="form-horizontal col-xs-12">
       <div class="form-group">
-        <label class="col-md-4">Sort tests by</label>
-        <div class="col-md-8">
+        <label class="col-md-2">Sort tests by</label>
+        <div class="col-md-3">
           <select class="form-control" name="sortTestsBy" ng-model="compare.sortField" ng-options="field as field for field in compare.sortFields"></select>
         </div>
       </div>
@@ -62,7 +62,7 @@
           </div>
           <ul class="list-group">
             <li class="list-group-item" ng-repeat="test in testList.tests | orderBy:'testName'">
-              <strong ng-class="test.markedUnstable ? 'text-warning' : ''" uib-tooltip="Marked as unstable"><iron-icon ng-show="test.markedUnstable" icon="bug-report"></iron-icon> {{ test.testName | className }}</strong>
+              <strong ng-class="test.markedUnstable ? 'text-warning' : ''"><iron-icon ng-show="test.markedUnstable" icon="bug-report" uib-tooltip="Marked as unstable"></iron-icon> {{ test.testName | className }}</strong>
               <paper-badge icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'" alt="Connection exception"></paper-badge>
               <em ng-if="!test.alien"> {{ test.errorMessage }}</em>
               <div class="links">
@@ -110,7 +110,7 @@
           </div>
           <ul class="list-group">
             <li class="list-group-item" ng-repeat="test in testList.tests | orderBy:'testName'">
-              <strong ng-class="test.markedUnstable ? 'text-warning' : ''" uib-tooltip="Marked as unstable"><iron-icon ng-show="test.markedUnstable" icon="bug-report"></iron-icon> {{ test.testName | className }}</strong>
+              <strong ng-class="test.markedUnstable ? 'text-warning' : ''"><iron-icon ng-show="test.markedUnstable" icon="bug-report" uib-tooltip="Marked as unstable"></iron-icon> {{ test.testName | className }}</strong>
               <paper-badge icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'" alt="Connection exception"></paper-badge>
               <em ng-if="!test.alien"> {{ test.errorMessage }}</em>
               <div class="links">

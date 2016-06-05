@@ -48,6 +48,16 @@
     },
     getStability: function (buildName, tests, startFromNumber, buildCount = 10) {
       return this.Stability.query({buildName, buildCount, startFromNumber}, tests).$promise;
+    },
+    prepareTestsForSending: function (tests) {
+      let testsByClass = [];
+      tests.forEach((test) => {
+        let testByClass = {};
+        testByClass.testClass = test.testClassName || test._id && test._id.testClassName;
+        testByClass.methods = _.map(test.tests, 'testName');
+        testsByClass.push(testByClass);
+      });
+      return testsByClass;
     }
   };
 }());
