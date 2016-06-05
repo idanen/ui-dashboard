@@ -12,6 +12,8 @@ module.exports = function (app) {
 
     app.get('/compareBuildTests/:buildName/:buildNumber/:toBuildName/:toBuildNumber', controller.getCompareTests.bind(controller));
 
+    app.get('/stability/:buildName/:buildCount/:startFromNumber', controller.getTestsStability.bind(controller));
+
     app.post('/buildTests/:buildName/:buildNumber', controller.getSpecificBuildTests.bind(controller));
 
     app.post('/stability/:buildName/:buildCount/:startFromNumber', controller.getTestsStability.bind(controller));

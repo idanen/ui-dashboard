@@ -45,7 +45,7 @@
     //  this.fetchFailedOfBuild();
     //});
     $q.all(this.availableBuilds.masters.$loaded(), this.availableBuilds.teams.$loaded())
-        .then(this.selectFirstOptions.bind(this));
+        .then(this.selectDefaultOptions.bind(this));
         //.then(this.fetchFailedOfBuild.bind(this));
   }
 
@@ -53,12 +53,15 @@
     fetchFailedOfBuild: function () {
       if (this.build.number) {
         this.reFetchLoading = true;
-        //this.buildTestsService.fetch(this.build.name, this.build.number)
-        this.buildTestsService.fetchLastFailedOfBuild(this.build.name, this.build.number, this.buildsCount)
-            .then(this.reFormatTestsStructure.bind(this))
-            .then(this.appendToTests.bind(this))
-            .catch(this.handleError)
+        this.fetchStability()
             .finally(() => this.reFetchLoading = false);
+        //this.buildTestsService.fetch(this.build.name, this.build.number)
+        //this.buildTestsService.fetchLastFailedOfBuild(this.build.name, this.build.number, this.buildsCount)
+        //    .then(this.reFormatTestsStructure.bind(this))
+        //    .then(this.appendToTests.bind(this))
+        //    //.then(this.fetchStability.bind(this))
+        //    .catch(this.handleError)
+        //    .finally(() => this.reFetchLoading = false);
       }
     },
     reFormatTestsStructure: function (tests) {
@@ -97,7 +100,7 @@
         }
       });
     },
-    selectFirstOptions: function () {
+    selectDefaultOptions: function () {
       if (this.build) {
         let selectedBuild = _.find(this.availableBuilds[this.build.group], this.build.name);
         if (selectedBuild && !this.build.number) {
@@ -143,31 +146,35 @@
     removeTest: function (testClass) {
       this.tests = _.filter(this.tests, test => test.testClass !== testClass);
     },
-    renderResults: function () {
-      this.clearResults();
-      _.forEach(this.tests, (test) => {
-        let stability = _.filter(this.stability, (testStability) => {
-          return testStability._id.testClassName === test.testClass;
+    renderResults: function (stabilityResults) {
+      this.testWraps = [];
+      _.forEach(stabilityResults, ((stabilityResult) => {
+        let testWrap = _.find(this.testWraps, (testWrap) => testWrap.testClassName === stabilityResult._id.testClassName);
+        let testData = _.extend(stabilityResult.tests[0], {
+          stabilityResult: {
+            testName: stabilityResult._id.testName,
+            stability: stabilityResult.stability,
+            failed: stabilityResult.failed,
+            count: stabilityResult.buildIds.length,
+            buildIds: stabilityResult.buildIds
+          }
         });
-        if (!test.results) {
-          test.results = {};
+        if (!testWrap) {
+          this.testWraps.push({
+            testClassName: stabilityResult._id.testClassName,
+            tests: [testData]
+          });
+        } else {
+          testWrap.tests.push(testData);
         }
-        _.forEach(stability, (results) => {
-          test.results[results._id.testName] = {
-            testName: results._id.testName,
-            stability: results.stability,
-            failed: results.failed,
-            count: results.buildIds.length
-          };
-        });
-      });
+      }));
+
+      return this.testWraps;
     },
     fetchStability: function () {
       this.goLoading = true;
-      this.buildTestsService.getStability(this.build.name, _.filter(this.tests, {selected: true}), this.build.number, this.buildsCount)
-          .then(stability => this.stability = stability)
+      return this.buildTestsService.getStability(this.build.name, this.build.number, this.buildsCount)
           .then(this.renderResults.bind(this))
-          .catch(this.handleError)
           .finally(() => this.goLoading = false);
     },
     handleError: console.error.bind(console)

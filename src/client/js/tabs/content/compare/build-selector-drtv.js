@@ -74,9 +74,7 @@
       } else {
         this.onChange({prop: prop, value: value});
       }
-      if (prop === 'number') {
-        this.selectedBuildResult = _.find(this.buildResults, {id: this.number}).result;
-      }
+      this.selectedBuildResult = _.find(this.buildResults, {id: this.number}).result;
     },
     buildResultsData: function (builds, selectedName) {
       let buildResults,

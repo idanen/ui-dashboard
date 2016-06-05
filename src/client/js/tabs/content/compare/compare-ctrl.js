@@ -35,21 +35,23 @@
     this.sortField = this.sortFields[0];
 
     $q.all(this.availableBuilds.masters.$loaded(), this.availableBuilds.teams.$loaded())
-      .then(this.selectFirstOptions.bind(this))
+      .then(this.selectDefaultOptions.bind(this))
       .then(this.getAllTests.bind(this));
   }
 
   CompareController.prototype = {
     selectionChanged: function (side, prop, value) {
       this.selected[side][prop] = value;
-      if (prop === 'number') {
-        this.getAllTests();
-      }
+      //if (prop === 'number') {
+      //  this.getAllTests();
+      //}
+      this.updateState();
     },
     getAllTests: function () {
       this.loading = true;
       return this.getTests()
           .then(this.assignToViewModel.bind(this))
+          .then(this.getTestStability.bind(this))
           .finally(() => this.loading = false);
     },
     updateState: function () {
@@ -62,7 +64,7 @@
         toBuildNumber: this.selected.right.number
       });
     },
-    selectFirstOptions: function () {
+    selectDefaultOptions: function () {
       if (this.build) {
         this.selected.left = {
           group: this.selected.left.group || this.build.group || 'masters',
@@ -127,23 +129,31 @@
         this.rightTests = this._toArray(leftGrouped);
       }
     },
-    getTestStability: function (testsWrap) {
-      this.buildTestsService.getStability(testsWrap.tests[0].jobName, this.buildTestsService.prepareTestsForSending([testsWrap]), testsWrap.tests[0].buildId, 10)
-          .then(this.addStabilityResultsToTestsList.bind(this, testsWrap));
+    getTestStability: function () {
+      this.buildTestsService.getStability(this.selected.left.name, this.selected.left.number, 10)
+          .then(this.addStabilityResultsToTestsList.bind(this, this.leftTests));
+      this.buildTestsService.getStability(this.selected.right.name, this.selected.right.number, 10)
+          .then(this.addStabilityResultsToTestsList.bind(this, this.rightTests));
     },
-    addStabilityResultsToTestsList: function (testsList, stabilityResults) {
-      let grouped = _.groupBy(stabilityResults, (stabilityResult) => stabilityResult._id.testClassName);
-      let stability = grouped[testsList.testClassName];
-      if (!testsList.results) {
-        testsList.results = {};
-      }
-      _.forEach(stability, (results) => {
-        testsList.results[results._id.testName] = {
-          testName: results._id.testName,
-          stability: results.stability,
-          failed: results.failed,
-          count: results.buildIds.length
-        };
+    addStabilityResultsToTestsList: function (testsWraps, stabilityResults) {
+      let groupedStabilityResults = _.groupBy(stabilityResults, (stabilityResult) => stabilityResult._id.testClassName);
+      _.forEach(testsWraps, (testsWrap) => {
+        let stabilityResults = _.omit(groupedStabilityResults[testsWrap.testClassName], 'tests');
+        testsWrap.tests = testsWrap.tests.map((test) => {
+          let stability = _.find(stabilityResults, (result) => result._id.testName === test.testName);
+          if (stability) {
+            return _.extend({}, test, {
+              stabilityResult: {
+                testName: stability._id.testName,
+                stability: stability.stability,
+                failed: stability.failed,
+                count: stability.buildIds.length,
+                buildIds: stability.buildIds
+              }
+            });
+          }
+          return test;
+        });
       });
     },
     goToStability: function (testsList, side) {

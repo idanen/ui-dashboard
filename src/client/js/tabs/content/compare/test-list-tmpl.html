@@ -1,0 +1,24 @@
+<ul class="list-group">
+  <li class="list-group-item" ng-repeat="test in $ctrl.tests | orderBy:'testName' track by $index">
+    <strong ng-class="test.markedUnstable ? 'text-warning' : ''"><iron-icon ng-show="test.markedUnstable" icon="bug-report" uib-tooltip="Marked as unstable"></iron-icon> {{ test.testName }}</strong>
+    <paper-badge icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'" alt="Connection exception"></paper-badge>
+    <em ng-if="!test.alien"> {{ test.errorMessage }}</em>
+    <div class="links">
+      <a class="btn btn-link" ng-href="{{ test.testReportUrl }}testReport" target="_blank" uib-tooltip="" ng-disabled="!test.testReportUrl">
+        <iron-icon icon="assignment"></iron-icon><span> Test Results</span>
+      </a>
+      <a class="btn btn-link" ng-href="{{ test.testReportUrl }}artifact/target/jbehave/view/index.html" target="_blank" ng-disabled="!test.testReportUrl">
+        <iron-icon icon="dashboard"></iron-icon><span> JBehave Report</span>
+      </a>
+      <a class="btn btn-link" ng-href="{{ test.testReportUrl }}artifact/target/reports/test-results.html" target="_blank" ng-disabled="!test.testReportUrl">
+        <iron-icon icon="important-devices"></iron-icon><span> UI Report</span>
+      </a>
+    </div>
+    <div class="test-stability" ng-if="test.stabilityResult">
+      <uib-progressbar class="progress-striped" max="test.stabilityResult.count" value="test.stabilityResult.failed" type="{{test.stabilityResult.stability > 0.3 ? 'danger' : 'warning'}}">
+        <span class="text-success test-result-stable" ng-if="test.stabilityResult.failed === 0"><iron-icon icon="done-all"></iron-icon> Stable</span>
+        <em ng-if="test.stabilityResult.failed > 0" uib-tooltip="{{ test.stabilityResult.failed }} / {{ test.stabilityResult.count }} ({{ test.stabilityResult.stability | percentage:0 }})">{{ test.stabilityResult.failed }} / {{ test.stabilityResult.count }} ({{ test.stabilityResult.stability | percentage:0 }})</em>
+      </uib-progressbar>
+    </div>
+  </li>
+</ul>

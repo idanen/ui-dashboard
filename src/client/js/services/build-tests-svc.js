@@ -20,7 +20,7 @@
     });
     this.Stability = $resource(`http://${ENV.HOST}:${ENV.PORT}/stability/:buildName/:buildCount/:startFromNumber`, {}, {
       query: {
-        method: 'POST',
+        method: 'GET',
         isArray: true
       }
     });
@@ -46,8 +46,8 @@
     fetchLastFailedOfBuild: function (buildName, startFromNumber, buildCount = 10) {
       return this.LastFailedTests.query({buildName, buildCount, startFromNumber}).$promise;
     },
-    getStability: function (buildName, tests, startFromNumber, buildCount = 10) {
-      return this.Stability.query({buildName, buildCount, startFromNumber}, tests).$promise;
+    getStability: function (buildName, startFromNumber, buildCount = 10) {
+      return this.Stability.query({buildName, buildCount, startFromNumber}).$promise;
     },
     prepareTestsForSending: function (tests) {
       let testsByClass = [];

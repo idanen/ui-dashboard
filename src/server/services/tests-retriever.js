@@ -122,21 +122,16 @@ module.exports = (function () {
           $group: {
             _id: {
               testClassName: '$testClassName',
-              category: '$category'
+              testName: '$testName'
             },
             tests: { $push: '$$ROOT' }
           }
         }
       ]);
     },
-    fetchStability: function (buildName, tests, buildCount, startFromNumber) {
+    fetchStability: function (buildName, buildCount, startFromNumber) {
       // console.log('buildName: \"' + buildName + '", buildCount: ' + buildCount + ', tests: ', tests);
-      var classesAndMethods, buildIdsRange;
-      classesAndMethods = _.transform(tests, function (result, value) {
-        result.classes.push(value.testClass);
-        result.methods = result.methods.concat(value.methods);
-      }, { classes: [], methods: [] });
-      buildIdsRange = this._arrayWithReverse(buildCount, startFromNumber);
+      var buildIdsRange = this._arrayWithReverse(buildCount, startFromNumber);
       return this._promisize('aggregate', [
         {
           $sort: {
@@ -146,15 +141,10 @@ module.exports = (function () {
         {
           $match: {
             jobName: buildName,
-            testClassName: {
-              $in: classesAndMethods.classes
-            },
-            testName: {
-              $in: classesAndMethods.methods
-            },
             buildId: {
               $in: buildIdsRange
-            }
+            },
+            testFailed: true
           }
         },
         {
@@ -164,6 +154,10 @@ module.exports = (function () {
             testClassName: 1,
             testName: 1,
             testFailed: 1,
+            markedUnstable: 1,
+            testReportUrl: 1,
+            exceptionType: 1,
+            errorMessage: 1,
             failedCount: { $cond: ['$testFailed', 1, 0] }
           }
         },
@@ -180,8 +174,8 @@ module.exports = (function () {
                 buildId: '$buildId',
                 testFailed: '$testFailed'
               }
-            }/*,
-            tests: {$push: '$$ROOT'}*/
+            },
+            tests: {$push: '$$ROOT'}
           }
         }
       ]);
@@ -373,8 +367,10 @@ module.exports = (function () {
                   testClassName: test.testClassName,
                   testName: test.testName
                 });
-                _.extend(foundTest, test);
-                delete foundTest.alien;
+                if (foundTest) {
+                  _.extend(foundTest, test);
+                  delete foundTest.alien;
+                }
               });
             });
 
