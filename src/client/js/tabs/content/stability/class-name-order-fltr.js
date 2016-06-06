@@ -6,7 +6,7 @@
 
   classNameOrderFactory.$inject = ['$filter'];
   function classNameOrderFactory($filter) {
-    return function (tests) {
+    return (tests) => {
       return _.sortBy(tests, (test) => {
         return $filter('className')(test.testClassName || test._id.testClassName);
       });

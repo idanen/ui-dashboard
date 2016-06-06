@@ -16,73 +16,56 @@
 
   <form class="form-horizontal" name="$ctrl.settings">
     <fieldset class="form-group">
+      <label class="col-md-3">Failed tests of</label>
+      <div class="col-md-6">
+        <build-selector groups="$ctrl.availableGroups"
+                        builds="$ctrl.availableBuilds[$ctrl.build.group]"
+                        selected="$ctrl.build"
+                        on-change="$ctrl.selectionChanged(prop, value)"></build-selector>
+      </div>
+    </fieldset>
+    <fieldset class="form-group">
       <label class="col-md-3">Previous builds count <iron-icon icon="info-outline" uib-tooltip="Calculate stability of the last {{$ctrl.buildsCount}} builds (NOTE: that this is not related to the selected build id below)"></iron-icon></label>
-      <div class="col-md-3">
+      <div class="col-md-6">
         <paper-slider pin min="10" max="50" bind-from="$ctrl.buildsCount" on-update="$ctrl.buildsCountUpdated(value)" style="width: 100%;"></paper-slider>
       </div>
       <div class="col-md-1">
         <input class="form-control" type="number" ng-model="$ctrl.buildsCount">
       </div>
     </fieldset>
-    <fieldset class="form-group">
-      <label class="col-xs-2">Manual</label>
-      <div class="col-xs-4">
-        <paper-input-container>
-          <label>Test Class (full quelified name)</label>
-          <input is="iron-input" ng-model="$ctrl.newTest.testClass">
-        </paper-input-container>
-      </div>
-      <div class="col-xs-4">
-        <paper-input-container>
-          <label>Test Name (comma separated)</label>
-          <input is="iron-input" ng-model="$ctrl.newTest.methods">
-        </paper-input-container>
-      </div>
-      <div class="col-xs-2">
-        <paper-button raised ng-click="$ctrl.addNewTest()">
-          <iron-icon icon="add"></iron-icon>
-          <span>Add test</span>
-        </paper-button>
-      </div>
-    </fieldset>
-    <fieldset class="form-group">
-      <label class="col-md-2">Failed tests of</label>
-      <div class="col-md-8">
-        <build-selector groups="$ctrl.availableGroups"
-                        builds="$ctrl.availableBuilds[$ctrl.build.group]"
-                        selected="$ctrl.build"
-                        on-change="$ctrl.selectionChanged(prop, value)"></build-selector>
-      </div>
-      <div class="col-md-2">
+    <div class="row">
+      <div class="col-xs-12">
         <paper-button raised class="btn-run-stability ladda-button" ladda="$ctrl.reFetchLoading" ng-click="$ctrl.fetchFailedOfBuild()" uib-tooltip="Fetch stability of last {{ $ctrl.buildsCount }} builds starting from selected build">
-          <iron-icon icon="add"></iron-icon>
+          <iron-icon icon="send"></iron-icon>
           <span>Fetch stability</span>
         </paper-button>
       </div>
-    </fieldset>
+    </div>
+    <hr>
     <fieldset class="form-group">
-      <label class="col-xs-2">Show above</label>
+      <label class="col-xs-3">Show above</label>
       <div class="col-xs-4">
         <paper-slider pin min="0" max="1" step="0.1" bind-from="$ctrl.filterFailedPercent" on-update="$ctrl.filterFailedPercentChanged(value)" style="width: 100%;"></paper-slider>
       </div>
-      <div class="col-xs-1">
-        <output>{{ $ctrl.filterFailedPercent * 100 }}&#37;</output>
+      <div class="col-xs-2">
+        <output>{{ $ctrl.filterFailedPercent * 100 }}&#37; failed</output>
+      </div>
+      <div class="col-xs-3">
+        <paper-input-container>
+          <iron-icon icon="search" prefix></iron-icon>
+          <label>Test Class Name</label>
+          <input is="iron-input" ng-model="$ctrl.filterTestName">
+        </paper-input-container>
       </div>
     </fieldset>
     <fieldset class="form-group">
-      <ul class="list-group">
-        <li class="list-group-item slide-in" ng-repeat="testWrap in $ctrl.testWraps | classNameOrder | stabilityFilter:$ctrl.filterFailedPercent track by $index">
-          <strong>{{ testWrap.testClassName }}</strong>
-          <test-list tests="testWrap.tests"></test-list>
-        </li>
-      </ul>
-    </fieldset>
-    <fieldset class="form-group">
-      <div class="col-xs-offset-10 col-xs-2">
-        <paper-button raised class="btn-run-stability ladda-button" ladda="$ctrl.goLoading" ng-click="$ctrl.fetchStability()">
-          <iron-icon icon="send"></iron-icon>
-          <span>Go!</span>
-        </paper-button>
+      <div class="col-xs-12">
+        <ul class="list-group">
+          <li class="list-group-item slide-in" ng-repeat="testWrap in $ctrl.testWraps | classNameOrder | stabilityFilter:$ctrl.filterFailedPercent | filter:$ctrl.filterTestName track by $index">
+            <strong>{{ testWrap.testClassName | className }}</strong>
+            <test-list tests="testWrap.tests"></test-list>
+          </li>
+        </ul>
       </div>
     </fieldset>
   </form>

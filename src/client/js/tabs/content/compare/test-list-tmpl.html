@@ -4,7 +4,7 @@
     <paper-badge icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'" alt="Connection exception"></paper-badge>
     <em ng-if="!test.alien"> {{ test.errorMessage }}</em>
     <div class="links">
-      <a class="btn btn-link" ng-href="{{ test.testReportUrl }}testReport" target="_blank" uib-tooltip="" ng-disabled="!test.testReportUrl">
+      <a class="btn btn-link" ng-href="{{ test.testReportUrl }}testReport" target="_blank" ng-disabled="!test.testReportUrl">
         <iron-icon icon="assignment"></iron-icon><span> Test Results</span>
       </a>
       <a class="btn btn-link" ng-href="{{ test.testReportUrl }}artifact/target/jbehave/view/index.html" target="_blank" ng-disabled="!test.testReportUrl">
