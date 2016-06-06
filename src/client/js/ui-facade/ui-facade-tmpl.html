@@ -14,7 +14,6 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li ui-sref-active="active"><a ui-sref="compare({buildName: 'master', buildNumber: '1118'})">Compare</a></li>
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ facade.currentStateWidget.title }} <span class="caret"></span></a>
                     <ul class="dropdown-menu">
@@ -23,6 +22,8 @@
                         </li>
                     </ul>
                 </li>
+                <li ui-sref-active="active"><a ng-click="facade.gotoState('compare')">Compare</a></li>
+                <li ui-sref-active="active"><a ng-click="facade.gotoState('stability')">Stability</a></li>
             </ul>
             <span class="navbar-right"><login-btn></login-btn></span>
         </div><!-- /.navbar-collapse -->

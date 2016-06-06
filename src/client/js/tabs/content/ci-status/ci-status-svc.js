@@ -13,14 +13,6 @@
      * @return {array}
      */
     angular.module('ci-site')
-        .filter('duration', function () {
-            return function (duration, format) {
-                if (angular.isNumber(duration)) {
-                    return moment.duration(duration).format(format || 'hh:mm:ss');
-                }
-                return duration;
-            };
-        })
         .filter('unique', function () {
             return function (items, filterOn) {
 
@@ -114,6 +106,23 @@
             var buildRef = this._getRef(jobId, group);
 
             return this.$firebaseArray(buildRef.child('builds').child(jobNumber).child('subBuilds').orderByChild('result').equalTo('running'));
+        },
+        getDefaultBuild: function () {
+          return this.$q((resolve) => {
+            this._statusRef
+                .child('masters')
+                .child('MaaS-SAW-USB-master')
+                .child('builds')
+                .orderByKey()
+                .limitToLast(1)
+                .once('child_added', (snap) => {
+                  resolve({
+                    group: 'masters',
+                    name: 'MaaS-SAW-USB-master',
+                    number: snap.key()
+                  });
+                });
+          });
         },
         getJobByName: function (jobName) {
             return this.$firebaseObject(this._jobsRef.child(jobName));
