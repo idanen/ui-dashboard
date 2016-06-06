@@ -162,8 +162,7 @@
       return this.$state.go('stability', {
         group: this.selected[side].group,
         buildName: testsList.tests[0].jobName,
-        buildNumber: testsList.tests[0].buildId,
-        tests: testsList
+        buildNumber: testsList.tests[0].buildId
       });
     },
     hasMarkedUnstable: function (testsList) {
