@@ -4,12 +4,14 @@
   angular.module('ci-site')
     .controller('CompareCtrl', CompareController);
 
-  CompareController.$inject = ['build', 'toBuild', '$state', '$q', 'ciStatusService', 'buildTestsService'];
-  function CompareController(build, toBuild, $state, $q, ciStatusService, buildTestsService) {
+  CompareController.$inject = ['build', 'toBuild', '$state', '$filter', '$q', 'ciStatusService', 'buildTestsService', 'JENKINS_BASE_URL'];
+  function CompareController(build, toBuild, $state, $filter, $q, ciStatusService, buildTestsService, JENKINS_BASE_URL) {
     this.build = build;
     this.toBuild = toBuild;
     this.$state = $state;
+    this.$filter = $filter;
     this.$q = $q;
+    this.JENKINS_BASE_URL = JENKINS_BASE_URL;
     this.buildTestsService = buildTestsService;
     this.loading = false;
     this.title = `Comparing build ${this.build.name}#${this.build.number} and ${this.toBuild.name}#${this.toBuild.number}`;
@@ -87,8 +89,8 @@
       }
     },
     getTests: function () {
-      let leftBuildName = this.selected.left.name.replace(/(.*release-\d+)_(\d+.*)/g, '$1.$2'),
-          rightBuildName = this.selected.right.name.replace(/(.*release-\d+)_(\d+.*)/g, '$1.$2');
+      let leftBuildName = this.$filter('releasever')(this.selected.left.name),
+          rightBuildName = this.$filter('releasever')(this.selected.right.name);
       return this.buildTestsService.fetchCompare(leftBuildName, this.selected.left.number, rightBuildName, this.selected.right.number);
     },
     panelClass: function (aTest) {
@@ -131,10 +133,16 @@
         this.rightTests = this._toArray(leftGrouped);
       }
     },
+    buildJenkinsLink: function (side) {
+      let buildName = this.$filter('releasever')(this.selected[side].name);
+      return `${this.JENKINS_BASE_URL}${buildName}/${this.selected[side].number}`;
+    },
     getTestStability: function () {
-      this.buildTestsService.getStability(this.selected.left.name, this.selected.left.number, 10)
+      let leftBuildName = this.$filter('releasever')(this.selected.left.name),
+          rightBuildName = this.$filter('releasever')(this.selected.right.name);
+      this.buildTestsService.getStability(leftBuildName, this.selected.left.number, 10)
           .then(this.addStabilityResultsToTestsList.bind(this, this.leftTests));
-      this.buildTestsService.getStability(this.selected.right.name, this.selected.right.number, 10)
+      this.buildTestsService.getStability(rightBuildName, this.selected.right.number, 10)
           .then(this.addStabilityResultsToTestsList.bind(this, this.rightTests));
     },
     addStabilityResultsToTestsList: function (testsWraps, stabilityResults) {
