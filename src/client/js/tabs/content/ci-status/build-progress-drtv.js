@@ -70,7 +70,7 @@
             FAILURE: 'build-state-failure',
             ABORTED: 'build-state-aborted'
           }[subBuild.result] || 'build-state-unknown',
-          running = subBuild.phase !== 'FINISHED' ? ' build-state-running' : '';
+          running = subBuild.phase !== 'FINISHED' && subBuild.phase !== 'FINALIZED' ? ' build-state-running' : '';
       return `${status}${running}`;
     }
   };

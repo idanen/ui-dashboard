@@ -62,6 +62,11 @@
               </li>
             </ul>
           </div>
+          <div class="pull-right">
+            <paper-button raised ng-click="ciJobsCtrl.clearAll('masters')" uib-tooltip="Clear all">
+              <iron-icon icon="block"></iron-icon>
+            </paper-button>
+          </div>
         </div>
         <div class="col-md-9">
             <a class="selected-filter slide-in" ng-repeat="(filtered, value) in ciJobsCtrl.filtered.masters" ng-click="ciJobsCtrl.unfilter('masters', filtered)" ng-if="value" uib-tooltip="{{  filtered }}">&times; {{ filtered }}</a>
@@ -83,6 +88,11 @@
                 </a>
               </li>
             </ul>
+          </div>
+          <div class="pull-right">
+            <paper-button raised ng-click="ciJobsCtrl.clearAll('teams')" uib-tooltip="Clear all">
+              <iron-icon icon="block"></iron-icon>
+            </paper-button>
           </div>
         </div>
         <div class="col-md-9">

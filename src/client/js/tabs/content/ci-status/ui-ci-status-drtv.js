@@ -86,6 +86,9 @@
       unfilter: function (group, jobId) {
         this.filtered[group][jobId] = false;
       },
+      clearAll: function (group) {
+        this.filtered[group] = {};
+      },
         addNewBuildNumber: function () {
           this.ciStatusService.addBuildNumber(this.newBuild.name, this.newBuild.number, 'masters').then(() => this.newBuild = {});
         },
