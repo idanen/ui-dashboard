@@ -87,7 +87,9 @@
       }
     },
     getTests: function () {
-      return this.buildTestsService.fetchCompare(this.selected.left.name, this.selected.left.number, this.selected.right.name, this.selected.right.number);
+      let leftBuildName = this.selected.left.name.replace(/(.*release-\d+)_(\d+.*)/g, '$1.$2'),
+          rightBuildName = this.selected.right.name.replace(/(.*release-\d+)_(\d+.*)/g, '$1.$2');
+      return this.buildTestsService.fetchCompare(leftBuildName, this.selected.left.number, rightBuildName, this.selected.right.number);
     },
     panelClass: function (aTest) {
       if (this.hasAliens(aTest)) {
