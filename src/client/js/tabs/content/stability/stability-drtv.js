@@ -15,7 +15,7 @@
     this.ciStatusService = ciStatusService;
     this.$filter = $filter;
     this.buildsCount = 10;
-    this.filterFailedPercent = 0.09;
+    this.filterFailedPercent = 0.0;
     this.tests = [];
     this.stability = {};
     this.legendShown = false;

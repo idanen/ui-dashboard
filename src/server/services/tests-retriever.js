@@ -132,7 +132,7 @@ module.exports = (function () {
     fetchStability: function (buildName, buildCount, startFromNumber) {
       // console.log('buildName: \"' + buildName + '", buildCount: ' + buildCount + ', tests: ', tests);
       var buildIdsRange = this._arrayWithReverse(buildCount, startFromNumber);
-      return this._promisize('aggregate', [
+      var aggregations = [
         {
           $sort: {
             buildId: -1
@@ -178,7 +178,89 @@ module.exports = (function () {
             tests: {$push: '$$ROOT'}
           }
         }
-      ]);
+      ];
+      return this._promisize('aggregate', aggregations)
+          .then(this.fetchStabilitySuccessTests.bind(this, buildName, buildIdsRange));
+    },
+    fetchStabilitySuccessTests: function (buildName, buildIdsRange, stabilityResults) {
+      var classesAndMethods, aggregations;
+      classesAndMethods = _.transform(stabilityResults, function (result, value) {
+        result.classes.push(value._id.testClassName);
+        result.methods.push(value._id.testName);
+      }, { classes: [], methods: [] });
+      classesAndMethods.classes = _.uniq(classesAndMethods.classes);
+      classesAndMethods.methods = _.uniq(classesAndMethods.methods);
+      aggregations = [
+        {
+          $sort: {
+            buildId: -1
+          }
+        },
+        {
+          $match: {
+            jobName: buildName,
+            buildId: {
+              $in: buildIdsRange
+            },
+            testClassName: {
+              $in: classesAndMethods.classes
+            },
+            testName: {
+              $in: classesAndMethods.methods
+            },
+            testFailed: false
+          }
+        },
+        {
+          $project: {
+            jobName: 1,
+            buildId: 1,
+            testClassName: 1,
+            testName: 1,
+            testFailed: 1,
+            markedUnstable: 1,
+            testReportUrl: 1,
+            exceptionType: 1,
+            errorMessage: 1,
+            successCount: { $cond: ['$testFailed', 0, 1] }
+          }
+        },
+        {
+          $group: {
+            _id: {
+              testClassName: '$testClassName',
+              testName: '$testName'
+            },
+            stability: { $avg: '$successCount' },
+            succeeded: { $sum: '$successCount' },
+            buildIds: {
+              $push: {
+                buildId: '$buildId',
+                testFailed: '$testFailed'
+              }
+            },
+            tests: {$push: '$$ROOT'}
+          }
+        }
+      ];
+      return this._promisize('aggregate', aggregations)
+          .then(this.addSuccessTestsToStability.bind(this, stabilityResults));
+    },
+    addSuccessTestsToStability: function (stabilityResults, complementingData) {
+      _.forEach(complementingData, function (successTest) {
+        var stabilityResult = _.find(stabilityResults, function (stabilityResult) {
+          return stabilityResult._id.testClassName === successTest._id.testClassName && stabilityResult._id.testName === successTest._id.testName;
+        });
+
+        if (stabilityResult) {
+          stabilityResult.buildIds = stabilityResult.buildIds.concat(successTest.buildIds);
+          stabilityResult.tests = stabilityResult.tests.concat(successTest.tests);
+          stabilityResult.succeeded = successTest.succeeded;
+          stabilityResult.stability = stabilityResult.failed / ((stabilityResult.failed + successTest.succeeded) || 1);
+        }
+      });
+
+      return stabilityResults;
     },
     fetchSpecific: function (buildName, buildNumber, tests, pageSize, page) {
       // console.log('fetchSpecific: buildName: \"' + buildName + '", buildNumber: ' + buildNumber + ', tests: ', tests);
