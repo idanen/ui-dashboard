@@ -2,7 +2,8 @@
   <div class="build-status-header">
     <div class="row">
       <div class="col-sm-4 build-name-column">
-        <paper-icon-button icon="{{ $ctrl.buildsHidden ? 'unfold-more' : 'unfold-less' }}" ng-click="$ctrl.buildsHiddenToggle()" ng-show="$ctrl.buildsHidden"></paper-icon-button>
+        <paper-icon-button icon="unfold-less" ng-click="$ctrl.buildsHiddenToggle()" ng-show="!$ctrl.buildsHidden"></paper-icon-button>
+        <paper-icon-button icon="unfold-more" ng-click="$ctrl.buildsHiddenToggle()" ng-show="$ctrl.buildsHidden"></paper-icon-button>
         <strong uib-tooltip="{{ $ctrl.build.$id | releasever }}"> {{ $ctrl.build.alias || $ctrl.build.$id | releasever }}</strong>
       </div>
       <div class="col-sm-4">

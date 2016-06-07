@@ -52,8 +52,8 @@
         })
         .service('ciStatusService', CiStatusService);
 
-    CiStatusService.$inject = ['$http', '$q', 'Ref', '$firebaseObject', '$firebaseArray', 'ENV'];
-    function CiStatusService($http, $q, ref, $firebaseObject, $firebaseArray, ENV) {
+    CiStatusService.$inject = ['$http', '$q', 'Ref', '$firebaseObject', '$firebaseArray', 'ENV', 'DEFAULT_JOB_NAME'];
+    function CiStatusService($http, $q, ref, $firebaseObject, $firebaseArray, ENV, DEFAULT_JOB_NAME) {
         this._jobsUrl = '//' + ENV.HOST + ':' + ENV.PORT;
         this._jobsRef = ref.child('allJobs');
         this._statusRef = ref.child('ciStatus');
@@ -63,6 +63,7 @@
         this.$q = $q;
         this.$firebaseObject = $firebaseObject;
         this.$firebaseArray = $firebaseArray;
+        this.DEFAULT_JOB_NAME = DEFAULT_JOB_NAME;
     }
 
     CiStatusService.prototype = {
@@ -70,7 +71,7 @@
             var ref = (group !== 'masters') ? this._statusRef.child(group) : this._statusRef.child(group);
             return this.$firebaseArray(ref);
         },
-        getLastBuildNumber: function (group = 'masters', buildName = 'MaaS-SAW-USB-master') {
+        getLastBuildNumber: function (group = 'masters', buildName = this.DEFAULT_JOB_NAME) {
             return this.$q((resolve) => {
                 this._statusRef.child(group).child(buildName)
                     .child('builds')
@@ -117,14 +118,14 @@
           return this.$q((resolve) => {
             this._statusRef
                 .child('masters')
-                .child('MaaS-SAW-USB-master')
+                .child(this.DEFAULT_JOB_NAME)
                 .child('builds')
                 .orderByKey()
                 .limitToLast(1)
                 .once('child_added', (snap) => {
                   resolve({
                     group: 'masters',
-                    name: 'MaaS-SAW-USB-master',
+                    name: this.DEFAULT_JOB_NAME,
                     number: snap.key()
                   });
                 });

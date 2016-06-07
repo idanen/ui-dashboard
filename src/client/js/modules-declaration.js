@@ -10,6 +10,7 @@
         })
         .constant('JENKINS_BASE_URL', 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/')
         .constant('DATE_FORMAT', 'HH:mm dd/MM/yyyy')
+        .constant('DEFAULT_JOB_NAME', 'MaaS-SAW-USB-master')
         .constant('NotificationTags', {
           PUSH_Q: 'PushQueueNotification',
           BRANCH_OWNER_Q: 'BranchOwnerNotification'

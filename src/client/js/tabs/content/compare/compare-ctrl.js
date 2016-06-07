@@ -4,14 +4,15 @@
   angular.module('ci-site')
     .controller('CompareCtrl', CompareController);
 
-  CompareController.$inject = ['build', 'toBuild', '$state', '$filter', '$q', 'ciStatusService', 'buildTestsService', 'JENKINS_BASE_URL'];
-  function CompareController(build, toBuild, $state, $filter, $q, ciStatusService, buildTestsService, JENKINS_BASE_URL) {
+  CompareController.$inject = ['build', 'toBuild', '$state', '$filter', '$q', 'ciStatusService', 'buildTestsService', 'JENKINS_BASE_URL', 'DEFAULT_JOB_NAME'];
+  function CompareController(build, toBuild, $state, $filter, $q, ciStatusService, buildTestsService, JENKINS_BASE_URL, DEFAULT_JOB_NAME) {
     this.build = build;
     this.toBuild = toBuild;
     this.$state = $state;
     this.$filter = $filter;
     this.$q = $q;
     this.JENKINS_BASE_URL = JENKINS_BASE_URL;
+    this.DEFAULT_JOB_NAME = DEFAULT_JOB_NAME;
     this.buildTestsService = buildTestsService;
     this.ciStatusService = ciStatusService;
     this.loading = false;
@@ -86,7 +87,7 @@
       } else {
         this.selected.right = {
           group: this.selected.right.group || this.toBuild.group || 'masters',
-          name: this.toBuild.name || 'MaaS-SAW-USB-master'
+          name: this.toBuild.name || this.DEFAULT_JOB_NAME
         };
         this.ciStatusService.getLastBuildNumber()
             .then((lastMasterBuild) => {
@@ -148,15 +149,17 @@
           rightBuildName = this.$filter('releasever')(this.selected.right.name),
           promises = [];
 
-      this.stabilityLoading = true;
+      if (this.buildsCount) {
+        this.stabilityLoading = true;
 
-      promises.push(this.buildTestsService.getStability(leftBuildName, this.selected.left.number, this.buildsCount)
-          .then(this.addStabilityResultsToTestsList.bind(this, this.leftTests)));
-      promises.push(this.buildTestsService.getStability(rightBuildName, this.selected.right.number, this.buildsCount)
-          .then(this.addStabilityResultsToTestsList.bind(this, this.rightTests)));
+        promises.push(this.buildTestsService.getStability(leftBuildName, this.selected.left.number, this.buildsCount)
+            .then(this.addStabilityResultsToTestsList.bind(this, this.leftTests)));
+        promises.push(this.buildTestsService.getStability(rightBuildName, this.selected.right.number, this.buildsCount)
+            .then(this.addStabilityResultsToTestsList.bind(this, this.rightTests)));
 
-      this.$q.all(promises)
-          .finally(() => this.stabilityLoading = false);
+        this.$q.all(promises)
+            .finally(() => this.stabilityLoading = false);
+      }
     },
     addStabilityResultsToTestsList: function (testsWraps, stabilityResults) {
       let groupedStabilityResults = _.groupBy(stabilityResults, (stabilityResult) => stabilityResult._id.testClassName);
