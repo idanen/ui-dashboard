@@ -55,10 +55,7 @@
       return this.$state.href('compare', {
         group: this.group,
         buildName: this.buildName,
-        buildNumber: buildNumber,
-        toGroup: this.group,
-        toBuildName: this.buildName,
-        toBuildNumber: (parseInt(buildNumber, 10) - 1)
+        buildNumber: buildNumber
       });
     },
     resultToClass: function (job) {

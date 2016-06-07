@@ -191,6 +191,9 @@ ui-ci-status .table tbody td:first-child {
     outline: 0;
     cursor: pointer;
   }
+  .compare-side-title {
+    line-height: 2;
+  }
 }
 
 .compare-legend-container {
@@ -223,6 +226,10 @@ test-stability {
   }
 }
 
+paper-slider.paper-slider {
+  width: 100%;
+}
+
 .stability-container {
   .btn-run-stability {
     background-color: $green-color;
@@ -234,6 +241,32 @@ test-stability {
     &:hover {
       background-color: darken($green-color, 5);
     }
+  }
+}
+
+.test-description {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 1.5em;
+  cursor: pointer;
+  transition: all .3s ease-out;
+  &.test-description-open {
+    max-height: 10em;
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    background: linear-gradient(to right, transparent 60%, #fff);
+    text-align: right;
+    right: 15px;
+    top: 7px;
+    height: 2em;
+    pointer-events: none;
+  }
+  &.test-description-open::after {
+    background: none;
   }
 }
 

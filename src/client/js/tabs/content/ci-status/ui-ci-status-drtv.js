@@ -95,62 +95,6 @@
         toggleLegend: function () {
           this.legendShown = !this.legendShown;
         },
-        determineInitialFreezeState: function (jobs) {
-            angular.forEach(jobs, (function (job, jobId) {
-                if (/^\$/.test(jobId)) {
-                    return;
-                }
-                this.freezeState(jobId, job.freeze);
-            }).bind(this));
-
-            return jobs;
-        },
-        freezeState: function (jobName, state, group) {
-            if (jobName in this.jobs[group || 'masters']) {
-                this.jobs[group || 'masters'][jobName].freeze = state;
-            }
-        },
-        getBuilds: function (job) {
-          return this.ciStatusService.getJobBuilds(job.$id, false, 3);
-        },
-        /**
-         * Displays the alias, if it doesn't exist we will show the job name.
-         * @param {object} job the job
-         * @returns {string} the job's display name
-         */
-        displayName: function (job) {
-          if (!job) {
-            return '';
-          }
-          if (job.alias) {
-            return job.alias;
-          }
-          return job.name;
-        },
-        status: function (job) {
-          if (!job) {
-            return '';
-          }
-            if (job.building) {
-                return 'Running';
-            } else {
-                return job.result;
-            }
-        },
-        buildJenkinsLink: function (jobName, jobNumber) {
-            return `${this.JENKINS_BASE_URL}${jobName}/${jobNumber}`;
-        },
-        buildCompareLink: function (jobName, jobNumber) {
-          return this.$state.href('compare', {
-            buildName: jobName,
-            buildNumber: jobNumber,
-            toBuildName: jobName,
-            toBuildNumber: (parseInt(jobNumber, 10) - 1)
-          });
-        },
-        resultToIconName: function (buildResult) {
-          return this.ResultsToIconNames[buildResult] || '';
-        },
         setNewBuildName: function (value) {
           this.newBuild.name = value;
         }

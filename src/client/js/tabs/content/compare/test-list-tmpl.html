@@ -1,8 +1,11 @@
 <ul class="list-group">
   <li class="list-group-item" ng-repeat="test in $ctrl.tests | orderBy:'testName' track by $index">
-    <strong ng-class="test.markedUnstable ? 'text-warning' : ''"><iron-icon ng-show="test.markedUnstable" icon="bug-report" uib-tooltip="Marked as unstable"></iron-icon> {{ test.testName }}</strong>
+    <div class="test-description" ng-class="{'text-warning': test.markedUnstable, 'test-description-open': $ctrl.openedTests[test.testName]}" ng-click="$ctrl.toggleOpen(test.testName)">
+      <iron-icon ng-show="test.markedUnstable" icon="bug-report" uib-tooltip="Marked as unstable"></iron-icon>
+      <strong> {{ test.testName }}</strong>
+      <em class="test-exception-details" ng-if="!test.alien"> {{ test.errorMessage }}</em>
+    </div>
     <paper-badge icon="cloud-off" ng-show="test.exceptionType === 'org.openqa.selenium.WebDriverException'" alt="Connection exception"></paper-badge>
-    <em ng-if="!test.alien"> {{ test.errorMessage }}</em>
     <div class="links">
       <a class="btn btn-link" ng-href="{{ test.testReportUrl }}testReport" target="_blank" ng-disabled="!test.testReportUrl">
         <iron-icon icon="assignment"></iron-icon><span> Test Results</span>
@@ -14,10 +17,20 @@
         <iron-icon icon="important-devices"></iron-icon><span> UI Report</span>
       </a>
     </div>
-    <div class="test-stability" ng-if="test.stabilityResult">
-      <uib-progressbar class="progress-striped" max="test.stabilityResult.count" value="test.stabilityResult.failed" type="{{test.stabilityResult.stability > 0.3 ? 'danger' : 'warning'}}">
-        <span class="text-success test-result-stable" ng-if="test.stabilityResult.failed === 0"><iron-icon icon="done-all"></iron-icon> Stable</span>
-        <em ng-if="test.stabilityResult.failed > 0" uib-tooltip="{{ test.stabilityResult.failed }} / {{ test.stabilityResult.count }} ({{ test.stabilityResult.stability | percentage:0 }})">{{ test.stabilityResult.failed }} / {{ test.stabilityResult.count }} ({{ test.stabilityResult.stability | percentage:0 }})</em>
+    <div class="test-stability" ng-if="!!test.stabilityResult">
+      <uib-progress class="progress-striped" max="$ctrl.stabilityCount">
+        <uib-bar value="test.stabilityResult.failed" type="danger">
+          <em>{{ test.stabilityResult.failed }}</em>
+        </uib-bar>
+        <uib-bar value="test.stabilityResult.count - test.stabilityResult.failed" type="success">
+          <em>{{ test.stabilityResult.count - test.stabilityResult.failed }}</em>
+        </uib-bar>
+        <em class="text-priority">{{ test.stabilityResult.stability | percentage:0 }}</em>
+      </uib-progress>
+    </div>
+    <div class="test-stability" ng-if="!test.stabilityResult">
+      <uib-progressbar class="progress-striped" max="100" value="100" type="success">
+        <span class="text-priority test-result-stable"><iron-icon icon="done-all"></iron-icon> Stable (didn't fail on last builds)</span>
       </uib-progressbar>
     </div>
   </li>

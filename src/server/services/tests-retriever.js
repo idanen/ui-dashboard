@@ -172,7 +172,8 @@ module.exports = (function () {
             buildIds: {
               $push: {
                 buildId: '$buildId',
-                testFailed: '$testFailed'
+                testFailed: '$testFailed',
+                markedUnstable: '$markedUnstable'
               }
             },
             tests: {$push: '$$ROOT'}
@@ -236,7 +237,8 @@ module.exports = (function () {
             buildIds: {
               $push: {
                 buildId: '$buildId',
-                testFailed: '$testFailed'
+                testFailed: '$testFailed',
+                markedUnstable: '$markedUnstable'
               }
             },
             tests: {$push: '$$ROOT'}

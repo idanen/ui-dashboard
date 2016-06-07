@@ -8,9 +8,8 @@
         templateUrl: 'js/tabs/content/stability/stability-tmpl.html'
       });
 
-  CIStabilityController.$inject = ['$q', '$scope', '$stateParams', 'buildTestsService', 'ciStatusService', 'build', '$filter'];
-  function CIStabilityController($q, $scope, $stateParams, buildTestsService, ciStatusService, build, $filter) {
-    this.$scope = $scope;
+  CIStabilityController.$inject = ['$q', '$stateParams', 'buildTestsService', 'ciStatusService', 'build', '$filter'];
+  function CIStabilityController($q, $stateParams, buildTestsService, ciStatusService, build, $filter) {
     this.buildTestsService = buildTestsService;
     this.ciStatusService = ciStatusService;
     this.$filter = $filter;
@@ -115,14 +114,10 @@
       //}
     },
     buildsCountUpdated: function (value) {
-      this.$scope.$applyAsync(() => {
-        this.buildsCount = value;
-      });
+      this.buildsCount = value;
     },
     filterFailedPercentChanged: function (value) {
-      this.$scope.$applyAsync(() => {
-        this.filterFailedPercent = value;
-      });
+      this.filterFailedPercent = value;
     },
     addNewTest: function () {
       this.appendToTests(this.newTest);

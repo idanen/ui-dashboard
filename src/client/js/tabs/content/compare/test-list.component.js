@@ -6,9 +6,18 @@
         controller: TestListController,
         templateUrl: 'js/tabs/content/compare/test-list-tmpl.html',
         bindings: {
-          tests: '<'
+          tests: '<',
+          stabilityCount: '<'
         }
       });
 
-  function TestListController() {}
+  function TestListController() {
+    this.openedTests = {};
+  }
+
+  TestListController.prototype = {
+    toggleOpen: function (testName) {
+      this.openedTests[testName] = !this.openedTests[testName];
+    }
+  };
 }());

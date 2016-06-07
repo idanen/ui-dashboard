@@ -73,11 +73,17 @@
         getLastBuildNumber: function (group = 'masters', buildName = 'MaaS-SAW-USB-master') {
             return this.$q((resolve) => {
                 this._statusRef.child(group).child(buildName)
-                    .child('builds').orderByKey().limitToLast(1)
+                    .child('builds')
+                    .orderByKey()
+                    .limitToLast(2)
                     .once('value', function (snapshot) {
-                        snapshot.forEach(function (innerSnapshot) {
-                            resolve(innerSnapshot.key());
-                        });
+                      let buildNumber = 0;
+                      snapshot.forEach(function (innerSnapshot) {
+                        if (innerSnapshot.val().result !== 'running') {
+                          buildNumber = innerSnapshot.key();
+                        }
+                      });
+                      resolve(buildNumber);
                     });
             });
         },

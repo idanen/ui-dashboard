@@ -13,8 +13,11 @@
     this.$q = $q;
     this.JENKINS_BASE_URL = JENKINS_BASE_URL;
     this.buildTestsService = buildTestsService;
+    this.ciStatusService = ciStatusService;
     this.loading = false;
+    this.stabilityLoading = false;
     this.title = `Comparing build ${this.build.name}#${this.build.number} and ${this.toBuild.name}#${this.toBuild.number}`;
+    this.buildsCount = 10;
     this.availableBuilds = {
       masters: ciStatusService.getJobs(),
       teams: ciStatusService.getJobs('teams')
@@ -83,9 +86,12 @@
       } else {
         this.selected.right = {
           group: this.selected.right.group || this.toBuild.group || 'masters',
-          name: this.build.name,
-          number: this.build.number - 1
+          name: this.toBuild.name || 'MaaS-SAW-USB-master'
         };
+        this.ciStatusService.getLastBuildNumber()
+            .then((lastMasterBuild) => {
+              this.selected.right.number = lastMasterBuild;
+            });
       }
     },
     getTests: function () {
@@ -139,11 +145,18 @@
     },
     getTestStability: function () {
       let leftBuildName = this.$filter('releasever')(this.selected.left.name),
-          rightBuildName = this.$filter('releasever')(this.selected.right.name);
-      this.buildTestsService.getStability(leftBuildName, this.selected.left.number, 10)
-          .then(this.addStabilityResultsToTestsList.bind(this, this.leftTests));
-      this.buildTestsService.getStability(rightBuildName, this.selected.right.number, 10)
-          .then(this.addStabilityResultsToTestsList.bind(this, this.rightTests));
+          rightBuildName = this.$filter('releasever')(this.selected.right.name),
+          promises = [];
+
+      this.stabilityLoading = true;
+
+      promises.push(this.buildTestsService.getStability(leftBuildName, this.selected.left.number, this.buildsCount)
+          .then(this.addStabilityResultsToTestsList.bind(this, this.leftTests)));
+      promises.push(this.buildTestsService.getStability(rightBuildName, this.selected.right.number, this.buildsCount)
+          .then(this.addStabilityResultsToTestsList.bind(this, this.rightTests)));
+
+      this.$q.all(promises)
+          .finally(() => this.stabilityLoading = false);
     },
     addStabilityResultsToTestsList: function (testsWraps, stabilityResults) {
       let groupedStabilityResults = _.groupBy(stabilityResults, (stabilityResult) => stabilityResult._id.testClassName);
@@ -166,16 +179,20 @@
         });
       });
     },
-    goToStability: function (testsList, side) {
+    goToStability: function (side) {
       return this.$state.go('stability', {
         group: this.selected[side].group,
-        buildName: testsList.tests[0].jobName,
-        buildNumber: testsList.tests[0].buildId
+        buildName: this.selected[side].name,
+        buildNumber: this.selected[side].number
       });
     },
     hasMarkedUnstable: function (testsList) {
       let unstable = _.find(testsList.tests, { markedUnstable: true });
       return !!unstable;
+    },
+    buildsCountUpdated: function (value) {
+      this.buildsCount = value;
+      this.getTestStability();
     },
     toggleLegend: function () {
       this.legendShown = !this.legendShown;

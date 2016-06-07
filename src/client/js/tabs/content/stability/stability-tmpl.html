@@ -27,7 +27,7 @@
     <fieldset class="form-group">
       <label class="col-md-3">Previous builds count <iron-icon icon="info-outline" uib-tooltip="Calculate stability of the last {{$ctrl.buildsCount}} builds (NOTE: that this is not related to the selected build id below)"></iron-icon></label>
       <div class="col-md-6">
-        <paper-slider pin min="10" max="50" bind-from="$ctrl.buildsCount" on-update="$ctrl.buildsCountUpdated(value)" style="width: 100%;"></paper-slider>
+        <paper-slider class="paper-slider" pin min="10" max="50" bind-from="$ctrl.buildsCount" on-update="$ctrl.buildsCountUpdated(value)"></paper-slider>
       </div>
       <div class="col-md-1">
         <input class="form-control" type="number" ng-model="$ctrl.buildsCount">
@@ -45,7 +45,7 @@
     <fieldset class="form-group">
       <label class="col-xs-3">Show above</label>
       <div class="col-xs-4">
-        <paper-slider pin min="0" max="1" step="0.1" bind-from="$ctrl.filterFailedPercent" on-update="$ctrl.filterFailedPercentChanged(value)" style="width: 100%;"></paper-slider>
+        <paper-slider class="paper-slider" pin min="0" max="1" step="0.1" bind-from="$ctrl.filterFailedPercent" on-update="$ctrl.filterFailedPercentChanged(value)"></paper-slider>
       </div>
       <div class="col-xs-2">
         <output>{{ $ctrl.filterFailedPercent * 100 }}&#37; failed</output>
@@ -63,7 +63,7 @@
         <ul class="list-group">
           <li class="list-group-item slide-in" ng-repeat="testWrap in $ctrl.testWraps | classNameOrder | stabilityFilter:$ctrl.filterFailedPercent | filter:$ctrl.filterTestName track by $index">
             <strong>{{ testWrap.testClassName | className }}</strong>
-            <test-list tests="testWrap.tests"></test-list>
+            <test-list tests="testWrap.tests" stability-count="$ctrl.buildsCount"></test-list>
           </li>
         </ul>
       </div>

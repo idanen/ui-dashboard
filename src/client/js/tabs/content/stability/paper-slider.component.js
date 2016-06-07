@@ -10,18 +10,22 @@
         }
       });
 
-  PaperSliderCtrl.$inject = ['$element'];
-  function PaperSliderCtrl($element) {
+  PaperSliderCtrl.$inject = ['$element', '$scope'];
+  function PaperSliderCtrl($element, $scope) {
     this.$element = $element;
+    this.$scope = $scope;
   }
 
   PaperSliderCtrl.prototype = {
     $postLink: function () {
-      this.$element[0].addEventListener('value-change', function () {
-        this.onUpdate({
-          value: this.$element[0].value
+      this.$element[0].addEventListener('value-change', () => {
+        // This is a regular DOM event so we have to manually trigger change detection (a $digest loop)
+        this.$scope.$applyAsync(() => {
+          this.onUpdate({
+            value: this.$element[0].value
+          });
         });
-      }.bind(this));
+      });
     },
     $onChanges: function (changes) {
       if (changes && changes.bindFrom) {
