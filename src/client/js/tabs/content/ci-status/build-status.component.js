@@ -58,16 +58,6 @@
         buildNumber: buildNumber
       });
     },
-    resultToClass: function (job) {
-      if (!job) {
-        return '';
-      }
-      if (job.building) {
-        return 'active';
-      }
-
-      return this._resultToClass[job.result] || '';
-    },
     resultToIconName: function (buildResult) {
       return this.ResultsToIconNames[buildResult] || '';
     },
