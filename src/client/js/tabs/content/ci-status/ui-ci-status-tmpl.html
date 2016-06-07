@@ -55,8 +55,7 @@
             <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
               <li role="menuitem" ng-repeat="job in ciJobsCtrl.jobs.masters">
                 <a ng-click="ciJobsCtrl.filterJob('masters', job)">
-                  <iron-icon icon="check-box" ng-show="ciJobsCtrl.filtered.masters[job.$id]"></iron-icon>
-                  <iron-icon icon="check-box-outline-blank" ng-hide="ciJobsCtrl.filtered.masters[job.$id]"></iron-icon>
+                  <iron-icon icon="{{ ciJobsCtrl.filtered.masters[job.$id] ? 'check-box' : 'check-box-outline-blank' }}"></iron-icon>
                   <span>{{ job.alias || job.$id | releasever }}</span>
                 </a>
               </li>
@@ -82,8 +81,7 @@
             <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
               <li role="menuitem" ng-repeat="job in ciJobsCtrl.jobs.teams">
                 <a ng-click="ciJobsCtrl.filterJob('teams', job)">
-                  <iron-icon icon="check-box" ng-show="ciJobsCtrl.filtered.teams[job.$id]"></iron-icon>
-                  <iron-icon icon="check-box-outline-blank" ng-hide="ciJobsCtrl.filtered.teams[job.$id]"></iron-icon>
+                  <iron-icon icon="{{ ciJobsCtrl.filtered.teams[job.$id] ? 'check-box' : 'check-box-outline-blank' }}"></iron-icon>
                   <span>{{ job.alias || job.$id | releasever }}</span>
                 </a>
               </li>

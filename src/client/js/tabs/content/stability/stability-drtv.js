@@ -8,11 +8,12 @@
         templateUrl: 'js/tabs/content/stability/stability-tmpl.html'
       });
 
-  CIStabilityController.$inject = ['$q', '$stateParams', 'buildTestsService', 'ciStatusService', 'build', '$filter'];
-  function CIStabilityController($q, $stateParams, buildTestsService, ciStatusService, build, $filter) {
+  CIStabilityController.$inject = ['$q', '$stateParams', 'buildTestsService', 'ciStatusService', 'build', '$filter', 'DEFAULT_JOB_NAME'];
+  function CIStabilityController($q, $stateParams, buildTestsService, ciStatusService, build, $filter, DEFAULT_JOB_NAME) {
     this.buildTestsService = buildTestsService;
     this.ciStatusService = ciStatusService;
     this.$filter = $filter;
+    this.DEFAULT_JOB_NAME = DEFAULT_JOB_NAME;
     this.buildsCount = 10;
     this.filterFailedPercent = 0.0;
     this.tests = [];
@@ -27,7 +28,7 @@
     this.availableGroups = Object.keys(this.availableBuilds);
     this.build = {
       group: build.group || 'masters',
-      name: build.name || 'MaaS-SAW-USB-master',
+      name: build.name || this.DEFAULT_JOB_NAME,
       number: build.number || ''
     };
 

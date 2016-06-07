@@ -1,4 +1,4 @@
-<ul class="list-group">
+<ul class="list-group test-list-component">
   <li class="list-group-item" ng-repeat="test in $ctrl.tests | orderBy:'testName' track by $index">
     <div class="test-description" ng-class="{'text-warning': test.markedUnstable, 'test-description-open': $ctrl.openedTests[test.testName]}" ng-click="$ctrl.toggleOpen(test.testName)">
       <iron-icon ng-show="test.markedUnstable" icon="bug-report" uib-tooltip="Marked as unstable"></iron-icon>
@@ -16,6 +16,22 @@
       <a class="btn btn-link" ng-href="{{ test.testReportUrl }}artifact/target/reports/test-results.html" target="_blank" ng-disabled="!test.testReportUrl">
         <iron-icon icon="important-devices"></iron-icon><span> UI Report</span>
       </a>
+      <span class="pull-right btn btn-link stability-details-btn" ng-if="!!test.stabilityResult" uib-dropdown uib-tooltip="Stability details" tooltip-placement="top">
+        <iron-icon icon="more-horiz" uib-dropdown-toggle></iron-icon>
+        <ul class="dropdown-menu" uib-dropdown-menu>
+          <li ng-repeat="details in test.stabilityResult.buildIds | orderBy:'-buildId'">
+            <a ng-href="{{ $ctrl.buildJenkinsLink(test.jobName, details.buildId) }}" target="_blank">
+              <span>{{ details.buildId }}</span>
+              <span ng-class="{'text-danger': details.testFailed, 'text-success': !details.testFailed}">
+                <iron-icon icon="{{ details.testFailed ? 'error-outline' : 'check' }}"></iron-icon>
+              </span>
+              <span class="text-warning" ng-if="details.markedUnstable">
+                <iron-icon icon="bug-report"></iron-icon>
+              </span>
+            </a>
+          </li>
+        </ul>
+      </span>
     </div>
     <div class="test-stability" ng-if="!!test.stabilityResult">
       <uib-progress class="progress-striped" max="$ctrl.stabilityCount">

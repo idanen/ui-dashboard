@@ -19,12 +19,14 @@
   PaperSliderCtrl.prototype = {
     $postLink: function () {
       this.$element[0].addEventListener('value-change', () => {
-        // This is a regular DOM event so we have to manually trigger change detection (a $digest loop)
-        this.$scope.$applyAsync(() => {
-          this.onUpdate({
-            value: this.$element[0].value
+        if (this.$element[0].value !== this.bindFrom) {
+          // This is a regular DOM event so we have to manually trigger change detection (a $digest loop)
+          this.$scope.$applyAsync(() => {
+            this.onUpdate({
+              value: this.$element[0].value
+            });
           });
-        });
+        }
       });
     },
     $onChanges: function (changes) {
