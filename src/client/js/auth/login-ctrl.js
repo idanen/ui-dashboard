@@ -15,7 +15,7 @@
 
   LoginController.prototype = {
     login: function () {
-      return this.auth.login('password', this.remember, this.email, this.password, this.displayName)
+      return this.auth.login('password', this.remember, this.email, this.password)
         .then(this.postLogin.bind(this))
         .catch(function (error) {
           console.error(error);

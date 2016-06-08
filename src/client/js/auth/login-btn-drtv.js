@@ -29,13 +29,13 @@
     };
   }
 
-  LoginBtnController.$inject = ['Ref', '$firebaseAuth', 'authService', 'userService'];
-  function LoginBtnController(Ref, $firebaseAuth, authService, userService) {
+  LoginBtnController.$inject = ['$firebaseAuth', 'authService', 'userService'];
+  function LoginBtnController($firebaseAuth, authService, userService) {
     this.authService = authService;
     this.userService = userService;
-    this.authObj = $firebaseAuth(Ref);
+    this.authObj = $firebaseAuth();
 
-    this.authObj.$onAuth(this.updateAuthState.bind(this));
+    this.authObj.$onAuthStateChanged(this.updateAuthState.bind(this));
   }
 
   LoginBtnController.prototype = {
