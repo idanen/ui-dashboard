@@ -13,9 +13,10 @@
         templateUrl: 'js/tabs/content/compare/build-selector-tmpl.html'
       });
 
-  BuildSelectorController.$inject = ['$element'];
-  function BuildSelectorController($element) {
+  BuildSelectorController.$inject = ['$element', 'DEFAULT_JOB_NAME'];
+  function BuildSelectorController($element, DEFAULT_JOB_NAME) {
     this.$element = $element;
+    this.DEFAULT_JOB_NAME = DEFAULT_JOB_NAME;
     this.selectedBuildResult = 'UNKNOWN';
   }
 
@@ -53,8 +54,12 @@
         }
       }
       if (changes.builds && changes.builds.currentValue) {
-        let firstBuild = changes.builds.currentValue[0];
+        let firstBuild = changes.builds.currentValue[0],
+            masterBuild = _.find(changes.builds.currentValue, { $id: this.DEFAULT_JOB_NAME });
         this.name = firstBuild.$id;
+        if (this.group === 'masters' && !!masterBuild) {
+          this.name = masterBuild.$id;
+        }
         this.buildResults = this.buildResultsData(this.builds, this.name);
         this.number = this.buildResults[0].id;
         this.selectedBuildResult = _.find(this.buildResults, {id: this.number}).result;
