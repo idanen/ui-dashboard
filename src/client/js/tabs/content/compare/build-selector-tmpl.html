@@ -20,15 +20,27 @@
     </ul>
   </span>
   <span>#</span>
-  <span class="btn btn-xs btn-default" uib-dropdown>
-    <span uib-dropdown-toggle>
-      {{ $ctrl.number }} <iron-icon icon="arrow-drop-down"></iron-icon>
+  <span ng-hide="$ctrl.manualMode">
+    <span class="btn btn-xs btn-default" uib-dropdown>
+      <span uib-dropdown-toggle>
+        {{ $ctrl.number }} <iron-icon icon="arrow-drop-down"></iron-icon>
+      </span>
+      <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+        <li ng-repeat="buildNumber in $ctrl.buildResults | limitTo:20 track by $index">
+          <a ng-click="$ctrl.change('number', buildNumber.id)">{{ buildNumber.id }} {{ buildNumber.branch }}
+            <build-result result="buildNumber.result"></build-result>
+          </a>
+        </li>
+      </ul>
     </span>
-    <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
-      <li ng-repeat="buildNumber in $ctrl.buildResults | limitTo:20 track by $index">
-        <a ng-click="$ctrl.change('number', buildNumber.id)">{{ buildNumber.id }} {{ buildNumber.branch }} <build-result result="buildNumber.result"></build-result></a>
-      </li>
-    </ul>
+    (<build-result result="$ctrl.selectedBuildResult"></build-result>)
   </span>
-  (<build-result result="$ctrl.selectedBuildResult"></build-result>)
+  <span ng-show="$ctrl.manualMode">
+    <input class="form-control build-selector-number-manual" ng-model="$ctrl.number">
+    <paper-button raised ng-click="$ctrl.change('number', $ctrl.number)">
+      <iron-icon icon="send"></iron-icon>
+      <span>Go</span>
+    </paper-button>
+  </span>
+  <paper-icon-button icon="create" ng-click="$ctrl.manualMode = !$ctrl.manualMode"></paper-icon-button>
 </div>

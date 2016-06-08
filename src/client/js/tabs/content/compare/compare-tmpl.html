@@ -89,13 +89,14 @@
   <hr>
   <div class="row">
     <div class="col-md-6">
+      <paper-badge class="compare-total-failed" label="{{ compare.totalFailed.left }}" uib-tooltip="Total failed"></paper-badge>
       <uib-accordion close-others="false">
         <uib-accordion-group ng-repeat="testList in compare.leftTests | orderBy:[compare.sortField, 'testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}" is-open="compare.openTestLists[testList.testClassName]">
           <uib-accordion-heading>
             <div class="test-compare-accordion-heading" ng-click="compare.toggleTestList($event, testList.testClassName)">
-              <span ng-class="compare.testIconClass(testList)">{{ testList.testClassName | className }}</span>
-              <span class="badge" ng-class="compare.testIconClass(testList)" ng-bind="testList.tests.length"></span>
-              <div class="pull-right" ng-class="compare.testIconClass(testList)">
+              <span>{{ testList.testClassName | className }}</span>
+              <span class="badge" ng-bind="testList.tests.length"></span>
+              <div class="pull-right">
                 <iron-icon icon="{{ compare.testIcon(testList) }}"></iron-icon>
               </div>
               <div class="pull-right text-warning" ng-if="compare.hasMarkedUnstable(testList)" uib-tooltip="Marked as unstable">
@@ -114,13 +115,14 @@
       </uib-accordion>
     </div>
     <div class="col-md-6">
+      <paper-badge class="compare-total-failed" label="{{ compare.totalFailed.right }}" uib-tooltip="Total failed"></paper-badge>
       <uib-accordion close-others="false">
         <uib-accordion-group ng-repeat="testList in compare.rightTests | orderBy:[compare.sortField, 'testClassName'] track by $index" panel-class="{{compare.panelClass(testList)}}" is-open="compare.openTestLists[testList.testClassName]">
           <uib-accordion-heading>
             <div class="test-compare-accordion-heading" ng-click="compare.toggleTestList($event, testList.testClassName)">
-              <span ng-class="compare.testIconClass(testList)"> {{ testList.testClassName | className }}</span>
-              <span class="badge" ng-bind="testList.tests.length" ng-class="compare.testIconClass(testList)"></span>
-              <div class="pull-right" ng-class="compare.testIconClass(testList)">
+              <span> {{ testList.testClassName | className }}</span>
+              <span class="badge" ng-bind="testList.tests.length"></span>
+              <div class="pull-right">
                 <iron-icon icon="{{ compare.testIcon(testList) }}"></iron-icon>
               </div>
               <div class="pull-right text-warning" ng-if="compare.hasMarkedUnstable(testList)" uib-tooltip="Marked as unstable">

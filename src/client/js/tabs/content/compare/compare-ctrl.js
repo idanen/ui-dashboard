@@ -19,6 +19,10 @@
     this.stabilityLoading = false;
     this.title = `Comparing build ${this.build.name}#${this.build.number} and ${this.toBuild.name}#${this.toBuild.number}`;
     this.buildsCount = 10;
+    this.totalFailed = {
+      left: 0,
+      right: 0
+    };
     this.availableBuilds = {
       masters: ciStatusService.getJobs(),
       teams: ciStatusService.getJobs('teams')
@@ -139,6 +143,16 @@
         this.leftTests = this._toArray(rightGrouped);
         this.rightTests = this._toArray(leftGrouped);
       }
+
+      // Sum all failures on each side
+      this.totalFailed.left = this.leftTests.reduce((total, testsWrap) => {
+        total += _.filter(testsWrap.tests, { testFailed: true }).length;
+        return total;
+      }, 0);
+      this.totalFailed.right = this.rightTests.reduce((total, testsWrap) => {
+        total += _.filter(testsWrap.tests, { testFailed: true }).length;
+        return total;
+      }, 0);
     },
     buildJenkinsLink: function (side) {
       let buildName = this.$filter('releasever')(this.selected[side].name);

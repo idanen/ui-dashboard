@@ -175,6 +175,10 @@ ui-ci-status .table tbody td:first-child {
   .ind-build-result-aborted {
     color: red;
   }
+  .build-selector-number-manual {
+    width: 70px;
+    display: inline;
+  }
 }
 
 .compare-content {
@@ -194,6 +198,11 @@ ui-ci-status .table tbody td:first-child {
   .compare-side-title {
     line-height: 2;
   }
+}
+
+.compare-total-failed {
+  top: -9px;
+  left: 5px;
 }
 
 .compare-legend-container {
