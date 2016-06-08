@@ -99,6 +99,22 @@
             });
       }
     },
+    selectMasterBuild: function (side) {
+      this.ciStatusService.getLastBuildNumber()
+          .then((lastMasterBuild) => {
+            this.selected[side].group = 'masters';
+            this.selected[side].name = this.DEFAULT_JOB_NAME;
+            this.selected[side].number = lastMasterBuild;
+            this.updateState();
+          });
+    },
+    selectPreviousBuild: function (side) {
+      let otherSide = side === 'left' ? 'right' : 'left';
+      this.selected[side].group = this.selected[otherSide].group;
+      this.selected[side].name = this.selected[otherSide].name;
+      this.selected[side].number = parseInt(this.selected[otherSide].number, 10) - 1;
+      this.updateState();
+    },
     getTests: function () {
       let leftBuildName = this.$filter('releasever')(this.selected.left.name),
           rightBuildName = this.$filter('releasever')(this.selected.right.name);
