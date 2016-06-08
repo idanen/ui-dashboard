@@ -20,7 +20,8 @@
           let googleProvider = new this.$window.firebase.auth.GoogleAuthProvider();
           this.GOOGLE_AUTH_SCOPES.forEach(scope => googleProvider.addScope(scope));
           return this.authObj.$signInWithPopup(googleProvider)
-              .then(this.saveUser.bind(this));
+              .then(this.saveUser.bind(this))
+              .catch(console.error.bind(console));
         case 'facebook':
         case 'twitter':
           return this.authObj.$signInWithPopup(provider)
@@ -33,8 +34,9 @@
       }
     },
     saveUser: function (authUserData) {
-      authUserData.email = authUserData[authUserData.provider].email;
-      authUserData.displayName = authUserData[authUserData.provider].displayName || authUserData.email;
+      const profile = authUserData.providerData[0];
+      authUserData.email = profile.email;
+      authUserData.displayName = profile.displayName || authUserData.email;
       return this.userService.saveUser(authUserData);
     },
     logout: function () {

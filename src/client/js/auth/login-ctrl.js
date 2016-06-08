@@ -17,10 +17,10 @@
     login: function () {
       return this.auth.login('password', this.remember, this.email, this.password)
         .then(this.postLogin.bind(this))
-        .catch(function (error) {
+        .catch((error) => {
           console.error(error);
           this.$uibModalInstance.dismiss(error);
-        }.bind(this));
+        });
     },
     loginWithProvider: function (provider) {
       return this.auth.login(provider, this.remember)

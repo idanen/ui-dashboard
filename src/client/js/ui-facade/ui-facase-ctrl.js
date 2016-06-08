@@ -4,26 +4,14 @@
     angular.module('ui')
         .controller('UiFacadeCtrl', UiFacadeController);
 
-    UiFacadeController.$inject = ['$state', '$element', 'UiFacadeService', 'ciStatusService'];
-    function UiFacadeController($state, $element, UiFacadeService, ciStatusService) {
+    UiFacadeController.$inject = ['$state', '$element', '$firebaseAuth', 'UiFacadeService', 'ciStatusService'];
+    function UiFacadeController($state, $element, $firebaseAuth, UiFacadeService, ciStatusService) {
         this.UiFacadeService = UiFacadeService;
         this.$state = $state;
         this.$element = $element;
+        this.authObj = $firebaseAuth();
 
-        this.mainWidgets = [
-            {
-                title: 'CI/CD Status',
-                contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-ci-status-tmpl.html'
-            },
-            {
-                title: 'Push Queue',
-                contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-push-queue-tmpl.html'
-            }
-        ];
-        this.widgets = this.UiFacadeService.getAuthWidgets();
-
-        this.currentWidget = this.mainWidgets[0];
-        this.currentStateWidget = this.widgets[0];
+        this.authObj.$onAuthStateChanged(this.initWidgets.bind(this));
 
         ciStatusService.getDefaultBuild()
             .then((build) => {
@@ -32,6 +20,11 @@
     }
 
     UiFacadeController.prototype = {
+      initWidgets: function (/*currentUser*/) {
+        this.widgets = this.UiFacadeService.getAuthWidgets();
+
+        this.currentStateWidget = this.widgets[0];
+      },
         setWidgetState: function (widget) {
             this.currentStateWidget = widget;
         },
