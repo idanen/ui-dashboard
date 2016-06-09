@@ -4,10 +4,11 @@
   angular.module('ci-site')
     .service('userService', UserService);
 
-  UserService.$inject = ['Ref', '$q', '$firebaseObject'];
-  function UserService(Ref, $q, $firebaseObject) {
+  UserService.$inject = ['Ref', '$q', '$window', '$firebaseObject'];
+  function UserService(Ref, $q, $window, $firebaseObject) {
     this.usersRef = Ref.child('users');
     this.$q = $q;
+    this.$window = $window;
     this.$firebaseObject = $firebaseObject;
   }
 
@@ -32,17 +33,21 @@
      * @returns {Promise} A promise which resolves with user's authentication data
      */
     saveUser: function (authData) {
-      var userId = authData.uid;
+      const userId = authData.uid,
+            profile = authData.providerData[0];
+      let toSave = {
+        uid: userId,
+        email: profile.email,
+        displayName: profile.displayName || authData.email,
+        photoURL: profile.photoURL || `https://secure.gravatar.com/avatar/${this.$window.escape(this.$window.btoa(authData.email))}?d=retro`
+      };
+
       return this.$q((resolve, reject) => {
         this.usersRef.child(userId).transaction((currentUserData) => {
-          console.log(currentUserData);
           if (currentUserData === null) {
-            delete authData.auth.token;
-            return authData;
+            return toSave;
           }
-          return null;
         }, (error, committed) => {
-          console.error(error);
           if (error) {
             reject(error);
           }

@@ -1,5 +1,4 @@
 var Promise = require('promise'),
-    Firebase = require('firebase'),
     FirebaseService = require('./firebase-service.js'),
     consts = require('../config/consts.js'),
     JenkinsService = require('./jenkins-service.js');
@@ -9,31 +8,15 @@ module.exports = (function () {
 
   function StatusUpdater() {
     this.jenkins = new JenkinsService();
-    this.firebaseRef = new Firebase(consts.FIREBASE_URL_CI_STATUS);
     this.statusToColor = {
       SUCCESS: 'blue',
       FAILED: 'red',
       'default': 'yellow'
     };
     this.firebase = new FirebaseService();
-    //this.firebaseRef.authWithCustomToken(consts.FIREBASE_AUTH_TOKEN).then(function (error, authData) {
-    //  if (error) {
-    //    console.error(error);
-    //  } else {
-    //    console.log('Auth success: ' + authData);
-    //  }
-    //});
   }
 
   StatusUpdater.prototype = {
-    getBuildStatus: function (buildName, buildNumber) {
-      return this.jenkins.getBuild(buildName, buildNumber)
-          .then(this.getRelevantBuilds.bind(this))
-          .then(this.writeToDB.bind(this))
-          .catch(function (error) {
-            return Promise.reject(error);
-          });
-    },
     getRelevantBuilds: function (buildDetails) {
       var promises = [];
       promises.push(this.jenkins.getBuildType(buildDetails.name, JenkinsService.BuildTypes.lastCompleted));
@@ -116,8 +99,7 @@ module.exports = (function () {
       };
     },
     updateStatusInDB: function (toUpdate) {
-      var // firebaseRef = this.firebaseRef.child(toUpdate.ref),
-          updateUri,
+      var updateUri,
           rootBuildUpdate, rootBuildUri, group;
 
       if (!toUpdate) {
@@ -155,46 +137,6 @@ module.exports = (function () {
       console.log('Updating ref "' + updateUri + '" with data ' + JSON.stringify(toUpdate));
       return rootBuildUpdate
         .then(this.firebase.update.bind(this.firebase, updateUri, toUpdate));
-      //return firebaseRef.update(toUpdate)
-      //    .then(function (error) {
-      //      if (error) {
-      //        return Promise.reject(error);
-      //      }
-      //      return toUpdate;
-      //    });
-    },
-    writeToDB: function (builds) {
-      var mastersRef = this.firebaseRef.child('masters'),
-          updateTime = Date.now(),
-          updatePromises, buildRef;
-
-      if (!builds || !builds.length) {
-        return;
-      }
-
-      updatePromises = [];
-      buildRef = mastersRef.child(builds[0].name);
-      builds.forEach(function (build) {
-        var buildForDB = {
-          icon: build.status,
-          result: build.result,
-          running: build.building || false,
-          duration: build.duration,
-          lastUpdate: updateTime
-        };
-        var updatePromise = buildRef.child('builds').child(build.number).set(buildForDB)
-          .then(function (error) {
-            if (error) {
-              return Promise.reject(error);
-            }
-            return buildForDB;
-          });
-
-        updatePromises.push(updatePromise);
-      }, this);
-      // Update lastUpdated field
-      updatePromises.push(buildRef.child('lastUpdate').set(updateTime));
-      return Promise.all(updatePromises);
     },
     getAvailableGroups: function () {
       return this.firebase.fetch()

@@ -4,7 +4,7 @@ module.exports = function (app) {
     var UIDashboardController = require('../controllers/controllers.js');
     var controller = new UIDashboardController();
 
-    app.get('/buildStatus/:buildName', controller.getBuildStatus.bind(controller));
+    //app.get('/buildStatus/:buildName', controller.getBuildStatus.bind(controller));
 
     app.get('/buildTests/:buildName/:buildNumber/:onlyFailed?', controller.getBuildTests.bind(controller));
 

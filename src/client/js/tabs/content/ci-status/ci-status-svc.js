@@ -109,21 +109,6 @@
                 });
             });
         },
-        addJob: function (toAdd) {
-            return this.$http.post(this._jobsUrl + '/addJob', toAdd)
-                .then(this._processResponse);
-        },
-        loadJobs: function () {
-            return this.$http.get(this._jobsUrl + '/loadJobs')
-                .then(this._processResponse);
-        },
-        getBuildStatus: function (buildName) {
-            return this.$http.get(`${this._jobsUrl}/buildStatus/${buildName}`)
-                .then(this._processResponse);
-        },
-        _processResponse: function (response) {
-            return response.data;
-        },
         _getRef: function (jobId, group) {
             if (group) {
                 return this._statusRef.child(group).child(jobId);

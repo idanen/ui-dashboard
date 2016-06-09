@@ -15,7 +15,7 @@
   }
 
   AuthService.prototype = {
-    login: function (provider, remember, user, password) {
+    login: function (provider, user, password) {
       switch (provider) {
         case 'google':
           let googleProvider = new this.$window.firebase.auth.GoogleAuthProvider();
@@ -35,10 +35,7 @@
       }
     },
     saveUser: function (authResult) {
-      const authUserData = authResult.user;
-      const profile = authUserData.providerData[0];
-      authUserData.email = profile.email;
-      authUserData.displayName = profile.displayName || authUserData.email;
+      const authUserData = _.extend({}, authResult.user);
       return this.userService.saveUser(authUserData);
     },
     logout: function () {

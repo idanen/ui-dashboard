@@ -18,13 +18,13 @@ module.exports = (function () {
 
     UIDashboardController.prototype = {
 
-        getBuildStatus: function (request, response) {
-            return this.statusUpdater.getBuildStatus(request.params.buildName)
-                .then(function (statuses) {
-                    response.send(statuses);
-                })
-                .catch(this._handleError.bind(this, response));
-        },
+        //getBuildStatus: function (request, response) {
+        //    return this.statusUpdater.getBuildStatus(request.params.buildName)
+        //        .then(function (statuses) {
+        //            response.send(statuses);
+        //        })
+        //        .catch(this._handleError.bind(this, response));
+        //},
 
         updateStatus: function (request, response) {
           var isHead = request.query && request.query.HEAD === '1';

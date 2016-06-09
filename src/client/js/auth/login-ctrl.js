@@ -15,7 +15,7 @@
 
   LoginController.prototype = {
     login: function () {
-      return this.auth.login('password', this.remember, this.email, this.password)
+      return this.auth.login('password', this.email, this.password)
         .then(this.postLogin.bind(this))
         .catch((error) => {
           console.error(error);
@@ -23,7 +23,7 @@
         });
     },
     loginWithProvider: function (provider) {
-      return this.auth.login(provider, this.remember)
+      return this.auth.login(provider)
         .then(this.postLogin.bind(this))
         .catch((error) => {
           console.error(error);
@@ -31,8 +31,11 @@
         });
     },
     postLogin: function (user) {
-      console.log(user);
-      this.model = angular.extend({}, user, {displayName: this.displayName, email: user.providerData[0].email});
+      let profile = user.providerData[0];
+      this.model = angular.extend({}, user, {
+        displayName: this.displayName || profile.email,
+        email: profile.email
+      });
       return this.close();
     },
     cancel: function () {

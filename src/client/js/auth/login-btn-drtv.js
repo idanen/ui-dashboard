@@ -13,7 +13,7 @@
         <div>
           <a class="btn btn-default" ui-sref="login" ng-hide="loginBtn.authData">Login</a>
           <span ng-show="loginBtn.authData">
-            <img class="profile-image img-circle" ng-src="{{loginBtn.extra.profileImageURL}}" alt="profile image">
+            <img class="profile-image img-circle" ng-src="{{loginBtn.authData.photoURL}}" alt="profile image">
             <a class="btn btn-link" ng-click="loginBtn.logout()">Hi, {{ loginBtn.authData.displayName }}! | Logout</a>
           </span>
         </div>
@@ -47,7 +47,7 @@
       if (authData) {
         this.authData = this.userService.getUser(authData.uid);
         this.authData.$loaded().then((loadedData) => {
-          this.extra = angular.extend({}, loadedData[loadedData.provider]);
+          this.extra = angular.extend({}, loadedData);
         });
       }
     }
