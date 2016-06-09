@@ -15,23 +15,24 @@
 
   LoginController.prototype = {
     login: function () {
-      return this.auth.login('password', this.remember, this.email, this.password, this.displayName)
+      return this.auth.login('password', this.remember, this.email, this.password)
         .then(this.postLogin.bind(this))
-        .catch(function (error) {
+        .catch((error) => {
           console.error(error);
           this.$uibModalInstance.dismiss(error);
-        }.bind(this));
+        });
     },
     loginWithProvider: function (provider) {
       return this.auth.login(provider, this.remember)
         .then(this.postLogin.bind(this))
-        .catch(function (error) {
+        .catch((error) => {
           console.error(error);
           this.$uibModalInstance.dismiss(error);
-        }.bind(this));
+        });
     },
     postLogin: function (user) {
-      this.model = angular.extend({}, user, {displayName: this.displayName, email: user[user.provider].email});
+      console.log(user);
+      this.model = angular.extend({}, user, {displayName: this.displayName, email: user.providerData[0].email});
       return this.close();
     },
     cancel: function () {

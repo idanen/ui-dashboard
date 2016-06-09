@@ -2,48 +2,47 @@
   'use strict';
 
   angular.module('ci-site')
-      .constant('GOOGLE_AUTH_SCOPES', 'profile,email,https://www.googleapis.com/auth/plus.login,https://www.googleapis.com/auth/plus.profile.emails.read')
+      .constant('GOOGLE_AUTH_SCOPES', ['profile', 'email', 'https://www.googleapis.com/auth/plus.login', 'https://www.googleapis.com/auth/plus.profile.emails.read'])
       .service('authService', AuthService);
 
-  AuthService.$inject = ['Ref', '$firebaseAuth', 'userService', 'GOOGLE_AUTH_SCOPES'];
-  function AuthService(Ref, $firebaseAuth, userService, GOOGLE_AUTH_SCOPES) {
-    this.authObj = $firebaseAuth(Ref);
+  AuthService.$inject = ['$firebaseAuth', '$window', '$q', 'userService', 'GOOGLE_AUTH_SCOPES'];
+  function AuthService($firebaseAuth, $window, $q, userService, GOOGLE_AUTH_SCOPES) {
+    this.authObj = $firebaseAuth();
+    this.$window = $window;
+    this.$q = $q;
     this.userService = userService;
     this.GOOGLE_AUTH_SCOPES = GOOGLE_AUTH_SCOPES;
   }
 
   AuthService.prototype = {
-    login: function (provider, remember, user, password, displayName) {
+    login: function (provider, remember, user, password) {
       switch (provider) {
         case 'google':
-          return this.authObj.$authWithOAuthPopup(provider, {
-              remember: remember ? 'default' : 'sessionOnly',
-              scope: this.GOOGLE_AUTH_SCOPES
-            })
-              .then(this.saveUser.bind(this));
+          let googleProvider = new this.$window.firebase.auth.GoogleAuthProvider();
+          this.GOOGLE_AUTH_SCOPES.forEach(scope => googleProvider.addScope(scope));
+          return this.authObj.$signInWithPopup(googleProvider)
+              .then(this.saveUser.bind(this))
+              .catch(error => console.error(error));
         case 'facebook':
         case 'twitter':
-          return this.authObj.$authWithOAuthPopup(provider, remember ? 'default' : 'sessionOnly')
+          return this.authObj.$signInWithPopup(provider)
               .then(this.saveUser.bind(this));
         case 'password':
-          return this.authObj.$authWithPassword({
-              displayName: displayName || user,
-              email: user,
-              password: password,
-              remember: remember ? 'default' : 'sessionOnly'
-            })
+          return this.authObj.$signInWithEmailAndPassword(user, password)
               .then(this.saveUser.bind(this));
         default:
-          return this.authObj.$authAnonymously();
+          return this.authObj.$signInAnonymously();
       }
     },
-    saveUser: function (authUserData) {
-      authUserData.email = authUserData[authUserData.provider].email;
-      authUserData.displayName = authUserData[authUserData.provider].displayName || authUserData.email;
+    saveUser: function (authResult) {
+      const authUserData = authResult.user;
+      const profile = authUserData.providerData[0];
+      authUserData.email = profile.email;
+      authUserData.displayName = profile.displayName || authUserData.email;
       return this.userService.saveUser(authUserData);
     },
     logout: function () {
-      return this.authObj.$unauth();
+      return this.authObj.$signOut();
     },
     getLoggedUser: function () {
       return this.authObj.$getAuth();

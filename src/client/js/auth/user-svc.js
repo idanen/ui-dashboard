@@ -35,11 +35,14 @@
       var userId = authData.uid;
       return this.$q((resolve, reject) => {
         this.usersRef.child(userId).transaction((currentUserData) => {
+          console.log(currentUserData);
           if (currentUserData === null) {
             delete authData.auth.token;
             return authData;
           }
+          return null;
         }, (error, committed) => {
+          console.error(error);
           if (error) {
             reject(error);
           }

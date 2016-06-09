@@ -99,9 +99,9 @@
     return UiFacadeService.getById($stateParams.widgetId);
   }
 
-  userResolver.$inject = ['$firebaseAuth', 'Ref'];
-  function userResolver($firebaseAuth, Ref) {
-    return $firebaseAuth(Ref).requireAuth();
+  userResolver.$inject = ['$firebaseAuth'];
+  function userResolver($firebaseAuth) {
+    return $firebaseAuth().$requireSignIn();
   }
 
   previousStateResolver.$inject = ['$state'];

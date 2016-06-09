@@ -13,43 +13,6 @@
      * @return {array}
      */
     angular.module('ci-site')
-        .filter('unique', function () {
-            return function (items, filterOn) {
-
-                if (filterOn === false) {
-                    return items;
-                }
-
-                if ((filterOn || angular.isUndefined(filterOn)) && angular.isArray(items)) {
-                    var newItems = [];
-
-                    var extractValueToCompare = function (item) {
-                        if (angular.isObject(item) && angular.isString(filterOn)) {
-                            return item[filterOn];
-                        } else {
-                            return item;
-                        }
-                    };
-
-                    angular.forEach(items, function (item) {
-                        var isDuplicate = false;
-
-                        for (var i = 0; i < newItems.length; i++) {
-                            if (angular.equals(extractValueToCompare(newItems[i]), extractValueToCompare(item))) {
-                                isDuplicate = true;
-                                break;
-                            }
-                        }
-                        if (!isDuplicate) {
-                            newItems.push(item);
-                        }
-
-                    });
-                    items = newItems;
-                }
-                return items;
-            };
-        })
         .service('ciStatusService', CiStatusService);
 
     CiStatusService.$inject = ['$http', '$q', 'Ref', '$firebaseObject', '$firebaseArray', 'ENV', 'DEFAULT_JOB_NAME'];
@@ -81,7 +44,7 @@
                       let buildNumber = 0;
                       snapshot.forEach(function (innerSnapshot) {
                         if (innerSnapshot.val().result !== 'running') {
-                          buildNumber = innerSnapshot.key();
+                          buildNumber = innerSnapshot.key;
                         }
                       });
                       resolve(buildNumber);
@@ -126,7 +89,7 @@
                   resolve({
                     group: 'masters',
                     name: this.DEFAULT_JOB_NAME,
-                    number: snap.key()
+                    number: snap.key
                   });
                 });
           });
