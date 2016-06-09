@@ -5,10 +5,11 @@
       .constant('GOOGLE_AUTH_SCOPES', ['profile', 'email', 'https://www.googleapis.com/auth/plus.login', 'https://www.googleapis.com/auth/plus.profile.emails.read'])
       .service('authService', AuthService);
 
-  AuthService.$inject = ['$firebaseAuth', '$window', 'userService', 'GOOGLE_AUTH_SCOPES'];
-  function AuthService($firebaseAuth, $window, userService, GOOGLE_AUTH_SCOPES) {
+  AuthService.$inject = ['$firebaseAuth', '$window', '$q', 'userService', 'GOOGLE_AUTH_SCOPES'];
+  function AuthService($firebaseAuth, $window, $q, userService, GOOGLE_AUTH_SCOPES) {
     this.authObj = $firebaseAuth();
     this.$window = $window;
+    this.$q = $q;
     this.userService = userService;
     this.GOOGLE_AUTH_SCOPES = GOOGLE_AUTH_SCOPES;
   }
@@ -21,7 +22,7 @@
           this.GOOGLE_AUTH_SCOPES.forEach(scope => googleProvider.addScope(scope));
           return this.authObj.$signInWithPopup(googleProvider)
               .then(this.saveUser.bind(this))
-              .catch(console.error.bind(console));
+              .catch(error => console.error(error));
         case 'facebook':
         case 'twitter':
           return this.authObj.$signInWithPopup(provider)
@@ -33,7 +34,8 @@
           return this.authObj.$signInAnonymously();
       }
     },
-    saveUser: function (authUserData) {
+    saveUser: function (authResult) {
+      const authUserData = authResult.user;
       const profile = authUserData.providerData[0];
       authUserData.email = profile.email;
       authUserData.displayName = profile.displayName || authUserData.email;
