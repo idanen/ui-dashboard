@@ -3,12 +3,16 @@
 
     angular.module('ci-site').service('PushQueueService', PushQueueService);
 
-    PushQueueService.$inject = ['TeamMembersService', 'FirebaseService', 'NotificationService'];
+    PushQueueService.$inject = ['Ref', 'TeamMembersService', 'FirebaseService', 'NotificationService', 'NotificationTags'];
 
-    function PushQueueService(TeamMembersService, FirebaseService, NotificationService) {
+    function PushQueueService(Ref, TeamMembersService, FirebaseService, NotificationService, NotificationTags) {
         var svc = this,
             unwatchQueueChanges;
+
+        svc.Ref = Ref;
         svc.queue = FirebaseService.getQueue();
+        svc.globalConfig = {};
+        Ref.child('config/global').on('value', snapshot => svc.globalConfig = snapshot.val());
 
         svc.addToQueue = addToQueue;
         svc.removeFromQueue = removeFromQueue;
@@ -20,7 +24,7 @@
 
         unwatchQueueChanges = svc.queue.$watch(function (event) {
             if (event.event === 'child_removed') {
-                if (svc.queue.length > 0) {
+                if (svc.queue.length > 0 && !!svc.globalConfig[NotificationTags.PushQueueNotification]) {
                     svc.fireNotification();
                 }
             }
@@ -62,4 +66,10 @@
             }
         }
     }
+
+    PushQueueService.prototype = {
+      getQueue: function () {
+        return this.$firebaseArray(this.Ref.child('queue'));
+      }
+    };
 })(window.angular);

@@ -53,11 +53,11 @@
               ng-class="{'active': $index === 0}">
             <div class="row">
               <div class="col-xs-1">
-                <img ng-src="{{ pushQueueCtrl.getMemberByID(member.id).img }}" alt="Profile image"
+                <img ng-src="{{ member.img }}" alt="Profile image"
                      class="profile-image"/>
               </div>
               <div class="col-xs-8">
-                <span>{{ pushQueueCtrl.getFirstName(member.id)}}</span>
+                <span>{{ member.name }}</span>
               </div>
               <div class="col-xs-3">
                 <button type="button" class="btn btn-info pull-right"
