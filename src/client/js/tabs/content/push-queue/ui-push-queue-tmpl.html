@@ -9,23 +9,23 @@
       <div class="col-md-12">
         <div class="row">
           <div class="col-md-9">
-            <ui-select ng-model="pushQueueCtrl.selected" theme="selectize">
+            <ui-select ng-model="pushQueueCtrl.selected.member" theme="selectize">
               <ui-select-match class="member-selector ui-select-match" placeholder="Select or search a member...">
                 <img class="profile-image" ng-src="{{$select.selected.img}}"/>
-                <span ng-bind-html="$select.selected.fname | highlight: $select.search"></span>
+                <span ng-bind-html="($select.selected.fname || $select.selected.name) | highlight: $select.search"></span>
               </ui-select-match>
               <ui-select-choices
                   class="ui-select-choices"
                   repeat="member in pushQueueCtrl.members | filter: $select.search">
                 <img class="profile-image" ng-src="{{member.img}}"/>
-                <span ng-bind-html="member.fname | highlight: $select.search"></span>
+                <span ng-bind-html="(member.fname || member.name) | highlight: $select.search"></span>
               </ui-select-choices>
             </ui-select>
           </div>
           <div class="col-md-3">
             <paper-button type="button" class="btn-block member-selector push-button" raised
-                          ng-disabled="pushQueueCtrl.selected === undefined"
-                          ng-click="pushQueueCtrl.addToQueue()">Push
+                          ng-disabled="!pushQueueCtrl.selected.member"
+                          ng-click="pushQueueCtrl.addToQueue('member')">Push
             </paper-button>
           </div>
         </div>
@@ -33,6 +33,32 @@
     </div>
     <div class="row">
       <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-9">
+            <ui-select ng-model="pushQueueCtrl.selected.team" theme="selectize">
+              <ui-select-match class="member-selector ui-select-match" placeholder="Select or search a team...">
+                <img class="profile-image" ng-src="{{$select.selected.img}}"/>
+                <span ng-bind-html="($select.selected.name || $select.selected.$id) | highlight: $select.search"></span>
+              </ui-select-match>
+              <ui-select-choices
+                  class="ui-select-choices"
+                  repeat="team in pushQueueCtrl.teams | filter: $select.search">
+                <img class="profile-image" ng-src="{{team.img}}"/>
+                <span ng-bind-html="(team.name || team.$id) | highlight: $select.search"></span>
+              </ui-select-choices>
+            </ui-select>
+          </div>
+          <div class="col-md-3">
+            <paper-button type="button" class="btn-block member-selector push-button" raised
+                          ng-disabled="!pushQueueCtrl.selected.team"
+                          ng-click="pushQueueCtrl.addToQueue('team')">Push
+            </paper-button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row under-construction">
+      <div class="col-md-8">
         <span>Last master merge was </span>
         <span>
           <time is="time-ago" datetime="{{ pushQueueCtrl.lastMasterMerge() | date:'yyyy-MM-ddTHH:mmZ' }}"
@@ -46,10 +72,15 @@
       </div>
     </div>
     <div class="row">
+      <div class="col-md-4">
+        <toggle-button state="pushQueueCtrl.pushEnabled.PushQueueNotification" label="Notify" on-update="pushQueueCtrl.updatePushStatus(state)"></toggle-button>
+      </div>
+    </div>
+    <div class="row">
       <div class="col-xs-10 col-xs-offset-1">
         <h3 ng-show="pushQueueCtrl.queue.length === 0">Queue is empty</h3>
         <ul class="list-group push-queue">
-          <li ng-repeat="member in pushQueueCtrl.queue" class="list-group-item"
+          <li ng-repeat="member in pushQueueCtrl.queue | orderBy:'$priority':true" class="list-group-item"
               ng-class="{'active': $index === 0}">
             <div class="row">
               <div class="col-xs-1">
@@ -58,6 +89,7 @@
               </div>
               <div class="col-xs-8">
                 <span>{{ member.name }}</span>
+                <paper-button ng-click="pushQueueCtrl.setPriority(member)">Set priority</paper-button>
               </div>
               <div class="col-xs-3">
                 <button type="button" class="btn btn-info pull-right"

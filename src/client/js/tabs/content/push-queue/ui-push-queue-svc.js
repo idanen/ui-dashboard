@@ -3,47 +3,32 @@
 
     angular.module('ci-site').service('PushQueueService', PushQueueService);
 
-    PushQueueService.$inject = ['Ref', 'TeamMembersService', 'FirebaseService', 'NotificationService', 'NotificationTags'];
-
-    function PushQueueService(Ref, TeamMembersService, FirebaseService, NotificationService, NotificationTags) {
-        var svc = this,
-            unwatchQueueChanges;
+    PushQueueService.$inject = ['Ref', '$q', '$firebaseObject', '$firebaseArray', 'TeamMembersService', 'FirebaseService', 'NotificationService', 'NotificationTags'];
+    function PushQueueService(Ref, $q, $firebaseObject, $firebaseArray, TeamMembersService, FirebaseService, notificationService, NotificationTags) {
+        var svc = this;
 
         svc.Ref = Ref;
+        svc.$q = $q;
+        svc.$firebaseObject = $firebaseObject;
+        svc.$firebaseArray = $firebaseArray;
+        svc.notificationService = notificationService;
+        svc.NotificationTags = NotificationTags;
+        svc.queueRef = Ref.child('queue');
         svc.queue = FirebaseService.getQueue();
         svc.globalConfig = {};
+        svc.topPriority = 1;
         Ref.child('config/global').on('value', snapshot => svc.globalConfig = snapshot.val());
 
-        svc.addToQueue = addToQueue;
         svc.removeFromQueue = removeFromQueue;
-        svc.getQueue = getQueue;
         svc.getFirstName = getFirstName;
         svc.getMemberByID = getMemberByID;
-        svc.fireNotification = fireNotification;
         svc.unwatchDataChanges = unwatchDataChanges;
 
-        unwatchQueueChanges = svc.queue.$watch(function (event) {
-            if (event.event === 'child_removed') {
-                if (svc.queue.length > 0 && !!svc.globalConfig[NotificationTags.PushQueueNotification]) {
-                    svc.fireNotification();
-                }
-            }
-        });
+        svc.queueRef.on('child_removed', svc.dequeue, angular.noop, svc);
+        svc.queueRef.on('child_moved', svc.orderChanged, angular.noop, svc);
 
-        function addToQueue(memberId) {
-            svc.queue.$add({
-                id: memberId
-            });
-        }
-
-        function removeFromQueue(id) {
-            return svc.queue.$remove(id).then(function () {
-                return (svc.queue.length === 0);
-            });
-        }
-
-        function getQueue(){
-            return svc.queue;
+        function removeFromQueue(member) {
+            return svc.queueRef.child(member.$id).remove();
         }
 
         function getFirstName(memberId) {
@@ -54,22 +39,53 @@
             return TeamMembersService.getMemberByID(memberId);
         }
 
-        function fireNotification() {
-            var memberByID = svc.getMemberByID(svc.queue[0].id);
-            NotificationService.notifyQueueChanged(memberByID.fname, memberByID.img);
-        }
-
         function unwatchDataChanges() {
-            // TODO (idan): just reduce watchers count here, call unwatch when all stopped watching
-            if (typeof unwatchQueueChanges === 'function') {
-                unwatchQueueChanges();
-            }
+          svc.queueRef.off('child_removed', svc.dequeue);
+          svc.queueRef.off('child_moved', svc.orderChanged);
         }
     }
 
     PushQueueService.prototype = {
       getQueue: function () {
         return this.$firebaseArray(this.Ref.child('queue'));
+      },
+      /**
+       * Adds to queue
+       * @param queueable {Object} A person or team that requests to be queued
+       */
+      addToQueue: function (queueable) {
+        let toQueue = {};
+        toQueue.id = queueable.$id;
+        toQueue.name = queueable.fname || queueable.name || queueable.$id;
+        if (queueable.img) {
+          toQueue.img = queueable.img;
+        }
+        return this.queueRef.push(toQueue).setPriority(1);
+      },
+      upgradePriority: function (enqueued) {
+        return this.orderChanged()
+            .then(topPriority => this.queueRef.child(enqueued.$id).setPriority(topPriority + 1));
+      },
+      fireNotification: function () {
+        this.notificationService.notifyQueueChanged(this.queue[0].name, this.queue[0].img);
+      },
+      orderChanged: function () {
+        return this.$q(resolve => {
+          this.queueRef.orderByPriority()
+              .limitToLast(1)
+              .once('child_added', (queueHeadSnap) => {
+                this.topPriority = queueHeadSnap.getPriority() || 1;
+                resolve(this.topPriority);
+              });
+        });
+      },
+      getTopPriority: function () {
+        return this.topPriority;
+      },
+      dequeue: function () {
+        if (this.queue.length > 0 && !!this.globalConfig[this.NotificationTags.PUSH_Q]) {
+          this.fireNotification();
+        }
       }
     };
 })(window.angular);
