@@ -15,17 +15,6 @@
           UNKNOWN: 'help-outline',
           running: 'alarm'
         })
-        .component('ciFreezeStateToggle', {
-          controller: CiFreezeStateToggleController,
-          transclude: true,
-          bindings: {
-            freeze: '<',
-            onUpdate: '&'
-          },
-          template: `
-            <label><paper-toggle-button></paper-toggle-button><span>Freeze</span></label>
-          `
-        })
         .directive('uiCiStatus', [function () {
             return {
                 restrict: 'E',
@@ -37,8 +26,8 @@
         }])
         .controller('ciStatusController', CiStatusController);
 
-    CiStatusController.$inject = ['$q', '$element', '$state', 'ciStatusService', 'userConfigs', 'JENKINS_BASE_URL', 'ResultsToIconNames'];
-    function CiStatusController($q, $element, $state, ciStatusService, userConfigs, JENKINS_BASE_URL, ResultsToIconNames) {
+    CiStatusController.$inject = ['$element', '$state', 'ciStatusService', 'userConfigs', 'JENKINS_BASE_URL', 'ResultsToIconNames'];
+    function CiStatusController($element, $state, ciStatusService, userConfigs, JENKINS_BASE_URL, ResultsToIconNames) {
       this.$state = $state;
       this.$element = $element;
       this.ciStatusService = ciStatusService;
@@ -58,28 +47,7 @@
       this.newBuild = {};
       this.legendShown = false;
 
-      //$q.all([this.jobs.masters.$loaded(), this.jobs.teams.$loaded()])
-      //  .then(this.determineInitialFreezeState.bind(this));
-      this.jobs.masters.$loaded()
-        .then(() => {
-            this.jobs.masters.forEach((job) => {
-              if (job.alias === 'master') {
-                //job.filtered = true;
-                this.filtered.masters[job.$id] = true;
-              }
-            });
-          });
-      this.jobs.teams.$loaded()
-          .then(() => {
-            this.jobs.teams.forEach(job => this.filtered.teams[job.$id] = true);
-          });
-      //$q.all([this.jobs.masters.$loaded(), this.jobs.teams.$loaded()])
-      //    .then(() => {
-      //      this.jobs.masters.forEach(job => this.filtered.masters[job.$id] = true);
-      //      this.jobs.teams.forEach(job => this.filtered.teams[job.$id] = true);
-      //    });
-
-      this.userConfigs.registerForAuthChange(this.authChanged.bind(this));
+      this.userConfigs.registerForConfigsChanges(this.configsChanged.bind(this));
     }
 
     CiStatusController.prototype = {
@@ -94,7 +62,7 @@
       clearAll: function (group) {
         this.filtered[group] = {};
       },
-      authChanged: function (uid) {
+      configsChanged: function (uid) {
         if (!uid) {
           return;
         }
@@ -102,18 +70,18 @@
         if (this.configsUnwatcher) {
           this.configsUnwatcher();
         }
-        if (this.configs) {
-          this.configs.$destroy();
+        if (this.filterConfig) {
+          this.filterConfig.$destroy();
         }
 
-        this.configs = this.userConfigs.getUserConfig();
-        this.configsUnwatcher = this.configs.$watch(() => {
-          this.filtered = _.extend({}, this.configs.statusFilter);
+        this.filterConfig = this.userConfigs.getUserConfig('statusFilter');
+        this.configsUnwatcher = this.filterConfig.$watch(() => {
+          this.filtered = _.extend({ masters: {}, teams: {} }, this.filterConfig);
         });
       },
       configFilterChanged: function () {
-        this.configs.statusFilter = _.extend({}, this.filtered);
-        this.configs.$save();
+        this.filterConfig = _.extend({}, this.filtered);
+        this.filterConfig.$save();
       },
         addNewBuildNumber: function () {
           this.ciStatusService.addBuildNumber(this.newBuild.name, this.newBuild.number, 'masters').then(() => this.newBuild = {});
@@ -124,31 +92,5 @@
         setNewBuildName: function (value) {
           this.newBuild.name = value;
         }
-    };
-
-    CiFreezeStateToggleController.$inject = ['$element'];
-    function CiFreezeStateToggleController($element) {
-      this.$element = $element;
-    }
-
-    CiFreezeStateToggleController.prototype = {
-      $onInit: function () {
-        this.$element.find('paper-toggle-button')[0].checked = this.freeze;
-      },
-      $postLink: function () {
-        var $toggler = this.$element.find('paper-toggle-button');
-        $toggler.on('iron-change', (ev) => {
-          this.onUpdate({freeze: ev.target.checked});
-        });
-
-        this.$element.on('$destroy', () => {
-          $toggler.off();
-        });
-      },
-      $onChanges: function (changes) {
-        if (changes && changes.freeze) {
-          this.$element.find('paper-toggle-button')[0].checked = changes.freeze.currentValue;
-        }
-      }
     };
 })();

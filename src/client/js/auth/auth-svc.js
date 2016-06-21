@@ -38,11 +38,7 @@
 
       return loginPromise
           .then(this.saveUser.bind(this))
-          .then(this.createConfig.bind(this))
           .catch(error => console.error(error));
-    },
-    createConfig: function (authResult) {
-      return this.userConfigs.initConfigs().then(() => authResult);
     },
     saveUser: function (authResult) {
       const authUserData = _.extend({}, authResult.user);
