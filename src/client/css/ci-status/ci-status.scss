@@ -110,11 +110,15 @@
     }
   }
   .sub-build {
-    width: 10%;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     display: inline-block;
     color: #ccc;
     vertical-align: middle;
+    border: 3px solid white;
+    border-radius: 50%;
+    background-color: currentColor;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .3);
     &.build-state-running {
       animation-name: pulse;
       animation-iteration-count: infinite;
@@ -141,28 +145,8 @@
         top: -7px;
       }
     }
-    &::before,
-    &::after {
-      content: '';
-      height: 50%;
-      width: 100%;
-      display: block;
-      position: relative;
-      bottom: 0;
-      left: 0;
-      background-color: currentColor;
-    }
-    &::before {
-      transform: skewX(25deg);
-    }
-    &::after {
-      transform: skewX(-25deg);
-    }
-    &:not(:first-child) {
-      &::before,
-      &::after {
-        border-left: 1px solid #747474;
-      }
+    &:not(:last-child) {
+      margin-right: 4px;
     }
   }
   .sub-build {

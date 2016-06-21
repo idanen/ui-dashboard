@@ -33,6 +33,7 @@ module.exports = (function () {
                     response.send('thanks');
                 })
                 .catch(function (error) {
+                  // TODO: add retries
                     console.error(error);
                     response.status(404).send(error.message);
                 });

@@ -50,8 +50,8 @@
         }
 
         this.subBuilds = this.statusService.getJobSubBuilds(this.buildName, this.buildNumber, this.buildGroup);
-        unwatch = this.subBuilds.$watch(this.updateSubBuildsSizes.bind(this));
-        this.$element.on('$destroy', unwatch);
+        // unwatch = this.subBuilds.$watch(this.updateSubBuildsSizes.bind(this));
+        // this.$element.on('$destroy', unwatch);
       }
     },
     updateSubBuildsSizes: function () {
