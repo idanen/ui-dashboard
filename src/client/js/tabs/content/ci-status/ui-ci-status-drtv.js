@@ -78,17 +78,42 @@
       //      this.jobs.masters.forEach(job => this.filtered.masters[job.$id] = true);
       //      this.jobs.teams.forEach(job => this.filtered.teams[job.$id] = true);
       //    });
+
+      this.userConfigs.registerForAuthChange(this.authChanged.bind(this));
     }
 
     CiStatusController.prototype = {
       filterJob: function (group, job) {
         this.filtered[group][job.$id] = !this.filtered[group][job.$id];
+        this.configFilterChanged();
       },
       unfilter: function (group, jobId) {
         this.filtered[group][jobId] = false;
+        this.configFilterChanged();
       },
       clearAll: function (group) {
         this.filtered[group] = {};
+      },
+      authChanged: function (uid) {
+        if (!uid) {
+          return;
+        }
+
+        if (this.configsUnwatcher) {
+          this.configsUnwatcher();
+        }
+        if (this.configs) {
+          this.configs.$destroy();
+        }
+
+        this.configs = this.userConfigs.getUserConfig();
+        this.configsUnwatcher = this.configs.$watch(() => {
+          this.filtered = _.extend({}, this.configs.statusFilter);
+        });
+      },
+      configFilterChanged: function () {
+        this.configs.statusFilter = _.extend({}, this.filtered);
+        this.configs.$save();
       },
         addNewBuildNumber: function () {
           this.ciStatusService.addBuildNumber(this.newBuild.name, this.newBuild.number, 'masters').then(() => this.newBuild = {});
