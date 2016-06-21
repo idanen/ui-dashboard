@@ -4,34 +4,39 @@
     angular.module('ci-site')
         .controller('PushQueueCtrl', PushQueueController);
 
-    PushQueueController.$inject = ['PushQueueService', 'TeamMembersService', 'MasterStatusService', 'DATE_FORMAT', '$scope'];
+    PushQueueController.$inject = ['PushQueueService', 'teamsService', 'TeamMembersService', 'MasterStatusService', 'DATE_FORMAT', 'Ref', '$firebaseObject', '$scope', 'NotificationTags'];
 
-    function PushQueueController(PushQueueService, TeamMembersService, MasterStatusService, DATE_FORMAT, $scope) {
+    function PushQueueController(pushQueueService, teamsService, TeamMembersService, MasterStatusService, DATE_FORMAT, Ref, $firebaseObject, $scope, NotificationTags) {
         var vm = this;
 
         vm.dateFormat = DATE_FORMAT;
-        vm.queue = PushQueueService.getQueue();
+        vm.pushQueueService = pushQueueService;
+        vm.queue = pushQueueService.getQueue();
         vm.members = TeamMembersService.getMembers();
+        vm.teams = teamsService.getTeams();
         vm.lastMasterMerge = MasterStatusService.getLastUpdateTime;
-
-        vm.addToQueue = function () {
-            PushQueueService.addToQueue(vm.selected.memberId);
+        vm.membersMetadata = {};
+        vm.pushEnabled = $firebaseObject(Ref.child('config/global'));
+        vm.NotificationTags = NotificationTags;
+        vm.selected = {
+          member: null,
+          team: null
         };
 
         vm.removeFromQueue = function (id) {
-            PushQueueService.removeFromQueue(id);
+            pushQueueService.removeFromQueue(id);
         };
 
         vm.getFirstName = function (memberId) {
-            return PushQueueService.getFirstName(memberId);
+            return pushQueueService.getFirstName(memberId);
         };
 
         vm.getMemberByID = function (memberId) {
-            return PushQueueService.getMemberByID(memberId);
+            return pushQueueService.getMemberByID(memberId);
         };
 
         vm.fireNotification = function () {
-            PushQueueService.fireNotification();
+            pushQueueService.fireNotification();
         };
 
         vm.updateMergedToMaster = function () {
@@ -39,8 +44,29 @@
         };
 
         $scope.$on('$destroy', function () {
-            MasterStatusService.unwatchDataChanges();
-            PushQueueService.unwatchDataChanges();
+          vm.queue.$destroy();
+          vm.members.$destroy();
+          vm.teams.$destroy();
+          MasterStatusService.unwatchDataChanges();
+          pushQueueService.unwatchDataChanges();
         });
     }
+  
+  PushQueueController.prototype = {
+    addToQueue: function (memberOrTeam) {
+      this.pushQueueService.addToQueue(this.selected[memberOrTeam]);
+    },
+    updatePushStatus: function (state) {
+      this.pushEnabled[this.NotificationTags.PUSH_Q] = state;
+      this.pushEnabled.$save();
+    },
+    setPriority: function (enqueued) {
+      let toUpdate = this.queue.$getRecord(enqueued.$id);
+      if (toUpdate) {
+        this.pushQueueService.upgradePriority(toUpdate);
+        // toUpdate.$priority = (toUpdate.$priority || 1) + 1;
+        // this.queue.$save(toUpdate);
+      }
+    }
+  };
 })();

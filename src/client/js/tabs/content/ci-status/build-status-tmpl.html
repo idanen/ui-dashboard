@@ -19,7 +19,7 @@
         <span>)</span>
       </div>
       <div class="col-sm-3">
-        <ci-freeze-state-toggle freeze="$ctrl.build.freeze" on-update="$ctrl.freezeState(freeze)"></ci-freeze-state-toggle>
+        <toggle-button state="$ctrl.build.freeze" label="Freeze" on-update="$ctrl.freezeState(state)"></toggle-button>
       </div>
       <div class="col-sm-1">
         <input type="number" class="form-control" ng-model="$ctrl.jobsLimit" ng-change="$ctrl.onLimitChange()">

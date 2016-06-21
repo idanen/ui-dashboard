@@ -5,34 +5,40 @@
       .constant('GOOGLE_AUTH_SCOPES', ['profile', 'email', 'https://www.googleapis.com/auth/plus.login', 'https://www.googleapis.com/auth/plus.profile.emails.read'])
       .service('authService', AuthService);
 
-  AuthService.$inject = ['$firebaseAuth', '$window', '$q', 'userService', 'GOOGLE_AUTH_SCOPES'];
-  function AuthService($firebaseAuth, $window, $q, userService, GOOGLE_AUTH_SCOPES) {
+  AuthService.$inject = ['$firebaseAuth', '$window', '$q', 'userService', 'userConfigs', 'GOOGLE_AUTH_SCOPES'];
+  function AuthService($firebaseAuth, $window, $q, userService, userConfigs, GOOGLE_AUTH_SCOPES) {
     this.authObj = $firebaseAuth();
     this.$window = $window;
     this.$q = $q;
     this.userService = userService;
+    this.userConfigs = userConfigs;
     this.GOOGLE_AUTH_SCOPES = GOOGLE_AUTH_SCOPES;
   }
 
   AuthService.prototype = {
     login: function (provider, user, password) {
+      var loginPromise;
       switch (provider) {
         case 'google':
           let googleProvider = new this.$window.firebase.auth.GoogleAuthProvider();
           this.GOOGLE_AUTH_SCOPES.forEach(scope => googleProvider.addScope(scope));
-          return this.authObj.$signInWithPopup(googleProvider)
-              .then(this.saveUser.bind(this))
-              .catch(error => console.error(error));
-        case 'facebook':
-        case 'twitter':
-          return this.authObj.$signInWithPopup(provider)
-              .then(this.saveUser.bind(this));
+          loginPromise = this.authObj.$signInWithPopup(googleProvider);
+          break;
+        // case 'facebook':
+        // case 'twitter':
+        //   loginPromise = this.authObj.$signInWithPopup(provider);
+        //   break;
         case 'password':
-          return this.authObj.$signInWithEmailAndPassword(user, password)
-              .then(this.saveUser.bind(this));
+          loginPromise = this.authObj.$signInWithEmailAndPassword(user, password);
+          break;
         default:
-          return this.authObj.$signInAnonymously();
+          loginPromise = this.authObj.$signInAnonymously();
+          break;
       }
+
+      return loginPromise
+          .then(this.saveUser.bind(this))
+          .catch(error => console.error(error));
     },
     saveUser: function (authResult) {
       const authUserData = _.extend({}, authResult.user);
