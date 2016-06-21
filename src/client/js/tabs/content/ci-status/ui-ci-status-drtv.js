@@ -37,13 +37,14 @@
         }])
         .controller('ciStatusController', CiStatusController);
 
-    CiStatusController.$inject = ['$q', '$element', '$state', 'ciStatusService', 'JENKINS_BASE_URL', 'ResultsToIconNames'];
-    function CiStatusController($q, $element, $state, ciStatusService, JENKINS_BASE_URL, ResultsToIconNames) {
+    CiStatusController.$inject = ['$q', '$element', '$state', 'ciStatusService', 'userConfigs', 'JENKINS_BASE_URL', 'ResultsToIconNames'];
+    function CiStatusController($q, $element, $state, ciStatusService, userConfigs, JENKINS_BASE_URL, ResultsToIconNames) {
       this.$state = $state;
       this.$element = $element;
       this.ciStatusService = ciStatusService;
       this.JENKINS_BASE_URL = JENKINS_BASE_URL;
       this.ResultsToIconNames = ResultsToIconNames;
+      this.userConfigs = userConfigs;
       this.jobs = {
         masters: this.ciStatusService.getJobs(),
         teams: this.ciStatusService.getJobs('teams')

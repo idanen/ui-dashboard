@@ -16,23 +16,31 @@
 
   AuthService.prototype = {
     login: function (provider, user, password) {
+      var loginPromise;
       switch (provider) {
         case 'google':
           let googleProvider = new this.$window.firebase.auth.GoogleAuthProvider();
           this.GOOGLE_AUTH_SCOPES.forEach(scope => googleProvider.addScope(scope));
-          return this.authObj.$signInWithPopup(googleProvider)
-              .then(this.saveUser.bind(this))
-              .catch(error => console.error(error));
+          loginPromise = this.authObj.$signInWithPopup(googleProvider);
+          break;
         case 'facebook':
         case 'twitter':
-          return this.authObj.$signInWithPopup(provider)
-              .then(this.saveUser.bind(this));
+          loginPromise = this.authObj.$signInWithPopup(provider);
+          break;
         case 'password':
-          return this.authObj.$signInWithEmailAndPassword(user, password)
-              .then(this.saveUser.bind(this));
+          loginPromise = this.authObj.$signInWithEmailAndPassword(user, password);
+          break;
         default:
-          return this.authObj.$signInAnonymously();
+          loginPromise = this.authObj.$signInAnonymously();
+          break;
       }
+
+      return loginPromise
+          .then(this.saveUser.bind(this))
+          .catch(error => console.error(error));
+    },
+    createConfig: function (authResult) {
+      // TODO: create user's config
     },
     saveUser: function (authResult) {
       const authUserData = _.extend({}, authResult.user);
