@@ -112,17 +112,17 @@ login-btn {
 }
 
 .push-queue {
-    /* To complement the scale transformation */
-    margin-top: 15px;
-}
-
-.push-queue li {
+  /* To complement the scale transformation */
+  margin-top: 10px;
+  li {
     transition: all 200ms ease-in-out;
-}
-
-.push-queue .active {
-    transform: scale(1.1);
+  }
+  .active {
+    transform: scale(1.01) translate3d(0, -6px, 0);
     box-shadow: 0 3px 5px rgba(0, 0, 0, .3);
+    /* Overrides Bootstrap */
+    z-index: 0;
+  }
 }
 
 ui-ci-status .table tbody td {
@@ -137,6 +137,10 @@ ui-ci-status .table tbody td:first-child {
 
 .selectize-dropdown-content {
     max-height: 400px;
+}
+
+.selectize-input {
+  z-index: 0;
 }
 
 .panel-group {
