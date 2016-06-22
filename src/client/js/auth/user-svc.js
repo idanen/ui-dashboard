@@ -4,12 +4,23 @@
   angular.module('ci-site')
     .service('userService', UserService);
 
-  UserService.$inject = ['Ref', '$q', '$window', '$firebaseObject'];
-  function UserService(Ref, $q, $window, $firebaseObject) {
+  UserService.$inject = ['Ref', '$q', '$window', '$firebaseObject', '$firebaseAuth'];
+  function UserService(Ref, $q, $window, $firebaseObject, $firebaseAuth) {
     this.usersRef = Ref.child('users');
     this.$q = $q;
     this.$window = $window;
     this.$firebaseObject = $firebaseObject;
+
+    this._admin = false;
+
+    $firebaseAuth().$onAuthStateChanged(authData => {
+      if (authData) {
+        Ref.child('admins').child(authData.uid).once('value')
+            .then(snap => this._admin = snap.exists());
+      } else {
+        this._admin = false;
+      }
+    });
   }
 
   UserService.prototype = {
@@ -67,6 +78,9 @@
      */
     getUser: function (uid) {
       return this.$firebaseObject(this.usersRef.child(uid));
+    },
+    isAdmin: function () {
+      return this._admin;
     }
   };
 }());
