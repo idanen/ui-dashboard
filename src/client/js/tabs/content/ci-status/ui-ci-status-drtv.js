@@ -38,16 +38,17 @@
         masters: this.ciStatusService.getJobs(),
         teams: this.ciStatusService.getJobs('teams')
       };
-      this.filtered = {
-        masters: {},
-        teams: {}
-      };
       this.loading = false; // when it true , progress bar enabled and job list disabled..
       this.buildsLimit = 3;
       this.newBuild = {};
       this.legendShown = false;
 
       this.userConfigs.registerForConfigsChanges(this.configsChanged.bind(this));
+
+      this.filterConfig = this.userConfigs.getUserConfig('statusFilter');
+      this.configsUnwatcher = this.filterConfig.$watch(() => {
+        this.filtered = _.extend({ masters: {}, teams: {} }, this.filterConfig);
+      });
     }
 
     CiStatusController.prototype = {
@@ -80,7 +81,8 @@
         });
       },
       configFilterChanged: function () {
-        this.filterConfig = _.extend({}, this.filtered);
+        this.filterConfig.masters = this.filtered.masters;
+        this.filterConfig.teams = this.filtered.teams;
         this.filterConfig.$save();
       },
         addNewBuildNumber: function () {

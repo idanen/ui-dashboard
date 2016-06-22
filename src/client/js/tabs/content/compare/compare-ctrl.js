@@ -152,7 +152,7 @@
       var leftGrouped = _.groupBy(both.left, 'testClassName'),
           rightGrouped = _.groupBy(both.right, 'testClassName');
 
-      if (both.left[0].jobName === this.selected.left.name && String(both.left[0].buildId) === this.selected.left.number && !this.allAliens(both.left)) {
+      if (both.left.length && both.left[0].jobName === this.selected.left.name && String(both.left[0].buildId) === this.selected.left.number && !this.allAliens(both.left)) {
         this.leftTests = this._toArray(leftGrouped);
         this.rightTests = this._toArray(rightGrouped);
       } else {

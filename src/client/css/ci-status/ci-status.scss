@@ -120,9 +120,9 @@
     background-color: currentColor;
     box-shadow: 0 0 5px rgba(0, 0, 0, .3);
     &.build-state-running {
-      animation-name: pulse;
+      animation-name: cool-blinker;
       animation-iteration-count: infinite;
-      animation-duration: 2s;
+      animation-duration: 1.2s;
     }
     .sub-build-result {
       position: absolute;
