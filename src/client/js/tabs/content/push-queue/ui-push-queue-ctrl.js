@@ -4,9 +4,8 @@
     angular.module('ci-site')
         .controller('PushQueueCtrl', PushQueueController);
 
-    PushQueueController.$inject = ['PushQueueService', 'teamsService', 'TeamMembersService', 'MasterStatusService', 'DATE_FORMAT', 'Ref', '$firebaseObject', '$scope', 'NotificationTags'];
-
-    function PushQueueController(pushQueueService, teamsService, TeamMembersService, MasterStatusService, DATE_FORMAT, Ref, $firebaseObject, $scope, NotificationTags) {
+    PushQueueController.$inject = ['PushQueueService', 'teamsService', 'TeamMembersService', 'MasterStatusService', 'DATE_FORMAT', 'Ref', '$firebaseObject', '$scope', 'NotificationTags', 'firebaseDestroy'];
+    function PushQueueController(pushQueueService, teamsService, TeamMembersService, MasterStatusService, DATE_FORMAT, Ref, $firebaseObject, $scope, NotificationTags, firebaseDestroy) {
         var vm = this;
 
         vm.dateFormat = DATE_FORMAT;
@@ -18,6 +17,7 @@
         vm.membersMetadata = {};
         vm.pushEnabled = $firebaseObject(Ref.child('config/global'));
         vm.NotificationTags = NotificationTags;
+        vm.firebaseDestroy = firebaseDestroy;
         vm.selected = {
           member: null,
           team: null
@@ -44,9 +44,7 @@
         };
 
         $scope.$on('$destroy', function () {
-          vm.queue.$destroy();
-          vm.members.$destroy();
-          vm.teams.$destroy();
+          vm.firebaseDestroy.destroy([this.queue, this.members, this.teams]);
           MasterStatusService.unwatchDataChanges();
           pushQueueService.unwatchDataChanges();
         });
@@ -54,7 +52,11 @@
   
   PushQueueController.prototype = {
     addToQueue: function (memberOrTeam) {
-      this.pushQueueService.addToQueue(this.selected[memberOrTeam]);
+      this.firebaseDestroy.destroy(this.queue);
+      this.pushQueueService.addToQueue(this.selected[memberOrTeam])
+          .then(() => {
+            this.queue = this.pushQueueService.getQueue();
+          });
     },
     updatePushStatus: function (state) {
       this.pushEnabled[this.NotificationTags.PUSH_Q] = state;

@@ -4,57 +4,49 @@
   <!--<div class="head-mark"><img ng-src="{{ pushQueueCtrl.getMemberByID(pushQueueCtrl.queue[0].id).img }}"/></div>-->
   <!--</div>-->
   <!--<div class="col-md-9">-->
-  <div class="col-md-12">
+  <div class="col-md-12" ci-is-admin>
     <div class="row">
-      <div class="col-md-12">
-        <div class="row">
-          <div class="col-md-9">
-            <ui-select ng-model="pushQueueCtrl.selected.member" theme="selectize">
-              <ui-select-match class="member-selector ui-select-match" placeholder="Select or search a member...">
-                <img class="profile-image" ng-src="{{$select.selected.img}}"/>
-                <span ng-bind-html="($select.selected.fname || $select.selected.name) | highlight: $select.search"></span>
-              </ui-select-match>
-              <ui-select-choices
-                  class="ui-select-choices"
-                  repeat="member in pushQueueCtrl.members | filter: $select.search">
-                <img class="profile-image" ng-src="{{member.img}}"/>
-                <span ng-bind-html="(member.fname || member.name) | highlight: $select.search"></span>
-              </ui-select-choices>
-            </ui-select>
-          </div>
-          <div class="col-md-3">
-            <paper-button type="button" class="btn-block member-selector push-button" raised
-                          ng-disabled="!pushQueueCtrl.selected.member"
-                          ng-click="pushQueueCtrl.addToQueue('member')">Push
-            </paper-button>
-          </div>
-        </div>
+      <div class="col-md-9">
+        <ui-select ng-model="pushQueueCtrl.selected.member" theme="selectize">
+          <ui-select-match class="member-selector ui-select-match" placeholder="Select or search a member...">
+            <img class="profile-image" ng-src="{{$select.selected.img}}"/>
+            <span ng-bind-html="($select.selected.fname || $select.selected.name) | highlight: $select.search"></span>
+          </ui-select-match>
+          <ui-select-choices
+              class="ui-select-choices"
+              repeat="member in pushQueueCtrl.members | filter: $select.search">
+            <img class="profile-image" ng-src="{{member.img}}"/>
+            <span ng-bind-html="(member.fname || member.name) | highlight: $select.search"></span>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+      <div class="col-md-3">
+        <paper-button type="button" class="btn-block member-selector push-button" raised
+                      ng-disabled="!pushQueueCtrl.selected.member"
+                      ng-click="pushQueueCtrl.addToQueue('member')">Push
+        </paper-button>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="row">
-          <div class="col-md-9">
-            <ui-select ng-model="pushQueueCtrl.selected.team" theme="selectize">
-              <ui-select-match class="member-selector ui-select-match" placeholder="Select or search a team...">
-                <img class="profile-image" ng-src="{{$select.selected.img}}"/>
-                <span ng-bind-html="($select.selected.name || $select.selected.$id) | highlight: $select.search"></span>
-              </ui-select-match>
-              <ui-select-choices
-                  class="ui-select-choices"
-                  repeat="team in pushQueueCtrl.teams | filter: $select.search">
-                <img class="profile-image" ng-src="{{team.img}}"/>
-                <span ng-bind-html="(team.name || team.$id) | highlight: $select.search"></span>
-              </ui-select-choices>
-            </ui-select>
-          </div>
-          <div class="col-md-3">
-            <paper-button type="button" class="btn-block member-selector push-button" raised
-                          ng-disabled="!pushQueueCtrl.selected.team"
-                          ng-click="pushQueueCtrl.addToQueue('team')">Push
-            </paper-button>
-          </div>
-        </div>
+    <div class="row" ci-is-admin>
+      <div class="col-md-9">
+        <ui-select ng-model="pushQueueCtrl.selected.team" theme="selectize">
+          <ui-select-match class="member-selector ui-select-match" placeholder="Select or search a team...">
+            <img class="profile-image" ng-src="{{$select.selected.img}}"/>
+            <span ng-bind-html="($select.selected.name || $select.selected.$id) | highlight: $select.search"></span>
+          </ui-select-match>
+          <ui-select-choices
+              class="ui-select-choices"
+              repeat="team in pushQueueCtrl.teams | filter: $select.search">
+            <img class="profile-image" ng-src="{{team.img}}"/>
+            <span ng-bind-html="(team.name || team.$id) | highlight: $select.search"></span>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+      <div class="col-md-3">
+        <paper-button type="button" class="btn-block member-selector push-button" raised
+                      ng-disabled="!pushQueueCtrl.selected.team"
+                      ng-click="pushQueueCtrl.addToQueue('team')">Push
+        </paper-button>
       </div>
     </div>
     <div class="row under-construction">
@@ -71,7 +63,7 @@
         </paper-button>
       </div>
     </div>
-    <div class="row">
+    <div class="row" ci-is-admin>
       <div class="col-md-4">
         <toggle-button state="pushQueueCtrl.pushEnabled.PushQueueNotification" label="Notify" on-update="pushQueueCtrl.updatePushStatus(state)"></toggle-button>
       </div>
@@ -89,10 +81,13 @@
               </div>
               <div class="col-xs-8">
                 <span>{{ member.name }}</span>
-                <paper-button ng-click="pushQueueCtrl.setPriority(member)">Set priority</paper-button>
+                <paper-button raised ng-click="pushQueueCtrl.setPriority(member)" ci-is-admin>
+                  <iron-icon icon="arrow-upward"></iron-icon>
+                  <span>Set priority</span>
+                </paper-button>
               </div>
               <div class="col-xs-3">
-                <button type="button" class="btn btn-info pull-right"
+                <button type="button" class="btn btn-info pull-right" ci-is-admin
                         ng-click="pushQueueCtrl.removeFromQueue(member)">
                   <iron-icon icon="clear"></iron-icon>
                 </button>

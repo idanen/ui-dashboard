@@ -115,10 +115,11 @@ login-btn {
   /* To complement the scale transformation */
   margin-top: 10px;
   li {
+    -webkit-font-smoothing: antialiased;
     transition: all 200ms ease-in-out;
   }
   .active {
-    transform: scale(1.01) translate3d(0, -6px, 0);
+    transform: scale(1.03) translate3d(0, -6px, 0);
     box-shadow: 0 3px 5px rgba(0, 0, 0, .3);
     /* Overrides Bootstrap */
     z-index: 0;

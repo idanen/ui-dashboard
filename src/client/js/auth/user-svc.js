@@ -12,14 +12,23 @@
     this.$firebaseObject = $firebaseObject;
 
     this._admin = false;
+    this._adminListeners = [];
 
     $firebaseAuth().$onAuthStateChanged(authData => {
+      let promise;
       if (authData) {
-        Ref.child('admins').child(authData.uid).once('value')
-            .then(snap => this._admin = snap.exists());
+        promise = this.$q.when(
+            Ref.child('admins').child(authData.uid).once('value')
+              .then(snap => this._admin = snap.exists())
+        );
       } else {
         this._admin = false;
+        promise = this.$q.when(this._admin);
       }
+
+      promise.then((isAdmin) => {
+        this._adminListeners.forEach((listener) => listener(isAdmin));
+      });
     });
   }
 
@@ -79,6 +88,13 @@
     getUser: function (uid) {
       return this.$firebaseObject(this.usersRef.child(uid));
     },
+    listenToAdminChanges: function (listener) {
+      this._adminListeners.push(listener);
+    },
+    /**
+     * Says weather the user is an admin
+     * @returns {boolean|*} `true` if the user is an admin, `false` otherwise
+     */
     isAdmin: function () {
       return this._admin;
     }
