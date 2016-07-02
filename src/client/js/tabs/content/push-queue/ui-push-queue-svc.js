@@ -60,7 +60,7 @@
         if (queueable.img) {
           toQueue.img = queueable.img;
         }
-        return this.queueRef.push(toQueue).setPriority(1);
+        return this.queueRef.push().setWithPriority(toQueue, 1);
       },
       upgradePriority: function (enqueued) {
         return this.orderChanged()

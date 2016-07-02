@@ -53,10 +53,10 @@
   PushQueueController.prototype = {
     addToQueue: function (memberOrTeam) {
       this.firebaseDestroy.destroy(this.queue);
-      this.pushQueueService.addToQueue(this.selected[memberOrTeam])
-          .then(() => {
-            this.queue = this.pushQueueService.getQueue();
-          });
+      this.pushQueueService.addToQueue(this.selected[memberOrTeam]);
+          // .then(() => {
+          //   this.queue = this.pushQueueService.getQueue();
+          // });
     },
     updatePushStatus: function (state) {
       this.pushEnabled[this.NotificationTags.PUSH_Q] = state;
