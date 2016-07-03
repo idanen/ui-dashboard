@@ -4,9 +4,10 @@
     angular.module('ci-site.filters', []);
     angular.module('ci-site', ['firebase', 'ngAnimate', 'ngSanitize', 'ngResource', 'ui.router', 'ui.select', 'ui.bootstrap', 'angular-ladda', 'ngclipboard', 'ci-site.filters', 'collapsiblePanel'])
         .constant('ENV', {
-            HOST: 'myd-vm08383.hpswlabs.adapps.hp.com',
-            //HOST: 'localhost',
-            PORT: '4000'
+          PROTOCOL: 'http',
+          HOST: 'cidashboard.hpe.guru',
+          //HOST: 'localhost',
+          PORT: '4000'
         })
         .constant('JENKINS_BASE_URL', 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/')
         .constant('DATE_FORMAT', 'HH:mm dd/MM/yyyy')
@@ -27,12 +28,12 @@
       });
     }
 
-    initApp.$inject = ['$rootScope', '$state', 'ShoutOutsService'];
-    function initApp($rootScope, $state, shoutOutsService) {
+    initApp.$inject = ['$rootScope', 'ShoutOutsService'];
+    function initApp($rootScope, shoutOutsService) {
         shoutOutsService.init();
 
         $rootScope.$on('$routeChangeError', function (event, next, previous, error) {
-            console.log(error);
+            console.log('$routeChangeError occurred', error);
             //event.preventDefault();
             //if (error === 'AUTH_REQUIRED') {
             //    $state.go('login');

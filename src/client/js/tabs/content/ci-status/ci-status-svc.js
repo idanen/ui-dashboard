@@ -15,13 +15,10 @@
     angular.module('ci-site')
         .service('ciStatusService', CiStatusService);
 
-    CiStatusService.$inject = ['$http', '$q', 'Ref', '$firebaseObject', '$firebaseArray', 'ENV', 'DEFAULT_JOB_NAME'];
-    function CiStatusService($http, $q, ref, $firebaseObject, $firebaseArray, ENV, DEFAULT_JOB_NAME) {
-        this._jobsUrl = '//' + ENV.HOST + ':' + ENV.PORT;
-        this._jobsRef = ref.child('allJobs');
+    CiStatusService.$inject = ['$http', '$q', 'Ref', '$firebaseObject', '$firebaseArray', 'DEFAULT_JOB_NAME'];
+    function CiStatusService($http, $q, ref, $firebaseObject, $firebaseArray, DEFAULT_JOB_NAME) {
         this._statusRef = ref.child('ciStatus');
         this._mastersRef = this._statusRef.child('masters');
-        this._teamsRef = this._statusRef.child('teams');
         this.$http = $http;
         this.$q = $q;
         this.$firebaseObject = $firebaseObject;
@@ -94,20 +91,20 @@
                 });
           });
         },
-        getJobByName: function (jobName) {
-            return this.$firebaseObject(this._jobsRef.child(jobName));
-        },
         addBuildNumber: function (buildName, newBuildNumber, group = 'masters') {
             var newBuild = {};
             newBuild[newBuildNumber] = {
                 result: 'UNKNOWN',
                 lastUpdate: Date.now()
             };
-            return this.$q((resolve) => {
-                this._statusRef.child(group).child(buildName).child('builds').update(newBuild, () => {
-                    resolve(newBuild);
-                });
-            });
+            return this.$q.when(
+                this._statusRef
+                    .child(group)
+                    .child(buildName)
+                    .child('builds')
+                    .update(newBuild)
+                    .then(() => newBuild)
+            );
         },
         _getRef: function (jobId, group) {
             if (group) {

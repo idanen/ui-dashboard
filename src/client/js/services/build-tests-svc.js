@@ -6,25 +6,25 @@
 
   BuildTestsService.$inject = ['$resource', 'ENV'];
   function BuildTestsService($resource, ENV) {
-    this.BuildTests = $resource(`http://${ENV.HOST}:${ENV.PORT}/buildTests/:buildName/:buildNumber/:onlyFailed`, {}, {
+    this.BuildTests = $resource(`${ENV.PROTOCOL}://${ENV.HOST}:${ENV.PORT}/buildTests/:buildName/:buildNumber/:onlyFailed`, {}, {
       specific: {
         method: 'POST',
         isArray: true
       }
     });
-    this.LastFailedTests = $resource(`http://${ENV.HOST}:${ENV.PORT}/failedOfLastBuilds/:buildName/:buildCount/:startFromNumber`, {}, {
+    this.LastFailedTests = $resource(`${ENV.PROTOCOL}://${ENV.HOST}:${ENV.PORT}/failedOfLastBuilds/:buildName/:buildCount/:startFromNumber`, {}, {
       specific: {
         method: 'GET',
         isArray: true
       }
     });
-    this.Stability = $resource(`http://${ENV.HOST}:${ENV.PORT}/stability/:buildName/:buildCount/:startFromNumber`, {}, {
+    this.Stability = $resource(`${ENV.PROTOCOL}://${ENV.HOST}:${ENV.PORT}/stability/:buildName/:buildCount/:startFromNumber`, {}, {
       query: {
         method: 'GET',
         isArray: true
       }
     });
-    this.Compare = $resource(`http://${ENV.HOST}:${ENV.PORT}/compareBuildTests/:buildName/:buildNumber/:toBuildName/:toBuildNumber`, {}, {
+    this.Compare = $resource(`${ENV.PROTOCOL}://${ENV.HOST}:${ENV.PORT}/compareBuildTests/:buildName/:buildNumber/:toBuildName/:toBuildNumber`, {}, {
       get: {
         method: 'GET',
         isArray: false
