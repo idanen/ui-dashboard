@@ -6,12 +6,15 @@
       .service('NotificationService', NotificationService)
       .run(runFn);
 
-  NotificationService.$inject = ['$q', '$timeout', '$window', 'NotificationTags'];
-  function NotificationService($q, $timeout, $window, NotificationTags) {
+  NotificationService.$inject = ['$q', '$timeout', '$window', 'Ref', 'NotificationTags'];
+  function NotificationService($q, $timeout, $window, Ref, NotificationTags) {
     this.$q = $q;
     this.$timeout = $timeout;
     this.$window = $window;
     this.NotificationTags = NotificationTags;
+
+    this.globalConfig = {};
+    Ref.child('config/global').on('value', snapshot => this.globalConfig = snapshot.val());
 
     this.allowedByUser = Notification.permission === 'granted';
     this.noNotificationsNotified = false;
@@ -39,7 +42,7 @@
 
       this.requestPermission()
           .then((function (allowed) {
-            if (allowed) {
+            if (allowed && !!this.globalConfig[tag]) {
               var notification = new Notification(title, {
                 icon: img,
                 body: message,

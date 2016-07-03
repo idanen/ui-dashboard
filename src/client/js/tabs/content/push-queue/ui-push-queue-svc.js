@@ -24,7 +24,7 @@
         svc.getMemberByID = getMemberByID;
         svc.unwatchDataChanges = unwatchDataChanges;
 
-        svc.queueRef.on('child_removed', svc.dequeue, angular.noop, svc);
+        svc.queueRef.on('child_removed', svc.postDequeue, angular.noop, svc);
         svc.queueRef.on('child_moved', svc.orderChanged, angular.noop, svc);
 
         function removeFromQueue(member) {
@@ -40,20 +40,35 @@
         }
 
         function unwatchDataChanges() {
-          svc.queueRef.off('child_removed', svc.dequeue);
+          svc.queueRef.off('child_removed', svc.postDequeue);
           svc.queueRef.off('child_moved', svc.orderChanged);
         }
     }
 
     PushQueueService.prototype = {
       getQueue: function () {
-        return this.$firebaseArray(this.Ref.child('queue'));
+        return this.$firebaseArray(this.queueRef);
       },
       /**
        * Adds to queue
-       * @param queueable {Object} A person or team that requests to be queued
+       * @param {Object} queueable A person or team that requests to be queued
        */
       addToQueue: function (queueable) {
+        // First upgrade other members priority, so that the new will be with lowest
+        this.updateAllPriorities()
+            .then(this.enqueue.bind(this, queueable));
+      },
+      updateAllPriorities: function () {
+        return this.queueRef
+            .orderByKey()
+            .once('value', (listSnap) => {
+              listSnap.forEach((snap) => {
+                let currentPriority = snap.getPriority();
+                snap.ref.setPriority(currentPriority + 1);
+              });
+            });
+      },
+      enqueue: function (queueable) {
         let toQueue = {};
         toQueue.id = queueable.$id;
         toQueue.name = queueable.fname || queueable.name || queueable.$id;
@@ -82,7 +97,7 @@
       getTopPriority: function () {
         return this.topPriority;
       },
-      dequeue: function () {
+      postDequeue: function () {
         if (this.queue.length > 0 && !!this.globalConfig[this.NotificationTags.PUSH_Q]) {
           this.fireNotification();
         }

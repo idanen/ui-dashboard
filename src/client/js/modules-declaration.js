@@ -13,6 +13,7 @@
         .constant('DEFAULT_JOB_NAME', 'MaaS-SAW-USB-master')
         .constant('NotificationTags', {
           PUSH_Q: 'PushQueueNotification',
+          BRANCH_UPDATES: 'NotificationTagMasterMerge',
           BRANCH_OWNER_Q: 'BranchOwnerNotification'
         })
         .config(config)

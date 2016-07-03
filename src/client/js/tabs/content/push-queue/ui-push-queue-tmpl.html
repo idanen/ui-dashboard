@@ -52,10 +52,10 @@
     <div class="row under-construction">
       <div class="col-md-8">
         <span>Last master merge was </span>
-        <span>
-          <time is="time-ago" datetime="{{ pushQueueCtrl.lastMasterMerge() | date:'yyyy-MM-ddTHH:mmZ' }}"
-                uib-tooltip="{{ pushQueueCtrl.lastMasterMerge() | date:pushQueueCtrl.dateFormat }}">
-            {{ pushQueueCtrl.lastMasterMerge() | date:pushQueueCtrl.dateFormat }}
+        <span ng-if="pushQueueCtrl.lastMasterMerge.lastUpdateTime">
+          <time is="time-ago" datetime="{{ pushQueueCtrl.lastMasterMerge.lastUpdateTime | date:'yyyy-MM-ddTHH:mmZ' }}"
+                uib-tooltip="{{ pushQueueCtrl.lastMasterMerge.lastUpdateTime | date:pushQueueCtrl.dateFormat }}">
+            {{ pushQueueCtrl.lastMasterMerge.lastUpdateTime | date:pushQueueCtrl.dateFormat }}
           </time>
         </span>
         <paper-button class="colorful" raised ng-click="pushQueueCtrl.updateMergedToMaster()" uib-tooltip="Click to update to now">
