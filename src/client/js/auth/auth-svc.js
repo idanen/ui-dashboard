@@ -44,6 +44,9 @@
       const authUserData = _.extend({}, authResult.user);
       return this.userService.saveUser(authUserData);
     },
+    loginAnonymous: function () {
+      return this.authObj.$signInAnonymously();
+    },
     logout: function () {
       return this.authObj.$signOut();
     },
