@@ -46,9 +46,7 @@
       this.userConfigs.registerForConfigsChanges(this.configsChanged.bind(this));
 
       this.filterConfig = this.userConfigs.getUserConfig('statusFilter');
-      this.configsUnwatcher = this.filterConfig.$watch(() => {
-        this.filtered = _.extend({ masters: {}, teams: {} }, this.filterConfig);
-      });
+      this.listenToFilterConfigChanges();
     }
 
     CiStatusController.prototype = {
@@ -76,9 +74,18 @@
         }
 
         this.filterConfig = this.userConfigs.getUserConfig('statusFilter');
-        this.configsUnwatcher = this.filterConfig.$watch(() => {
-          this.filtered = _.extend({ masters: {}, teams: {} }, this.filterConfig);
-        });
+        this.listenToFilterConfigChanges();
+      },
+      listenToFilterConfigChanges: function () {
+        if (this.filterConfig) {
+          if (this.configsUnwatcher) {
+            this.configsUnwatcher();
+          }
+
+          this.configsUnwatcher = this.filterConfig.$watch(() => {
+            this.filtered = _.extend({masters: {}, teams: {}}, this.filterConfig);
+          });
+        }
       },
       configFilterChanged: function () {
         this.filterConfig.masters = this.filtered.masters;
