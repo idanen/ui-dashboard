@@ -10,24 +10,30 @@
       restrict: 'A',
       link: function ($scope, $element, $attrs) {
         let operation = $attrs.ciIsAdmin;
-        userService.listenToAdminChanges((isAdmin) => {
+
+        userService.listenToAdminChanges(listener);
+        $element.on('$destroy', () => userService.stopListeningToAdminChanges(listener));
+
+        function listener(isAdmin) {
+          let target = $element[0];
           if (operation === 'disable') {
             if (isAdmin) {
               $element.removeAttr('disabled');
               $element.removeAttr('title');
+              target.disabled = false;
             } else {
               $element.attr('disabled', 'disabled');
               $element.attr('title', 'Not permitted');
+              target.disabled = true;
             }
           } else {
-            let target = $element[0];
             if (isAdmin) {
               target.style.display = '';
             } else {
               target.style.display = 'none';
             }
           }
-        });
+        }
       }
     };
   }

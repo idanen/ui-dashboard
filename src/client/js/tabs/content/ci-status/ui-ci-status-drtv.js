@@ -26,13 +26,14 @@
         }])
         .controller('ciStatusController', CiStatusController);
 
-    CiStatusController.$inject = ['$element', '$state', 'ciStatusService', 'userConfigs', 'JENKINS_BASE_URL', 'ResultsToIconNames'];
-    function CiStatusController($element, $state, ciStatusService, userConfigs, JENKINS_BASE_URL, ResultsToIconNames) {
+    CiStatusController.$inject = ['$element', '$state', 'ciStatusService', 'userConfigs', 'JENKINS_BASE_URL', 'ResultsToIconNames', 'DEFAULT_JOB_NAME'];
+    function CiStatusController($element, $state, ciStatusService, userConfigs, JENKINS_BASE_URL, ResultsToIconNames, DEFAULT_JOB_NAME) {
       this.$state = $state;
       this.$element = $element;
       this.ciStatusService = ciStatusService;
       this.JENKINS_BASE_URL = JENKINS_BASE_URL;
       this.ResultsToIconNames = ResultsToIconNames;
+      this.DEFAULT_JOB_NAME = DEFAULT_JOB_NAME;
       this.userConfigs = userConfigs;
       this.jobs = {
         masters: this.ciStatusService.getJobs(),
@@ -85,6 +86,12 @@
           this.configsUnwatcher = this.filterConfig.$watch(() => {
             this.filtered = _.extend({masters: {}, teams: {}}, this.filterConfig);
           });
+        } else {
+          this.filtered = {
+            masters: {},
+            teams: {}
+          };
+          this.filtered.masters[this.DEFAULT_JOB_NAME] = true;
         }
       },
       configFilterChanged: function () {

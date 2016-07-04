@@ -10,7 +10,7 @@
           onUpdate: '&'
         },
         template: `
-            <label><paper-toggle-button></paper-toggle-button><span>{{ $ctrl.label }}</span></label>
+            <label><paper-toggle-button><span>{{ $ctrl.label }}</span></paper-toggle-button></label>
           `
       });
 

@@ -18,7 +18,6 @@
                 id: 'pushqueue',
                 title: 'Push Queue',
                 contentUrl: 'js/tabs/list/tabs-content-templates/tab-content-ui-push-queue-tmpl.html',
-                requiresAuth: true,
                 columns: 12
             },
             {

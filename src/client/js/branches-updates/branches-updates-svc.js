@@ -15,7 +15,7 @@
     this.NotificationTags = NotificationTags;
 
     $firebaseAuth().$onAuthStateChanged(authData => {
-      this.currentUserId = authData.uid;
+      this.currentUserId = authData && authData.uid;
     });
   }
 

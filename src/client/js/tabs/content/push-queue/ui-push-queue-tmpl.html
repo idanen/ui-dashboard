@@ -4,8 +4,8 @@
   <!--<div class="head-mark"><img ng-src="{{ pushQueueCtrl.getMemberByID(pushQueueCtrl.queue[0].id).img }}"/></div>-->
   <!--</div>-->
   <!--<div class="col-md-9">-->
-  <div class="col-md-12" ci-is-admin>
-    <div class="row">
+  <div class="col-md-12">
+    <div class="row" ci-is-admin>
       <div class="col-md-9">
         <ui-select ng-model="pushQueueCtrl.selected.member" theme="selectize">
           <ui-select-match class="member-selector ui-select-match" placeholder="Select or search a member...">
@@ -63,9 +63,9 @@
         </paper-button>
       </div>
     </div>
-    <div class="row" ci-is-admin>
+    <div class="row">
       <div class="col-md-4">
-        <toggle-button state="pushQueueCtrl.pushEnabled.PushQueueNotification" label="Notify" on-update="pushQueueCtrl.updatePushStatus(state)"></toggle-button>
+        <toggle-button state="pushQueueCtrl.pushEnabled.PushQueueNotification" label="Notify" on-update="pushQueueCtrl.updatePushStatus(state)" ci-is-admin="disable"></toggle-button>
       </div>
     </div>
     <div class="row">
@@ -81,13 +81,13 @@
               </div>
               <div class="col-xs-8">
                 <span>{{ member.name }}</span>
-                <paper-button raised ng-click="pushQueueCtrl.setPriority(member)" ci-is-admin>
+                <paper-button raised ng-click="pushQueueCtrl.setPriority(member)" ci-is-admin="disable">
                   <iron-icon icon="arrow-upward"></iron-icon>
                   <span>Set priority</span>
                 </paper-button>
               </div>
               <div class="col-xs-3">
-                <button type="button" class="btn btn-info pull-right" ci-is-admin
+                <button type="button" class="btn btn-info pull-right" ci-is-admin="disable"
                         ng-click="pushQueueCtrl.removeFromQueue(member)">
                   <iron-icon icon="clear"></iron-icon>
                 </button>
