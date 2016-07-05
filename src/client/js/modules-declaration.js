@@ -12,7 +12,8 @@
         .constant('JENKINS_BASE_URL', 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/')
         .constant('DATE_FORMAT', 'HH:mm dd/MM/yyyy')
         .constant('DEFAULT_JOB_NAME', 'MaaS-SAW-USB-master')
-        .constant('MOCKAROO_API_KEY', '921088f0')
+        .constant('IMAGE_GENERATOR_URL', 'https://robohash.org/')
+        .constant('NAME_GENERATOR_URL', 'https://www.mockaroo.com/api/generate.json?key=921088f0')
         .constant('NotificationTags', {
           PUSH_Q: 'PushQueueNotification',
           BRANCH_UPDATES: 'NotificationTagMasterMerge',
@@ -33,20 +34,32 @@
           .setNotify(false, false);
     }
 
-    initApp.$inject = ['$rootScope', 'ShoutOutsService', 'localStorageService'];
-    function initApp($rootScope, shoutOutsService, localStorageService) {
-      let firstTimer = localStorageService.get('firstTimer');
-      if (!firstTimer) {
-        
-      }
-        shoutOutsService.init();
+    initApp.$inject = ['$rootScope', '$q', '$window', 'ShoutOutsService', 'localStorageService', 'authService', 'mockData', 'userService'];
+    function initApp($rootScope, $q, $window, shoutOutsService, localStorageService, authService, mockData, userService) {
+      let unregisterAuthChanges = $window.firebase.auth().onAuthStateChanged(authData => {
+        if (!authData) {
+          authService.loginAnonymous()
+              .then((authData) => {
+                console.log('first timer logged in anonymously', authData);
+                return $q.all([authData, mockData.getNameAndImg()]);
+              })
+              .then((userData) => {
+                var user = _.extend({uid: userData[0].uid, anonymous: true}, userData[1]);
+                return userService.saveAnonymousUser(user);
+              });
+        }
 
-        $rootScope.$on('$routeChangeError', function (event, next, previous, error) {
-            console.log('$routeChangeError occurred', error);
-            //event.preventDefault();
-            //if (error === 'AUTH_REQUIRED') {
-            //    $state.go('login');
-            //}
-        });
+        unregisterAuthChanges();
+      });
+
+      shoutOutsService.init();
+
+      $rootScope.$on('$routeChangeError', function (event, next, previous, error) {
+        console.log('$routeChangeError occurred', error);
+        //event.preventDefault();
+        //if (error === 'AUTH_REQUIRED') {
+        //    $state.go('login');
+        //}
+      });
     }
 })();

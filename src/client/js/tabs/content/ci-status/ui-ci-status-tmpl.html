@@ -46,7 +46,7 @@
   <div class="row">
     <form class="form-horizontal col-xs-12">
       <fieldset class="form-group">
-        <div class="col-md-3">
+        <div class="col-md-3 col-xs-5">
           <div class="btn-group" uib-dropdown auto-close="disabled">
             <paper-button raised uib-dropdown-toggle>
               <iron-icon icon="filter-list"></iron-icon>
@@ -67,12 +67,12 @@
             </paper-button>
           </div>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-9 col-xs-7">
             <a class="selected-filter slide-in" ng-repeat="(filtered, value) in ciJobsCtrl.filtered.masters" ng-click="ciJobsCtrl.unfilter('masters', filtered)" ng-if="value" uib-tooltip="{{  filtered }}">&times; {{ filtered }}</a>
         </div>
       </fieldset>
       <fieldset class="form-group">
-        <div class="col-md-3">
+        <div class="col-md-3 col-xs-5">
           <div class="btn-group" uib-dropdown auto-close="disabled">
             <paper-button raised uib-dropdown-toggle>
               <iron-icon icon="filter-list"></iron-icon>
@@ -93,7 +93,7 @@
             </paper-button>
           </div>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-9 col-xs-7">
           <a class="selected-filter slide-in" ng-repeat="(filtered, value) in ciJobsCtrl.filtered.teams" ng-click="ciJobsCtrl.unfilter('teams', filtered)" ng-if="value" uib-tooltip="{{  filtered }}">&times; {{ filtered }}</a>
         </div>
       </fieldset>

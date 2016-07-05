@@ -4,12 +4,13 @@
   angular.module('ci-site')
     .service('userService', UserService);
 
-  UserService.$inject = ['Ref', '$q', '$window', '$firebaseObject', '$firebaseAuth'];
-  function UserService(Ref, $q, $window, $firebaseObject, $firebaseAuth) {
+  UserService.$inject = ['Ref', '$q', '$window', '$firebaseObject', '$firebaseAuth', 'mockData'];
+  function UserService(Ref, $q, $window, $firebaseObject, $firebaseAuth, mockData) {
     this.usersRef = Ref.child('users');
     this.$q = $q;
     this.$window = $window;
     this.$firebaseObject = $firebaseObject;
+    this.mockData = mockData;
 
     this._admin = false;
     this._adminListeners = [];
@@ -58,8 +59,9 @@
       let toSave = {
         uid: userId,
         email: profile.email,
-        displayName: profile.displayName || authData.email,
-        photoURL: profile.photoURL || `https://secure.gravatar.com/avatar/${this.$window.escape(this.$window.btoa(authData.email))}?d=retro`
+        displayName: profile.displayName || profile.email,
+        // photoURL: profile.photoURL || `https://secure.gravatar.com/avatar/${this.$window.escape(this.$window.btoa(profile.email))}?d=retro`
+        photoURL: profile.photoUrl || this.mockData.getImageUrl(profile.email)
       };
 
       return this.$q((resolve, reject) => {
@@ -79,6 +81,11 @@
         });
       });
       //return this.$q.when(this.usersRef.set(authData));
+    },
+    saveAnonymousUser: function (anonymous) {
+      return this.$q.resolve(
+          this.usersRef.child(anonymous.uid).set(anonymous)
+      );
     },
     /**
      * Gets user's data
