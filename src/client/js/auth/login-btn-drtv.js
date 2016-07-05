@@ -10,12 +10,12 @@
     return {
       restrict: 'EA',
       template: `
-        <div>
+        <div ng-if="loginBtn.ready">
           <a class="btn btn-default" ui-sref="login" ng-hide="loginBtn.authData">Login</a>
           <div class="user-links" ng-show="loginBtn.authData">
             <img class="profile-image img-circle" ng-src="{{loginBtn.authData.photoURL}}" alt="profile image">
             <a class="btn-link">Hi, {{ loginBtn.authData.displayName }}!</a>
-            <a class="btn-link" ng-click="loginBtn.logout()">Logout</a>
+            <a class="btn-link" ng-click="loginBtn.logout()" ng-hide="loginBtn.authData.anonymous">Logout</a>
             <a class="btn-link under-construction" ui-sref="login" ng-show="loginBtn.authData.anonymous" uib-tooltip="Link to a user account to add email and set a real name :)">Link</a>
           </div>
         </div>
@@ -36,6 +36,7 @@
     this.authService = authService;
     this.userService = userService;
     this.authObj = $firebaseAuth();
+    this.ready = false;
 
     this.authObj.$onAuthStateChanged(this.updateAuthState.bind(this));
   }
@@ -46,9 +47,11 @@
     },
     updateAuthState: function (authData) {
       this.authData = authData;
+      this.ready = false;
       if (authData) {
         this.authData = this.userService.getUser(authData.uid);
         this.authData.$loaded().then((loadedData) => {
+          this.ready = true;
           this.extra = angular.extend({}, loadedData);
         });
       }

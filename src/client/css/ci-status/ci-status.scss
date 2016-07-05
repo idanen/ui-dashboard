@@ -121,27 +121,6 @@
       animation-iteration-count: infinite;
       animation-duration: 1.2s;
     }
-    .sub-build-result {
-      position: absolute;
-      background: transparent;
-      top: 0;
-      z-index: 1;
-      color: white;
-      font-size: 1.2rem;
-      text-align: center;
-      text-transform: lowercase;
-      visibility: hidden;
-    }
-    &:hover {
-      .sub-build-result {
-        visibility: visible;
-      }
-    }
-    &.build-state-running:hover {
-      .sub-build-result {
-        top: -7px;
-      }
-    }
     &:not(:last-child) {
       margin-right: 4px;
     }

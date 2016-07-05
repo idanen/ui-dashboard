@@ -55,13 +55,14 @@
      */
     saveUser: function (authData) {
       const userId = authData.uid,
-            profile = authData.providerData[0];
+            profile = authData.providerData[0],
+            generatedPhotoURL = profile.email ? this.mockData.getImageUrl(profile.email) : this.mockData.getImageUrl(authData.uid);
       let toSave = {
         uid: userId,
         email: profile.email,
         displayName: profile.displayName || profile.email,
         // photoURL: profile.photoURL || `https://secure.gravatar.com/avatar/${this.$window.escape(this.$window.btoa(profile.email))}?d=retro`
-        photoURL: profile.photoUrl || this.mockData.getImageUrl(profile.email)
+        photoURL: profile.photoURL || generatedPhotoURL
       };
 
       return this.$q((resolve, reject) => {

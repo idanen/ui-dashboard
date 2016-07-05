@@ -12,8 +12,7 @@
         },
         template: `
           <div class="build-progress" ng-class="$ctrl.buildResult === 'running' && 'build-progress-running'">
-            <div class="sub-build slide-in" ng-repeat="subBuild in $ctrl.subBuilds" uib-tooltip="{{ subBuild.$id }}" ng-class="$ctrl.determineClass(subBuild)">
-              <span class="sub-build-result">{{ subBuild.result }}</span>
+            <div class="sub-build slide-in" ng-repeat="subBuild in $ctrl.subBuilds | orderBy:$ctrl.resultToOrder" uib-tooltip="{{ subBuild.$id }} ({{ subBuild.result }})" ng-class="$ctrl.determineClass(subBuild)">
             </div>
           </div>
         `
@@ -51,6 +50,12 @@
         this.subBuilds = this.statusService.getJobSubBuilds(this.buildName, this.buildNumber, this.buildGroup);
       }
     },
+    resultToOrder: function (subBuild) {
+      if (subBuild.result === 'running') {
+        return 1;
+      }
+      return 0;
+    },
     determineClass: function (subBuild) {
       var status = {
             SUCCESS: 'build-state-success',
@@ -58,7 +63,7 @@
             FAILURE: 'build-state-failure',
             ABORTED: 'build-state-aborted'
           }[subBuild.result] || 'build-state-unknown',
-          running = subBuild.phase !== 'FINISHED' && subBuild.phase !== 'FINALIZED' ? ' build-state-running' : '';
+          running = subBuild.result === 'running' ? ' build-state-running' : '';
       return `${status}${running}`;
     }
   };
