@@ -63,9 +63,9 @@
         </paper-button>
       </div>
     </div>
-    <div class="row">
+    <div class="row" ci-is-admin>
       <div class="col-md-4">
-        <toggle-button state="pushQueueCtrl.pushEnabled.PushQueueNotification" label="Notify" on-update="pushQueueCtrl.updatePushStatus(state)" ci-is-admin="disable"></toggle-button>
+        <toggle-button state="pushQueueCtrl.pushEnabled.PushQueueNotification" label="Notify" on-update="pushQueueCtrl.updatePushStatus(state)"></toggle-button>
       </div>
     </div>
     <div class="row">

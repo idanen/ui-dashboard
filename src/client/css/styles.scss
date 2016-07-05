@@ -105,19 +105,22 @@ body {
     height: auto;
 }
 
+.navbar {
+  a,
+  .btn-link {
+    cursor: pointer;
+  }
+}
+
 login-btn {
   .profile-image {
     margin: auto;
-    box-shadow: 2px 2px 4px rgba(255, 255, 255, .6);
   }
   .user-links {
     margin-top: 8px;
     margin-bottom: 8px;
-    .btn-link {
-      cursor: pointer;
-      &:not(:first-of-type)::before {
-        content: ' | ';
-      }
+    .btn-link:not(:first-of-type)::before {
+      content: ' | ';
     }
   }
 }

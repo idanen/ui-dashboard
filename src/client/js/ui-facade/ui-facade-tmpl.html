@@ -15,7 +15,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ facade.currentStateWidget.title }} <span class="caret"></span></a>
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ facade.title }} <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li ui-sref-active="active" ng-repeat="widget in facade.widgets">
                             <a ui-sref="widget({widgetId: widget.id})">{{ widget.title }}</a>
@@ -61,7 +61,7 @@
                     <paper-header-panel main>
                         <paper-toolbar>
                             <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
-                            <div class="title">{{ facade.currentStateWidget.title }}</div>
+                            <div class="title">{{ facade.title }}</div>
                         </paper-toolbar>
                         <div class="main-panel-container">
                             <div class="widget-content" ui-view></div>

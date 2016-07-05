@@ -9,9 +9,7 @@
           label: '@',
           onUpdate: '&'
         },
-        template: `
-            <label><paper-toggle-button><span>{{ $ctrl.label }}</span></paper-toggle-button></label>
-          `
+        template: `<paper-toggle-button><span>{{ $ctrl.label }}</span></paper-toggle-button>`
       });
 
   ToggleButtonComponent.$inject = ['$element'];
@@ -26,7 +24,9 @@
     $postLink: function () {
       var $toggler = this.$element.find('paper-toggle-button');
       $toggler.on('iron-change', (ev) => {
-        this.onUpdate({state: ev.target.checked});
+        if (this.state !== ev.target.checked) {
+          this.onUpdate({state: ev.target.checked});
+        }
       });
 
       this.$element.on('$destroy', () => {

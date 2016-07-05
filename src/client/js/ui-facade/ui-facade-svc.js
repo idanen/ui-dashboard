@@ -4,9 +4,11 @@
     angular.module('ui')
         .service('UiFacadeService', UiFacadeService);
 
-    UiFacadeService.$inject = ['authService'];
-    function UiFacadeService(authService) {
+    UiFacadeService.$inject = ['authService', 'userService', '$stateParams'];
+    function UiFacadeService(authService, userService, $stateParams) {
         this.authService = authService;
+        this.$stateParams = $stateParams;
+        this.userService = userService;
         this.widgets = [
             {
                 id: 'cistatus',
@@ -50,6 +52,11 @@
             }
         ];
 
+        this.statesToTitles = {};
+        this.widgets.forEach((widget) => this.statesToTitles[widget.id] = widget.title);
+        this.statesToTitles.compare = 'Builds Compare';
+        this.statesToTitles.stability = 'Build Analysis';
+
         this.currentWidget = this.widgets[0];
     }
 
@@ -61,7 +68,7 @@
             if (this.authService.getLoggedUser()) {
                 return this.widgets;
             } else {
-                return _.filter(this.widgets, (widget) => !widget.requiresAuth);
+                return _.filter(this.widgets, (widget) => !widget.requiresAuth || this.userService.isAdmin());
             }
         },
         setCurrent: function (idx) {
@@ -72,6 +79,12 @@
         },
         getById: function (id) {
             return _.find(this.widgets, { id: id });
+        },
+        getTitleOfState: function (stateName) {
+            if (stateName === 'widget') {
+                return this.statesToTitles[this.$stateParams.widgetId];
+            }
+            return this.statesToTitles[stateName];
         },
         getByIndex: function (idx) {
             return this.widgets[idx];

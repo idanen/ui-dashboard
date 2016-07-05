@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('ci-site.filters', []);
-    angular.module('ci-site', ['firebase', 'ngAnimate', 'ngSanitize', 'ngResource', 'ui.router', 'ui.select', 'ui.bootstrap', 'angular-ladda', 'ngclipboard', 'LocalStorageModule', 'ci-site.filters', 'collapsiblePanel'])
+    angular.module('ci-site', ['firebase', 'ngAnimate', 'ngSanitize', 'ngResource', 'ui.router', 'ui.select', 'ui.bootstrap', 'angular-ladda', 'ngclipboard', 'ci-site.filters', 'collapsiblePanel'])
         .constant('ENV', {
           PROTOCOL: 'http',
           HOST: 'cidashboard.hpe.guru',
@@ -23,19 +23,15 @@
         .run(initApp);
     angular.module('ui', ['ci-site']);
 
-    config.$inject = ['$uibTooltipProvider', 'localStorageServiceProvider'];
-    function config($uibTooltipProvider, localStorageServiceProvider) {
+    config.$inject = ['$uibTooltipProvider'];
+    function config($uibTooltipProvider) {
       $uibTooltipProvider.options({
         placement: 'bottom', appendToBody: true
       });
-      localStorageServiceProvider
-          .setPrefix('ciSite')
-          .setStorageType('localStorage')
-          .setNotify(false, false);
     }
 
-    initApp.$inject = ['$rootScope', '$q', '$window', 'ShoutOutsService', 'localStorageService', 'authService', 'mockData', 'userService'];
-    function initApp($rootScope, $q, $window, shoutOutsService, localStorageService, authService, mockData, userService) {
+    initApp.$inject = ['$rootScope', '$q', '$window', 'ShoutOutsService', 'authService', 'mockData', 'userService'];
+    function initApp($rootScope, $q, $window, shoutOutsService, authService, mockData, userService) {
       let unregisterAuthChanges = $window.firebase.auth().onAuthStateChanged(authData => {
         if (!authData) {
           authService.loginAnonymous()

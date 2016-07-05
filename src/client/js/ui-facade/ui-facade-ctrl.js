@@ -4,9 +4,9 @@
     angular.module('ui')
         .controller('UiFacadeCtrl', UiFacadeController);
 
-    UiFacadeController.$inject = ['$state', '$element', '$firebaseAuth', 'UiFacadeService', 'ciStatusService'];
-    function UiFacadeController($state, $element, $firebaseAuth, UiFacadeService, ciStatusService) {
-        this.UiFacadeService = UiFacadeService;
+    UiFacadeController.$inject = ['$scope', '$state', '$element', '$firebaseAuth', 'UiFacadeService', 'ciStatusService'];
+    function UiFacadeController($scope, $state, $element, $firebaseAuth, facadeService, ciStatusService) {
+        this.facadeService = facadeService;
         this.$state = $state;
         this.$element = $element;
         this.authObj = $firebaseAuth();
@@ -17,11 +17,15 @@
             .then((build) => {
               this.defaultBuild = build;
             });
+
+      $scope.$on('$stateChangeSuccess', (event, toState) => {
+        this.title = this.facadeService.getTitleOfState(toState.name);
+      });
     }
 
     UiFacadeController.prototype = {
       initWidgets: function (/*currentUser*/) {
-        this.widgets = this.UiFacadeService.getAuthWidgets();
+        this.widgets = this.facadeService.getAuthWidgets();
 
         this.currentStateWidget = this.widgets[0];
       },
@@ -49,7 +53,7 @@
                 return;
             }
             this.$state.go('widget', { widgetId: widgetId });
-            this.setWidgetState(this.UiFacadeService.getById(widgetId));
+            this.setWidgetState(this.facadeService.getById(widgetId));
         },
         setMainWidget: function (index) {
             this.currentWidget = this.mainWidgets[index];
