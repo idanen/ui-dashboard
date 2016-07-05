@@ -4,14 +4,13 @@
     angular.module('ui')
         .controller('UiFacadeCtrl', UiFacadeController);
 
-    UiFacadeController.$inject = ['$scope', '$state', '$element', '$firebaseAuth', 'UiFacadeService', 'ciStatusService'];
-    function UiFacadeController($scope, $state, $element, $firebaseAuth, facadeService, ciStatusService) {
+    UiFacadeController.$inject = ['$scope', '$state', '$element', 'userService', 'UiFacadeService', 'ciStatusService'];
+    function UiFacadeController($scope, $state, $element, userService, facadeService, ciStatusService) {
         this.facadeService = facadeService;
         this.$state = $state;
         this.$element = $element;
-        this.authObj = $firebaseAuth();
 
-        this.authObj.$onAuthStateChanged(this.initWidgets.bind(this));
+        let offAdminChange = userService.onAdminChange(this.initWidgets.bind(this));
 
         ciStatusService.getDefaultBuild()
             .then((build) => {
@@ -21,17 +20,14 @@
       $scope.$on('$stateChangeSuccess', (event, toState) => {
         this.title = this.facadeService.getTitleOfState(toState.name);
       });
+
+      $scope.$on('$destroy', offAdminChange);
     }
 
     UiFacadeController.prototype = {
       initWidgets: function (/*currentUser*/) {
         this.widgets = this.facadeService.getAuthWidgets();
-
-        this.currentStateWidget = this.widgets[0];
       },
-        setWidgetState: function (widget) {
-            this.currentStateWidget = widget;
-        },
         gotoState: function (widgetId) {
             this.closeDrawer();
             if (widgetId === 'compare') {

@@ -11,8 +11,8 @@
       link: function ($scope, $element, $attrs) {
         let operation = $attrs.ciIsAdmin;
 
-        userService.listenToAdminChanges(listener);
-        $element.on('$destroy', () => userService.stopListeningToAdminChanges(listener));
+        let offAdminChange = userService.onAdminChange(listener);
+        $element.on('$destroy', offAdminChange);
 
         function listener(isAdmin) {
           let target = $element[0];

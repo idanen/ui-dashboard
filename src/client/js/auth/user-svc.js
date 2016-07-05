@@ -96,15 +96,15 @@
     getUser: function (uid) {
       return this.$firebaseObject(this.usersRef.child(uid));
     },
-    listenToAdminChanges: function (listener) {
+    onAdminChange: function (listener) {
       this._adminListeners.push(listener);
       listener(this._admin);
-    },
-    stopListeningToAdminChanges: function (listener) {
-      let idx = this._adminListeners.indexOf(listener);
-      if (idx > -1) {
-        this._adminListeners.splice(idx, 1);
-      }
+      return () => {
+        let idx = this._adminListeners.indexOf(listener);
+        if (idx > -1) {
+          this._adminListeners.splice(idx, 1);
+        }
+      };
     },
     /**
      * Says weather the user is an admin

@@ -65,7 +65,7 @@
             return this.widgets;
         },
         getAuthWidgets: function () {
-            if (this.authService.getLoggedUser()) {
+            if (this.userService.isAdmin()) {
                 return this.widgets;
             } else {
                 return _.filter(this.widgets, (widget) => !widget.requiresAuth || this.userService.isAdmin());
