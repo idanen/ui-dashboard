@@ -30,7 +30,7 @@
       );
     },
     getImageUrl: function (identifier) {
-      return `${this.IMAGE_GENERATOR_URL}${identifier}`;
+      return `${this.IMAGE_GENERATOR_URL}${identifier}?gravatar=yes`;
     },
     getNameAndImg: function () {
       return this.getMockName()
