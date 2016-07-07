@@ -4,15 +4,10 @@ var $ = require('gulp-load-plugins')();
 var del = require('del');
 var runSequence = require('run-sequence');
 var browserSync = require('browser-sync');
-var pagespeed = require('psi');
 var reload = browserSync.reload;
 var inject = require('gulp-inject');
-var nodemon = require('gulp-nodemon');
+var series = require('stream-series');
 var isProd = require('yargs').argv.stage === 'prod';
-
-// we'd need a slight delay to reload browsers
-// connected to browser-sync after restarting nodemon
-var BROWSER_SYNC_RELOAD_DELAY = 500;
 
 var AUTOPREFIXER_BROWSERS = [
   'ie >= 10',
@@ -24,6 +19,19 @@ var AUTOPREFIXER_BROWSERS = [
   'ios >= 7',
   'android >= 4.4',
   'bb >= 10'
+];
+
+const JS_FILES_ORDER = [
+  '**/firebase.js',
+  '**/lodash.js',
+  '**/dependencies/**/moment.js',
+  '**/dependencies/**/jquery*.js',
+  '**/dependencies/**/bootstrap.js',
+  '**/dependencies/**/angular.js',
+  '**/clipboard.js',
+  '**/spin.js',
+  '**/ladda.js',
+  '**/angular-ui-bootstrap/**/ui-bootstrap.js'
 ];
 
 // Lint JavaScript
@@ -67,10 +75,12 @@ gulp.task('fonts', function () {
 
 // Compile and automatically prefix stylesheets
 gulp.task('styles', function () {
+  var mainCssFilter = $.filter('styles*.css', {restore: true});
   // For best performance, don't add Sass partials to `gulp.src`
   return gulp.src([
     'src/client/lib/**/*.{scss,css}',
-    'src/client/css/**/*.{scss,css}'
+    'src/client/css/**/*.{scss,css}',
+    '!src/client/css/ci-status/**'
   ])
     .pipe($.sourcemaps.init())
     .pipe($.changed('.tmp/css', {extension: '.css'}))
@@ -83,6 +93,9 @@ gulp.task('styles', function () {
     .pipe(gulp.dest('.tmp/css'))
     // Concatenate and minify styles
     .pipe($.if('*.css', $.csso()))
+    .pipe($.if(isProd, mainCssFilter))
+    .pipe($.if(isProd, $.rev()))
+    .pipe($.if(isProd, mainCssFilter.restore))
     .pipe(gulp.dest('dist/css'))
     .pipe($.size({title: 'styles'}));
 });
@@ -90,8 +103,8 @@ gulp.task('styles', function () {
 // Concatenate and minify JavaScript. Optionally transpiles ES2015 code to ES5.
 // to enables ES2015 support remove the line `"only": "gulpfile.babel.js",` in the
 // `.babelrc` file.
-gulp.task('scripts', ['jshint'], function (cb) {
-  gulp.src([
+gulp.task('scripts', ['jslib', 'jshint'], function () {
+  return gulp.src([
     // Note: Since we are not using useref in the scripts build pipeline,
     //       you need to explicitly list your scripts here in the right order
     //       to be correctly concatenated
@@ -106,12 +119,12 @@ gulp.task('scripts', ['jshint'], function (cb) {
       .pipe($.sourcemaps.write())
       .pipe($.if(isProd, $.concat('main.min.js')))
       .pipe($.if(isProd, $.uglify({preserveComments: 'some'})))
+      .pipe($.if(isProd, $.rev()))
       .pipe(gulp.dest('dist/scripts'))
     // Output files
       .pipe($.size({title: 'scripts'}))
       .pipe($.sourcemaps.write('.'))
-      .pipe(gulp.dest('dist/scripts'))
-      .on('end', cb);
+      .pipe(gulp.dest('dist/scripts'));
 });
 
 // Scan your HTML for assets & optimize them
@@ -161,7 +174,18 @@ gulp.task('clear', function (done) {
 gulp.task('clean', del.bind(null, ['.tmp', 'dist/*', '!dist/.git'], {dot: true}));
 
 gulp.task('jslib', function () {
-  return gulp.src(['src/client/lib/**/*.js'])
+  return gulp.src([
+        'src/client/lib/**/*.js',
+        '!**/*min.js'
+      ])
+      .pipe($.sourcemaps.init())
+      // .pipe($.count('found ## pages'))
+      .pipe($.order(JS_FILES_ORDER))
+      .pipe($.if(isProd, $.concat('vendor.min.js')))
+      .pipe($.if(isProd, $.uglify({preserveComments: 'some'})))
+      .pipe($.if(isProd, $.rev()))
+      .pipe(gulp.dest('dist/lib'))
+      .pipe($.sourcemaps.write('.'))
       .pipe(gulp.dest('dist/lib'));
 });
 
@@ -172,9 +196,18 @@ gulp.task('templatecopy', function () {
 
 // Inject app *.js files to index.html
 gulp.task('inject', ['templatecopy', 'html'], function () {
-  var scriptsSrc = 'dist/scripts/' + (isProd ? 'main.min.js' : '**/*.js');
+  var scriptsSrc = 'dist/scripts/' + (isProd ? 'main*.min.js' : '**/*.js'),
+      vendorSrc = 'dist/lib/' + (isProd ? 'vendor*.min.js' : '**/*.js'),
+      stylesSrc = 'dist/css/styles*.css',
+      mainJsStream, vendorJsStream;
+
+  vendorJsStream = gulp.src([vendorSrc], {read: false})
+      .pipe($.order(JS_FILES_ORDER));
+  mainJsStream = gulp.src([scriptsSrc], {read: false});
+
   return gulp.src('dist/index.html')
-    .pipe(inject(gulp.src(scriptsSrc, {read: false}), {relative: true}))
+    .pipe(inject(series(vendorJsStream, mainJsStream), {relative: true}))
+    .pipe(inject(gulp.src(stylesSrc, {read: false}), {relative: true}))
     //.pipe($.angularFilesort())
     //// Minify any HTML
     //.pipe($.htmlmin({
@@ -184,33 +217,8 @@ gulp.task('inject', ['templatecopy', 'html'], function () {
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('nodemon', function (cb) {
-  var called = false;
-  return nodemon({
-
-    // nodemon our expressjs server
-    script: './server/StartServer.js',
-
-    // watch core server file(s) that require server restart on change
-    watch: ['./src/server/app.js']
-  })
-      .on('start', function onStart() {
-        // ensure start only got called once
-        if (!called) { cb(); }
-        called = true;
-      })
-      .on('restart', function onRestart() {
-        // reload connected browsers after a slight delay
-        setTimeout(function reload() {
-          browserSync.reload({
-            stream: false
-          });
-        }, BROWSER_SYNC_RELOAD_DELAY);
-      });
-});
-
 gulp.task('build', function (cb) {
-  runSequence('clean', ['jslib', 'styles', 'copy', 'images', 'inject'], cb);
+  runSequence('clean', ['styles', 'copy', 'html', 'inject', 'images'], cb);
 });
 
 // Watch files for changes & reload
@@ -226,9 +234,9 @@ gulp.task('serve', ['build'], function () {
     server: ['.tmp', 'dist']
   });
 
-  gulp.watch(['src/client/**/*.html'], ['templatecopy'], reload);
+  gulp.watch(['src/client/**/*.html'], ['html'], reload);
   gulp.watch(['src/client/**/*.{scss,css}'], ['styles', 'inject'], reload);
-  gulp.watch(['src/client/js/**/*.js'], ['jshint', 'jslib', 'scripts', 'inject'], reload);
+  gulp.watch(['src/client/js/**/*.js'], ['scripts'], reload);
   gulp.watch(['src/client/images/**/*'], reload);
 });
 
@@ -247,7 +255,7 @@ gulp.task('serve:dist', ['clear', 'build'], function () {
 
 // Build production files, the default task
 gulp.task('default', ['clear', 'clean'], function (cb) {
-  runSequence('styles', ['jshint', 'html', 'images', 'fonts', 'copy'], 'jslib', cb);
+  runSequence('styles', ['jshint', 'html', 'images', 'fonts', 'copy'], 'inject', cb);
 });
 
 // watch files for changes and reload

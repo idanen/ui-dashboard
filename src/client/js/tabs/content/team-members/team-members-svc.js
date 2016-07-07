@@ -5,25 +5,13 @@
 
     TeamMembersService.$inject = ['Ref', '$firebaseArray', '$firebaseObject', '$q'];
     function TeamMembersService(Ref, $firebaseArray, $firebaseObject, $q) {
-        var svc = this;
-
         this._ref = Ref.child('members');
         this.$firebaseArray = $firebaseArray;
         this.$firebaseObject = $firebaseObject;
         this.$q = $q;
-        // this.members = FirebaseService.getMembers();
-
-        // this.members.$loaded(function () {
-        //     svc.uniqueMemberId = svc.members.length;
-        // });
 
         this._ref.orderByChild('memberId').limitToLast(1).once('value')
-            .then((snapshot) => svc.uniqueMemberId = snapshot.child('id').val());
-
-        this.addMember = function (newMember) {
-          this._ref.push(angular.extend({memberId: this.uniqueMemberId}, newMember));
-          this.uniqueMemberId++;
-        };
+            .then((snapshot) => this.uniqueMemberId = snapshot.child('memberId').val());
     }
 
     TeamMembersService.prototype = {
