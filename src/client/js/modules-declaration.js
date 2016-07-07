@@ -5,8 +5,8 @@
     angular.module('ci-site', ['firebase', 'ngAnimate', 'ngSanitize', 'ngResource', 'ui.router', 'ui.select', 'ui.bootstrap', 'angular-ladda', 'ngclipboard', 'ci-site.filters', 'collapsiblePanel'])
         .constant('ENV', {
           PROTOCOL: 'http',
-          // HOST: 'cidashboard.hpe.guru',
-          HOST: 'localhost',
+          HOST: 'cidashboard.hpe.guru',
+          // HOST: 'localhost',
           PORT: '4000'
         })
         .constant('JENKINS_BASE_URL', 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/')
