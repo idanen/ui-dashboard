@@ -49,7 +49,6 @@
                 return;
             }
             this.$state.go('widget', { widgetId: widgetId });
-            this.setWidgetState(this.facadeService.getById(widgetId));
         },
         setMainWidget: function (index) {
             this.currentWidget = this.mainWidgets[index];

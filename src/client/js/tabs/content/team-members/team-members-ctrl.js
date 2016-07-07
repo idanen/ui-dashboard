@@ -7,25 +7,25 @@
 
     TeamMembersController.$inject = ['TeamMembersService'];
 
-    function TeamMembersController(TeamMembersService) {
+    function TeamMembersController(teamMembersService) {
         var ctrl = this;
-        this.members = TeamMembersService.getMembers();
+        this.members = teamMembersService.getMembers();
         this.addMember = function (member) {
-            TeamMembersService.addMember(member);
+            teamMembersService.addMember(member);
         };
         this.setEditMember = function (member) {
             ctrl.editMember = member;
         };
         this.saveMember = function () {
-            TeamMembersService.saveMemberInfo(ctrl.editMember);
+            teamMembersService.saveMemberInfo(ctrl.editMember);
         };
         this.cancelEditMember = function () {
-            TeamMembersService.getOrigMember(ctrl.editMember.$id).then(function (data) {
-                ctrl.editMember.fname = data.fname;
-                ctrl.editMember.lname = data.lname;
-                ctrl.editMember.compName = data.compName;
-                ctrl.editMember.email = data.email;
-                ctrl.editMember.img = data.img;
+            teamMembersService.getOrigMember(ctrl.editMember.$id).then(function (origMember) {
+                ctrl.editMember.fname = origMember.fname;
+                ctrl.editMember.lname = origMember.lname;
+                ctrl.editMember.compName = origMember.compName;
+                ctrl.editMember.email = origMember.email;
+                ctrl.editMember.img = origMember.img;
             });
         };
     }
