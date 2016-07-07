@@ -4,7 +4,7 @@ var $ = require('gulp-load-plugins')();
 var del = require('del');
 var runSequence = require('run-sequence');
 var browserSync = require('browser-sync');
-var pagespeed = require('psi');
+var hash = require('gulp-hash-filename');
 var reload = browserSync.reload;
 var inject = require('gulp-inject');
 var nodemon = require('gulp-nodemon');
@@ -106,6 +106,7 @@ gulp.task('scripts', ['jshint'], function (cb) {
       .pipe($.sourcemaps.write())
       .pipe($.if(isProd, $.concat('main.min.js')))
       .pipe($.if(isProd, $.uglify({preserveComments: 'some'})))
+      .pipe($.if(isProd, hash()))
       .pipe(gulp.dest('dist/scripts'))
     // Output files
       .pipe($.size({title: 'scripts'}))
@@ -172,7 +173,7 @@ gulp.task('templatecopy', function () {
 
 // Inject app *.js files to index.html
 gulp.task('inject', ['templatecopy', 'html'], function () {
-  var scriptsSrc = 'dist/scripts/' + (isProd ? 'main.min.js' : '**/*.js');
+  var scriptsSrc = 'dist/scripts/' + (isProd ? 'main.min*.js' : '**/*.js');
   return gulp.src('dist/index.html')
     .pipe(inject(gulp.src(scriptsSrc, {read: false}), {relative: true}))
     //.pipe($.angularFilesort())
