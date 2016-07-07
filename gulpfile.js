@@ -218,7 +218,7 @@ gulp.task('inject', ['templatecopy', 'html'], function () {
 });
 
 gulp.task('build', function (cb) {
-  runSequence('clean', ['styles', 'copy', 'html', 'inject', 'images'], cb);
+  runSequence('clean', ['styles', 'copy', 'inject', 'images'], cb);
 });
 
 // Watch files for changes & reload
@@ -236,7 +236,7 @@ gulp.task('serve', ['build'], function () {
 
   gulp.watch(['src/client/**/*.html'], ['html'], reload);
   gulp.watch(['src/client/**/*.{scss,css}'], ['styles', 'inject'], reload);
-  gulp.watch(['src/client/js/**/*.js'], ['scripts'], reload);
+  gulp.watch(['src/client/js/**/*.js'], ['inject'], reload);
   gulp.watch(['src/client/images/**/*'], reload);
 });
 

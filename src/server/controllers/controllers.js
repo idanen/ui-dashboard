@@ -95,8 +95,12 @@ module.exports = (function () {
       },
 
       getTestsStability: function (request, response) {
+        var branchName;
+        if (request.query && request.query.branchName) {
+          branchName = request.query.branchName;
+        }
         return this._handleRequest(request, response, function (req) {
-          return this.testsRetriever.fetchStability(req.params.buildName, parseInt(req.params.buildCount, 10), parseInt(req.params.startFromNumber, 10), req.params.branchName)
+          return this.testsRetriever.fetchStability(req.params.buildName, parseInt(req.params.buildCount, 10), parseInt(req.params.startFromNumber, 10), branchName)
         }.bind(this));
       },
 

@@ -169,9 +169,8 @@ module.exports = (function () {
             });
       }
       return buildIdsRange.then(function (buildIds) {
-        var aggregations = _buildStabilityAggregator(buildName, buildIds);
-        return this._promisize('aggregate', aggregations)
-            .then(this.fetchStabilitySuccessTests.bind(this, buildName, buildIdsRange));
+        return this._promisize('aggregate', _buildStabilityAggregator(buildName, buildIds))
+            .then(this.fetchStabilitySuccessTests.bind(this, buildName, buildIds));
       }.bind(this));
     },
     fetchStabilitySuccessTests: function (buildName, buildIdsRange, stabilityResults) {
