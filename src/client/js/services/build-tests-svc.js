@@ -46,7 +46,10 @@
     fetchLastFailedOfBuild: function (buildName, startFromNumber, buildCount = 10) {
       return this.LastFailedTests.query({buildName, buildCount, startFromNumber}).$promise;
     },
-    getStability: function (buildName, startFromNumber, buildCount = 10) {
+    getStability: function (buildName, startFromNumber, buildCount = 10, branchName = '') {
+      if (branchName) {
+        return this.Stability.query({buildName, buildCount, startFromNumber, branchName}).$promise;
+      }
       return this.Stability.query({buildName, buildCount, startFromNumber}).$promise;
     },
     prepareTestsForSending: function (tests) {

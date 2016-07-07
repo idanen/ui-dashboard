@@ -8,12 +8,13 @@
         templateUrl: 'js/tabs/content/stability/stability-tmpl.html'
       });
 
-  CIStabilityController.$inject = ['$q', '$stateParams', 'buildTestsService', 'ciStatusService', 'build', '$filter', 'DEFAULT_JOB_NAME'];
-  function CIStabilityController($q, $stateParams, buildTestsService, ciStatusService, build, $filter, DEFAULT_JOB_NAME) {
+  CIStabilityController.$inject = ['$q', '$stateParams', 'buildTestsService', 'ciStatusService', 'build', '$filter', 'DEFAULT_JOB_NAME', 'GENERIC_JOB_NAME'];
+  function CIStabilityController($q, $stateParams, buildTestsService, ciStatusService, build, $filter, DEFAULT_JOB_NAME, GENERIC_JOB_NAME) {
     this.buildTestsService = buildTestsService;
     this.ciStatusService = ciStatusService;
     this.$filter = $filter;
     this.DEFAULT_JOB_NAME = DEFAULT_JOB_NAME;
+    this.GENERIC_JOB_NAME = GENERIC_JOB_NAME;
     this.buildsCount = 10;
     this.filterFailedPercent = 0.0;
     this.tests = [];
@@ -169,9 +170,13 @@
     },
     fetchStability: function () {
       this.goLoading = true;
-      return this.buildTestsService.getStability(this.build.name, this.build.number, this.buildsCount)
+      return this.buildTestsService.getStability(this.build.name, this.build.number, this.buildsCount, this.selectedBuildsBranch())
           .then(this.renderResults.bind(this))
           .finally(() => this.goLoading = false);
+    },
+    selectedBuildsBranch: function () {
+      let selectedBuild = _.find(this.availableBuilds[this.build.group], {$id: this.build.name});
+      return selectedBuild.builds[this.build.number].branchName;
     },
     handleError: console.error.bind(console)
   };

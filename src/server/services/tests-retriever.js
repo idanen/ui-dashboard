@@ -129,59 +129,49 @@ module.exports = (function () {
         }
       ]);
     },
-    fetchStability: function (buildName, buildCount, startFromNumber) {
+    fetchStability: function (buildName, buildCount, startFromNumber, branchName) {
       // console.log('buildName: \"' + buildName + '", buildCount: ' + buildCount + ', tests: ', tests);
-      var buildIdsRange = this._arrayWithReverse(buildCount, startFromNumber);
-      var aggregations = [
-        {
-          $sort: {
-            buildId: -1
-          }
-        },
-        {
-          $match: {
-            jobName: buildName,
-            buildId: {
-              $in: buildIdsRange
-            },
-            testFailed: true
-          }
-        },
-        {
-          $project: {
-            jobName: 1,
-            buildId: 1,
-            testClassName: 1,
-            testName: 1,
-            testFailed: 1,
-            markedUnstable: 1,
-            testReportUrl: 1,
-            exceptionType: 1,
-            errorMessage: 1,
-            failedCount: { $cond: ['$testFailed', 1, 0] }
-          }
-        },
-        {
-          $group: {
-            _id: {
-              testClassName: '$testClassName',
-              testName: '$testName'
-            },
-            stability: { $avg: '$failedCount' },
-            failed: { $sum: '$failedCount' },
-            buildIds: {
-              $push: {
-                buildId: '$buildId',
-                testFailed: '$testFailed',
-                markedUnstable: '$markedUnstable'
+      var buildIdsRange = Promise.resolve(this._arrayWithReverse(buildCount, startFromNumber));
+      if (branchName) {
+        buildIdsRange = this._promisize('aggregate', [
+          {
+            $match: {
+              jobName: buildName,
+              branchName: branchName
+            }
+          },
+          {
+            $group: {
+              _id: {
+                buildId: '$buildId'
               }
-            },
-            tests: {$push: '$$ROOT'}
+            }
+          },
+          {
+            $sort: {
+              "_id.buildId": -1
+            }
+          },
+          {
+            $limit: 10
           }
-        }
-      ];
-      return this._promisize('aggregate', aggregations)
-          .then(this.fetchStabilitySuccessTests.bind(this, buildName, buildIdsRange));
+        ])
+            .then(function (results) {
+              var buildIds = [];
+
+              if (results) {
+                results.forEach(function (aggregated) {
+                  buildIds.push(aggregated._id.buildId);
+                });
+              }
+
+              return buildIds;
+            });
+      }
+      return buildIdsRange.then(function (buildIds) {
+        return this._promisize('aggregate', _buildStabilityAggregator(buildName, buildIds))
+            .then(this.fetchStabilitySuccessTests.bind(this, buildName, buildIds));
+      }.bind(this));
     },
     fetchStabilitySuccessTests: function (buildName, buildIdsRange, stabilityResults) {
       var classesAndMethods, aggregations;
@@ -493,6 +483,57 @@ module.exports = (function () {
     }
 
     return test.testClassName === otherTest.testClassName && test.testName === otherTest.testName;
+  }
+
+  function _buildStabilityAggregator(jobName, buildIds) {
+    return [
+      {
+        $sort: {
+          buildId: -1
+        }
+      },
+      {
+        $match: {
+          jobName: jobName,
+          buildId: {
+            $in: buildIds
+          },
+          testFailed: true
+        }
+      },
+      {
+        $project: {
+          jobName: 1,
+          buildId: 1,
+          testClassName: 1,
+          testName: 1,
+          testFailed: 1,
+          markedUnstable: 1,
+          testReportUrl: 1,
+          exceptionType: 1,
+          errorMessage: 1,
+          failedCount: { $cond: ['$testFailed', 1, 0] }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            testClassName: '$testClassName',
+            testName: '$testName'
+          },
+          stability: { $avg: '$failedCount' },
+          failed: { $sum: '$failedCount' },
+          buildIds: {
+            $push: {
+              buildId: '$buildId',
+              testFailed: '$testFailed',
+              markedUnstable: '$markedUnstable'
+            }
+          },
+          tests: {$push: '$$ROOT'}
+        }
+      }
+    ];
   }
 
   return TestsRetriever;
