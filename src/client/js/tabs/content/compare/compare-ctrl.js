@@ -162,11 +162,11 @@
 
       // Sum all failures on each side
       this.totalFailed.left = this.leftTests.reduce((total, testsWrap) => {
-        total += _.filter(testsWrap.tests, { testFailed: true }).length;
+        total += _.filter(testsWrap.tests, { testFailed: true, jobName: this.selected.left.name, buildId: parseInt(this.selected.left.number, 10) }).length;
         return total;
       }, 0);
       this.totalFailed.right = this.rightTests.reduce((total, testsWrap) => {
-        total += _.filter(testsWrap.tests, { testFailed: true }).length;
+        total += _.filter(testsWrap.tests, { testFailed: true, jobName: this.selected.right.name, buildId: parseInt(this.selected.right.number, 10) }).length;
         return total;
       }, 0);
     },
