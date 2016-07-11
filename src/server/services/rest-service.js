@@ -16,20 +16,26 @@ module.exports = (function () {
   }
 
   RestService.prototype = {
-    fetch: function (uri) {
+    fetch: function (uri, params) {
       var options = _.extend({}, this.options);
       options.uri = this.options.baseUrl + uri;
       options.qs = this.options.params;
+      if (params) {
+        options.qs = _.extend({}, options.qs, params);
+      }
 
       delete options.baseUrl;
 
       return request(options);
     },
-    save: function (uri, data, method) {
+    save: function (uri, data, method, params) {
       var options = _.extend({}, this.options);
       options.method = RestService.WriteMethods[method.toUpperCase()] || 'PUT';
       options.uri = this.options.baseUrl + uri;
       options.qs = this.options.params;
+      if (params) {
+        options.qs = _.extend({}, options.qs, params);
+      }
       options.body = data;
 
       delete options.baseUrl;

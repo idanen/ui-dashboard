@@ -12,11 +12,11 @@ module.exports = (function () {
   }
 
   FirebaseService.prototype = {
-    fetch: function (ref) {
-      return this.rest.fetch((ref || '') + consts.FIREBASE_REST_SUFFIX);
+    fetch: function (ref, params) {
+      return this.rest.fetch((ref || '') + consts.FIREBASE_REST_SUFFIX, params);
     },
-    update: function (ref, data) {
-      return this.rest.save((ref || '') + consts.FIREBASE_REST_SUFFIX, data, RestService.WriteMethods.PATCH);
+    update: function (ref, data, params) {
+      return this.rest.save((ref || '') + consts.FIREBASE_REST_SUFFIX, data, RestService.WriteMethods.PATCH, params);
     }
   };
 

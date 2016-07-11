@@ -153,6 +153,30 @@ module.exports = (function () {
             return true;
           });
     },
+    fetchOldBuildsIds: function (group, buildName, threshold) {
+      return this.firebase.fetch(group + '/' + buildName + '/builds', {
+          shallow: true
+        })
+          .then(this._cutOldBuilds.bind(this, threshold));
+    },
+    deleteBuildStatuses: function (group, buildName, buildIdsToDelete) {
+      var deletionPatch = {};
+      buildIdsToDelete.map(function (buildId) {
+        deletionPatch[buildId] = null;
+      });
+
+      return this.firebase.update(group + '/' + buildName + '/builds', deletionPatch);
+    },
+    _cutOldBuilds: function (threshold, builds) {
+      var buildIds;
+
+      if (!builds) {
+        return Promise.resolve([]);
+      }
+
+      buildIds = Object.keys(builds);
+      return buildIds.slice(0, buildIds.length - (threshold || 100));
+    },
     isMastersGroup: function (buildParams) {
       return buildParams && buildParams.GIT_BRANCH === 'master' || /generic$/i.test(buildParams.HEAD_JOB_NAME) || /^release-\d+.\d+$/i.test(buildParams.GIT_BRANCH);
     }
