@@ -25,7 +25,7 @@
 
   BuildResultController.prototype = {
     resultToIconName: function () {
-      return this.ResultsToIconNames[this.result] || '';
+      return this.ResultsToIconNames[this.result] || 'Unknown';
     }
   };
 }());

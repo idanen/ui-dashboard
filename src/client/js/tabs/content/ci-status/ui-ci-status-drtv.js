@@ -35,24 +35,28 @@
       this.ResultsToIconNames = ResultsToIconNames;
       this.DEFAULT_JOB_NAME = DEFAULT_JOB_NAME;
       this.userConfigs = userConfigs;
-      this.jobs = {
-        masters: this.ciStatusService.getJobs(),
-        teams: this.ciStatusService.getJobs('teams')
-      };
-      this.loading = false; // when it true , progress bar enabled and job list disabled..
-      this.buildsLimit = 3;
+
+      this.loading = false;
       this.newBuild = {};
       this.legendShown = false;
+      this.jobs = {
+        masters: [],
+        teams: []
+      };
 
       this.userConfigs.registerForConfigsChanges(this.configsChanged.bind(this));
-
       this.filterConfig = this.userConfigs.getUserConfig('statusFilter');
       this.listenToFilterConfigChanges();
+
+      this.ciStatusService.getJobsIds()
+          .then(mastersIds => this.jobs.masters = Object.keys(mastersIds));
+      this.ciStatusService.getJobsIds('teams')
+          .then(teamsIds => this.jobs.teams = Object.keys(teamsIds));
     }
 
     CiStatusController.prototype = {
-      filterJob: function (group, job) {
-        this.filtered[group][job.$id] = !this.filtered[group][job.$id];
+      filterJob: function (group, jobId) {
+        this.filtered[group][jobId] = !this.filtered[group][jobId];
         this.configFilterChanged();
       },
       unfilter: function (group, jobId) {

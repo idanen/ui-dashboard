@@ -26,7 +26,26 @@
       </div>
     </div>
   </div>
-  <div class="build-status-rows">
+  <div class="build-status-rows" ng-if="$ctrl.loadingBuildResults">
+    <div class="row builds-group slide-in">
+      <div class="col-sm-4">
+        <a><em>Loading...</em></a>
+      </div>
+      <div class="col-sm-4">
+        <build-result result="build.result" show-label="true"></build-result>
+        <em>
+          ( Just now )
+        </em>
+      </div>
+      <div class="col-sm-4">
+        <div class="build-progress build-progress-running">
+          <div class="sub-build slide-in build-state-unknown build-state-running">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="build-status-rows" ng-if="!$ctrl.loadingBuildResults">
     <div class="row builds-group slide-in" ng-repeat="build in $ctrl.buildResults | orderBy:'$id':true track by $index">
       <div class="col-sm-4">
         <a ng-href="{{ $ctrl.buildCompareLink(build.$id) }}" uib-tooltip="Compare this build to another">{{ build.$id }}</a>

@@ -21,6 +21,8 @@
     this.ResultsToIconNames = ResultsToIconNames;
     this.$filter = $filter;
     this.JENKINS_BASE_URL = JENKINS_BASE_URL;
+    
+    this.loadingBuildResults = true;
     this.config = {
       buildTooLong: 1000 * 60 * 60 * 3
     };
@@ -41,6 +43,8 @@
 
       this.build.$loaded()
           .then((job) => this.determineInitialFreezeState(job));
+      this.buildResults.$loaded()
+          .then(() => this.loadingBuildResults = false);
     },
     $onDestroy: function () {
       if (this.buildResults && _.isFunction(this.buildResults.$destroy)) {
