@@ -57,11 +57,11 @@
     CiStatusController.prototype = {
       filterJob: function (group, jobId) {
         this.filtered[group][jobId] = !this.filtered[group][jobId];
-        this.configFilterChanged();
+        this.saveConfigChanges();
       },
       unfilter: function (group, jobId) {
         this.filtered[group][jobId] = false;
-        this.configFilterChanged();
+        this.saveConfigChanges();
       },
       clearAll: function (group) {
         this.filtered[group] = {};
@@ -95,10 +95,15 @@
             masters: {},
             teams: {}
           };
-          this.filtered.masters[this.DEFAULT_JOB_NAME] = true;
+          this.userConfigs.getUnboundConfig('statusFilter')
+              .then((globalStatusFilter) => {
+                if (_.isEmpty(this.filtered.masters) && _.isEmpty(this.filtered.teams)) {
+                  this.filtered = _.extend({masters: {}, teams: {}}, globalStatusFilter);
+                }
+              });
         }
       },
-      configFilterChanged: function () {
+      saveConfigChanges: function () {
         this.filterConfig.masters = this.filtered.masters;
         this.filterConfig.teams = this.filtered.teams;
         this.filterConfig.$save();

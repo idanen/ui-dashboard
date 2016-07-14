@@ -45,8 +45,8 @@
       </uib-progress>
     </div>
     <div class="test-stability" ng-if="!test.stabilityResult">
-      <uib-progressbar class="progress-striped" max="100" value="100" type="success">
-        <span class="text-priority test-result-stable"><iron-icon icon="done-all"></iron-icon> Stable (didn't fail on last builds)</span>
+      <uib-progressbar class="progress-striped" max="100" value="100">
+        <span class="text-priority test-result-stable"><iron-icon icon="warning"></iron-icon> Stable (didn't find failures on last {{ $ctrl.stabilityCount }} builds)</span>
       </uib-progressbar>
     </div>
     <div class="test-profile">

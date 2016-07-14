@@ -25,22 +25,51 @@
   }
 
   UserConfigs.prototype = {
-    getGlobalConfig: function () {
-      return this.$firebaseObject(this.globalConfigRef);
+    getGlobalConfig: function (configKey) {
+      return this._getConfig(configKey, 'user');
     },
-    getUserConfig: function (configName) {
-      if (!this.configsRef) {
-        return;
+    getUserConfig: function (configKey) {
+      return this._getConfig(configKey, 'user');
+    },
+    _getConfig: function (configKey, which = 'global') {
+      let ref;
+      switch (which) {
+        case 'user':
+          ref = this.configsRef;
+          break;
+        default:
+          ref = this.globalConfigRef;
+          break;
       }
 
-      if (!configName || !_.isString(configName)) {
-        return this.$firebaseObject(this.configsRef);
+      if (!configKey || !_.isString(configKey)) {
+        return this.$firebaseObject(ref);
       }
 
-      return this.$firebaseObject(this.configsRef.child(configName));
+      return this.$firebaseObject(this.configsRef.child(configKey));
     },
     registerForConfigsChanges: function (listener) {
       this.configsChangesListeners.push(listener);
+    },
+    getUnboundConfig: function (configKey) {
+      if (configKey) {
+        return this.$q.resolve(
+            this.globalConfigRef
+                .child(configKey)
+                .once('value')
+                .then(function (snap) {
+                  return snap.val();
+                })
+        );
+      }
+
+      return this.$q.resolve(
+          this.globalConfigRef
+              .once('value')
+              .then(function (snap) {
+                return snap.val();
+              })
+      );
     },
     publishConfigsChanged: function () {
       this.configsChangesListeners.forEach((listener) => {

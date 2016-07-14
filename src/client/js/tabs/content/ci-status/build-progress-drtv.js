@@ -12,7 +12,7 @@
         },
         template: `
           <div class="build-progress" ng-class="$ctrl.buildResult === 'running' && 'build-progress-running'">
-            <div class="sub-build slide-in" ng-repeat="subBuild in $ctrl.subBuilds | orderBy:$ctrl.resultToOrder" uib-tooltip="{{ subBuild.$id }} ({{ subBuild.result }})" ng-class="$ctrl.determineClass(subBuild)">
+            <div class="sub-build slide-in" ng-repeat="subBuild in $ctrl.subBuilds" uib-tooltip="{{ subBuild.$id }} ({{ subBuild.result }})" ng-class="$ctrl.determineClass(subBuild)">
             </div>
           </div>
         `
