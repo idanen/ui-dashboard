@@ -406,7 +406,7 @@ module.exports = (function () {
             $or: [
               {
                 jobName: leftAlienTests[0].jobName,
-                buildId: rightAlienTests[0].buildId,
+                buildId: leftAlienTests[0].buildId,
                 testClassName: {
                   $in: classesAndMethods.classes
                 },
@@ -415,7 +415,7 @@ module.exports = (function () {
                 }
               },
               {
-                jobName: leftAlienTests[0].jobName,
+                jobName: rightAlienTests[0].jobName,
                 buildId: rightAlienTests[0].buildId,
                 testClassName: {
                   $in: classesAndMethods.classes
