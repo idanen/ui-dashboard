@@ -4,8 +4,8 @@
   angular.module('ci-site')
     .controller('CompareCtrl', CompareController);
 
-  CompareController.$inject = ['build', 'toBuild', '$state', '$filter', '$q', 'ciStatusService', 'buildTestsService', 'JENKINS_BASE_URL', 'DEFAULT_JOB_NAME'];
-  function CompareController(build, toBuild, $state, $filter, $q, ciStatusService, buildTestsService, JENKINS_BASE_URL, DEFAULT_JOB_NAME) {
+  CompareController.$inject = ['build', 'toBuild', '$state', '$filter', '$q', 'ciStatusService', 'buildTestsService', 'JENKINS_BASE_URL', 'DEFAULT_JOB_NAME', 'DEFAULT_BUILDS_COUNT'];
+  function CompareController(build, toBuild, $state, $filter, $q, ciStatusService, buildTestsService, JENKINS_BASE_URL, DEFAULT_JOB_NAME, DEFAULT_BUILDS_COUNT) {
     this.build = build;
     this.toBuild = toBuild;
     this.$state = $state;
@@ -18,7 +18,7 @@
     this.loading = false;
     this.stabilityLoading = false;
     this.title = `Comparing build ${this.build.name}#${this.build.number} and ${this.toBuild.name}#${this.toBuild.number}`;
-    this.buildsCount = 10;
+    this.buildsCount = DEFAULT_BUILDS_COUNT;
     this.totalFailed = {
       left: 0,
       right: 0

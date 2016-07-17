@@ -15,6 +15,7 @@
         .constant('GENERIC_JOB_NAME', 'MaaS-SAW-USB-generic')
         .constant('IMAGE_GENERATOR_URL', 'https://robohash.org/')
         .constant('NAME_GENERATOR_URL', 'https://www.mockaroo.com/api/generate.json?key=921088f0')
+        .constant('DEFAULT_BUILDS_COUNT', 20)
         .constant('NotificationTags', {
           PUSH_Q: 'PushQueueNotification',
           BRANCH_UPDATES: 'NotificationTagMasterMerge',

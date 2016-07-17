@@ -8,14 +8,14 @@
         templateUrl: 'js/tabs/content/stability/stability-tmpl.html'
       });
 
-  CIStabilityController.$inject = ['$q', '$stateParams', 'buildTestsService', 'ciStatusService', 'build', '$filter', 'DEFAULT_JOB_NAME', 'GENERIC_JOB_NAME'];
-  function CIStabilityController($q, $stateParams, buildTestsService, ciStatusService, build, $filter, DEFAULT_JOB_NAME, GENERIC_JOB_NAME) {
+  CIStabilityController.$inject = ['$q', '$stateParams', 'buildTestsService', 'ciStatusService', 'build', '$filter', 'DEFAULT_JOB_NAME', 'GENERIC_JOB_NAME', 'DEFAULT_BUILDS_COUNT'];
+  function CIStabilityController($q, $stateParams, buildTestsService, ciStatusService, build, $filter, DEFAULT_JOB_NAME, GENERIC_JOB_NAME, DEFAULT_BUILDS_COUNT) {
     this.buildTestsService = buildTestsService;
     this.ciStatusService = ciStatusService;
     this.$filter = $filter;
     this.DEFAULT_JOB_NAME = DEFAULT_JOB_NAME;
     this.GENERIC_JOB_NAME = GENERIC_JOB_NAME;
-    this.buildsCount = 10;
+    this.buildsCount = DEFAULT_BUILDS_COUNT;
     this.filterFailedPercent = 0.0;
     this.tests = [];
     this.stability = {};
