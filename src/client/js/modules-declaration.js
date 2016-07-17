@@ -9,7 +9,7 @@
           // HOST: 'localhost',
           PORT: '4000'
         })
-        .constant('JENKINS_BASE_URL', 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/')
+        .constant('JENKINS_BASE_URL', 'http://jenkins.hpe.guru:8080/jenkins/job/')
         .constant('DATE_FORMAT', 'HH:mm dd/MM/yyyy')
         .constant('DEFAULT_JOB_NAME', 'MaaS-SAW-USB-master')
         .constant('GENERIC_JOB_NAME', 'MaaS-SAW-USB-generic')
