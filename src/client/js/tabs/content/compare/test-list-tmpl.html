@@ -35,11 +35,8 @@
     </div>
     <div class="test-stability" ng-if="!!test.stabilityResult">
       <uib-progress class="progress-striped" max="$ctrl.stabilityCount">
-        <uib-bar value="test.stabilityResult.failed" type="danger">
-          <em>{{ test.stabilityResult.failed }}</em>
-        </uib-bar>
-        <uib-bar value="test.stabilityResult.count - test.stabilityResult.failed" type="success">
-          <em>{{ test.stabilityResult.count - test.stabilityResult.failed }}</em>
+        <uib-bar ng-repeat="details in test.stabilityResult.trends" value="details.count" type="{{ details.testFailed ? 'danger' : 'success' }}" uib-tooltip="{{ details.buildId }}">
+          <em>{{ details.count }}</em>
         </uib-bar>
         <em class="text-priority">{{ test.stabilityResult.stability | percentage:0 }}</em>
       </uib-progress>

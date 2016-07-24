@@ -192,24 +192,17 @@
       }
     },
     addStabilityResultsToTestsList: function (testsWraps, stabilityResults) {
-      let groupedStabilityResults = _.groupBy(stabilityResults, (stabilityResult) => stabilityResult._id.testClassName);
       _.forEach(testsWraps, (testsWrap) => {
-        let stabilityResults = _.omit(groupedStabilityResults[testsWrap.testClassName], 'tests');
-        testsWrap.tests = testsWrap.tests.map((test) => {
-          let stability = _.find(stabilityResults, (result) => result._id.testName === test.testName);
-          if (stability) {
-            return _.extend({}, test, {
-              stabilityResult: {
-                testName: stability._id.testName,
-                stability: stability.stability,
-                failed: stability.failed,
-                count: stability.buildIds.length,
-                buildIds: stability.buildIds
-              }
-            });
-          }
-          return test;
-        });
+        let stabilityResultsTests = _.find(stabilityResults, { testClassName: testsWrap.testClassName });
+        if (stabilityResultsTests) {
+          testsWrap.tests = testsWrap.tests.map((test) => {
+            let stability = _.find(stabilityResultsTests.tests, {testName: test.testName});
+            if (stability) {
+              return _.extend({}, test, { stabilityResult: stability.stabilityResult });
+            }
+            return test;
+          });
+        }
       });
     },
     goToStability: function (side) {
