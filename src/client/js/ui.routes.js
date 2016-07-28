@@ -25,10 +25,10 @@
             widget: widgetResolver
           }
         },
-        userConfigs = {
-          name: 'userConfigs',
+        userProfile = {
+          name: 'userProfile',
           parent: home,
-          url: '^/user-configs/:userId',
+          url: '^/user-profile/:userId',
           templateUrl: '/js/tabs/content/user-configs/user-configs-tmpl.html',
           controller: 'UserConfigsCtrl',
           controllerAs: '$ctrl',
@@ -98,7 +98,7 @@
 
     $stateProvider.state(home);
     $stateProvider.state(widget);
-    $stateProvider.state(userConfigs);
+    $stateProvider.state(userProfile);
     $stateProvider.state(login);
     $stateProvider.state(compare);
     $stateProvider.state(stability);

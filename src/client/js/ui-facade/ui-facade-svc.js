@@ -56,6 +56,7 @@
         this.widgets.forEach((widget) => this.statesToTitles[widget.id] = widget.title);
         this.statesToTitles.compare = 'Builds Compare';
         this.statesToTitles.stability = 'Build Analysis';
+        this.statesToTitles.userProfile = 'User Profile';
 
         this.currentWidget = this.widgets[0];
     }

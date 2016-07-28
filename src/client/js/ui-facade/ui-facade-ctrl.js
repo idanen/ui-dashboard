@@ -48,6 +48,10 @@
                 this.$state.go(widgetId, {group: this.defaultBuild.group, buildName: this.defaultBuild.name, buildNumber: this.defaultBuild.number});
                 return;
             }
+            if (widgetId === 'userProfile') {
+              this.$state.go(widgetId);
+              return;
+            }
             this.$state.go('widget', { widgetId: widgetId });
         },
         setMainWidget: function (index) {

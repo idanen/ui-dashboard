@@ -29,6 +29,7 @@
         // Save user
         this.usersRef
             .child(authData.uid)
+            .once('value')
             .then(user => this._currentUser = user);
       } else {
         // Admin state

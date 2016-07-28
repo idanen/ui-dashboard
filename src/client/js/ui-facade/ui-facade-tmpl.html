@@ -22,8 +22,9 @@
                         </li>
                     </ul>
                 </li>
-                <li ui-sref-active="active"><a ng-click="facade.gotoState('compare')">Compare</a></li>
-                <li ui-sref-active="active"><a ng-click="facade.gotoState('stability')">Stability</a></li>
+                <li ui-sref-active="active"><a ng-click="facade.gotoState('compare')">{{facade.getTitleOfState('compare')}}</a></li>
+                <li ui-sref-active="active"><a ng-click="facade.gotoState('stability')">{{facade.getTitleOfState('stability')}}</a></li>
+                <li ui-sref-active="active"><a ng-click="facade.gotoState('userProfile')">{{facade.getTitleOfState('userProfile')}}</a></li>
             </ul>
             <span class="navbar-right"><login-btn></login-btn></span>
         </div><!-- /.navbar-collapse -->
@@ -45,15 +46,20 @@
                                     <!--<div secondary>{{ widget.subTitle }}</div>-->
                                 </paper-item-body>
                             </paper-item>
-                            <paper-item class="widget-link" ng-click="facade.gotoState('compare')" uib-tooltip="Compare Builds">
+                            <paper-item class="widget-link" ng-click="facade.gotoState('compare')" uib-tooltip="{{facade.getTitleOfState('compare')}}">
                                 <paper-item-body>
-                                    <div>Compare Builds</div>
+                                    <div>{{facade.getTitleOfState('compare')}}</div>
                                 </paper-item-body>
                             </paper-item>
-                            <paper-item class="widget-link" ng-click="facade.gotoState('stability')" uib-tooltip="Test Stability">
+                            <paper-item class="widget-link" ng-click="facade.gotoState('stability')" uib-tooltip="{{facade.getTitleOfState('stability')}}">
                                 <paper-item-body two-line>
-                                    <div>Test Stability</div>
+                                    <div>{{facade.getTitleOfState('stability')}}</div>
                                     <!--<div secondary>Check test&apos;s stability</div>-->
+                                </paper-item-body>
+                            </paper-item>
+                            <paper-item class="widget-link" ng-click="facade.gotoState('userProfile')" uib-tooltip="{{facade.getTitleOfState('userProfile')}}">
+                                <paper-item-body>
+                                    <div>{{facade.getTitleOfState('userProfile')}}</div>
                                 </paper-item-body>
                             </paper-item>
                         </paper-menu>
