@@ -305,13 +305,18 @@ module.exports = (function () {
       aggregations = [
         {
           $match: {
-            jobName: {
-              $in: [buildName, toBuildName]
-            },
-            buildId: {
-              $in: [buildNumber, toBuildNumber]
-            },
-            testFailed: true
+            $or: [
+              {
+                jobName: buildName,
+                buildId: buildNumber,
+                testFailed: true
+              },
+              {
+                jobName: toBuildName,
+                buildId: toBuildNumber,
+                testFailed: true
+              }
+            ]
           }
         },
         {
@@ -398,18 +403,28 @@ module.exports = (function () {
       aggregations = [
         {
           $match: {
-            jobName: {
-              $in: [leftAlienTests[0].jobName, rightAlienTests[0].jobName]
-            },
-            buildId: {
-              $in: [leftAlienTests[0].buildId, rightAlienTests[0].buildId]
-            },
-            testClassName: {
-              $in: classesAndMethods.classes
-            },
-            testName: {
-              $in: classesAndMethods.methods
-            }
+            $or: [
+              {
+                jobName: leftAlienTests[0].jobName,
+                buildId: leftAlienTests[0].buildId,
+                testClassName: {
+                  $in: classesAndMethods.classes
+                },
+                testName: {
+                  $in: classesAndMethods.methods
+                }
+              },
+              {
+                jobName: rightAlienTests[0].jobName,
+                buildId: rightAlienTests[0].buildId,
+                testClassName: {
+                  $in: classesAndMethods.classes
+                },
+                testName: {
+                  $in: classesAndMethods.methods
+                }
+              }
+            ]
           }
         },
         {

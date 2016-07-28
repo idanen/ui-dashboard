@@ -30,7 +30,7 @@
       );
     },
     getImageUrl: function (identifier) {
-      return `${this.IMAGE_GENERATOR_URL}${identifier}?gravatar=yes&bgset=bg3`;
+      return `${this.IMAGE_GENERATOR_URL}${identifier}?gravatar=yes&bgset=bg1`;
     },
     getNameAndImg: function () {
       return this.getMockName()

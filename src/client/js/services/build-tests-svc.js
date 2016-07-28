@@ -47,10 +47,13 @@
       return this.LastFailedTests.query({buildName, buildCount, startFromNumber}).$promise;
     },
     getStability: function (buildName, startFromNumber, buildCount = 10, branchName = '') {
+      let fetchPromise;
       if (branchName) {
-        return this.Stability.query({buildName, buildCount, startFromNumber, branchName}).$promise;
+        fetchPromise = this.Stability.query({buildName, buildCount, startFromNumber, branchName}).$promise;
+      } else {
+        fetchPromise = this.Stability.query({buildName, buildCount, startFromNumber}).$promise;
       }
-      return this.Stability.query({buildName, buildCount, startFromNumber}).$promise;
+      return fetchPromise.then(this.addStabilityResultsToTests.bind(this));
     },
     prepareTestsForSending: function (tests) {
       let testsByClass = [];
@@ -61,6 +64,48 @@
         testsByClass.push(testByClass);
       });
       return testsByClass;
+    },
+    addStabilityResultsToTests: function (stabilityResults) {
+      return _.reduce(stabilityResults, (testWraps, stabilityResult) => {
+        let testWrap = _.find(testWraps, (testWrap) => testWrap.testClassName === stabilityResult._id.testClassName);
+        let testData = _.extend(stabilityResult.tests[0], {
+          stabilityResult: {
+            testName: stabilityResult._id.testName,
+            stability: stabilityResult.stability,
+            failed: stabilityResult.failed,
+            count: stabilityResult.buildIds.length,
+            buildIds: _.reverse(_.sortBy(stabilityResult.buildIds, 'buildId'))
+          }
+        });
+
+        testData.stabilityResult.trends = testData.stabilityResult.buildIds.reduce((trends, buildDetails) => {
+          let last = trends[trends.length - 1];
+          if (last && last.testFailed === buildDetails.testFailed) {
+            last.count += 1;
+            last.buildId += ' ' + buildDetails.buildId;
+          } else {
+            let newSegment = {
+              count: 1,
+              testFailed: buildDetails.testFailed,
+              buildId: '' + buildDetails.buildId
+            };
+            trends.push(newSegment);
+          }
+
+          return trends;
+        }, []);
+
+        if (!testWrap) {
+          testWraps.push({
+            testClassName: stabilityResult._id.testClassName,
+            tests: [testData]
+          });
+        } else {
+          testWrap.tests.push(testData);
+        }
+
+        return testWraps;
+      }, []);
     }
   };
 }());
