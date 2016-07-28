@@ -18,11 +18,9 @@
   }
 
   ToggleButtonComponent.prototype = {
-    $onInit: function () {
-      this.$element.find('paper-toggle-button')[0].checked = this.state;
-    },
     $postLink: function () {
       var $toggler = this.$element.find('paper-toggle-button');
+      $toggler[0].checked = this.state;
       $toggler.on('iron-change', (ev) => {
         if (this.state !== ev.target.checked) {
           this.onUpdate({state: ev.target.checked});
