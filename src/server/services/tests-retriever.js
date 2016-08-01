@@ -340,8 +340,8 @@ module.exports = (function () {
       //console.log(JSON.stringify(aggregations));
       return this._promisize('aggregate', aggregations)
           //.then(this.groupTests)
-          .then(this.addComplementingTests.bind(this))
-          .then(this.fetchComplementingTests.bind(this));
+          .then(this.addComplementingTests.bind(this, buildName, buildNumber, toBuildName, toBuildNumber))
+          .then(this.fetchComplementingTests.bind(this, buildName, buildNumber, toBuildName, toBuildNumber));
     },
     groupTests: function (aggregated) {
       if (aggregated) {
@@ -351,9 +351,10 @@ module.exports = (function () {
       }
       return aggregated;
     },
-    addComplementingTests: function (failedOfBoth) {
+    addComplementingTests: function (buildName, buildNumber, toBuildName, toBuildNumber, failedOfBoth) {
       var leftTests = failedOfBoth[0] && failedOfBoth[0].tests || [],
           rightTests = failedOfBoth[1] && failedOfBoth[1].tests || [],
+          toReturn = {},
           addToLeft,
           addToRight;
 
@@ -369,17 +370,17 @@ module.exports = (function () {
       leftTests = leftTests.concat(addToLeft);
       rightTests = rightTests.concat(addToRight);
 
-      return {
-        left: leftTests,
-        right: rightTests
-      };
-    },
-    fetchComplementingTests: function (allTests) {
-      var leftAlienTests = _.filter(allTests.left, { alien: true }),
-          rightAlienTests = _.filter(allTests.right, { alien: true }),
-          aggregations;
+      toReturn[buildName + buildNumber] = leftTests;
+      toReturn[toBuildName + toBuildNumber] = rightTests;
 
-      if (!leftAlienTests.length || !rightAlienTests.length) {
+      return toReturn;
+    },
+    fetchComplementingTests: function (buildName, buildNumber, toBuildName, toBuildNumber, allTests) {
+      var leftAlienTests = _.filter(allTests[buildName + buildNumber], { alien: true }),
+          rightAlienTests = _.filter(allTests[toBuildName + toBuildNumber], { alien: true }),
+          aggregations, orCondition = [];
+
+      if (!leftAlienTests.length && !rightAlienTests.length) {
         return allTests;
       }
 
@@ -390,6 +391,7 @@ module.exports = (function () {
         if (!_.includes(result.methods, value.testName)) {
           result.methods.push(value.testName);
         }
+        return result;
       }, { classes: [], methods: [] });
       classesAndMethods = _.transform(rightAlienTests, function (result, value) {
         if (!_.includes(result.classes, value.testClassName)) {
@@ -398,33 +400,34 @@ module.exports = (function () {
         if (!_.includes(result.methods, value.testName)) {
           result.methods.push(value.testName);
         }
+        return result;
       }, classesAndMethods);
+
+      orCondition.push({
+        jobName: buildName,
+        buildId: buildNumber,
+        testClassName: {
+          $in: classesAndMethods.classes
+        },
+        testName: {
+          $in: classesAndMethods.methods
+        }
+      });
+      orCondition.push({
+        jobName: toBuildName,
+        buildId: toBuildNumber,
+        testClassName: {
+          $in: classesAndMethods.classes
+        },
+        testName: {
+          $in: classesAndMethods.methods
+        }
+      });
 
       aggregations = [
         {
           $match: {
-            $or: [
-              {
-                jobName: leftAlienTests[0].jobName,
-                buildId: leftAlienTests[0].buildId,
-                testClassName: {
-                  $in: classesAndMethods.classes
-                },
-                testName: {
-                  $in: classesAndMethods.methods
-                }
-              },
-              {
-                jobName: rightAlienTests[0].jobName,
-                buildId: rightAlienTests[0].buildId,
-                testClassName: {
-                  $in: classesAndMethods.classes
-                },
-                testName: {
-                  $in: classesAndMethods.methods
-                }
-              }
-            ]
+            $or: orCondition
           }
         },
         {
@@ -447,12 +450,8 @@ module.exports = (function () {
       return this._promisize('aggregate', aggregations)
           .then(function (groupedTests) {
             groupedTests.forEach(function (groupedTest) {
-              var side = 'left';
-              if (groupedTest._id.jobName === allTests.right[0].jobName && groupedTest._id.buildId === allTests.right[0].buildId) {
-                side = 'right'
-              }
               groupedTest.tests.forEach(function (test) {
-                var foundTest = _.find(allTests[side], {
+                var foundTest = _.find(allTests[test.jobName + test.buildId], {
                   testClassName: test.testClassName,
                   testName: test.testName
                 });
