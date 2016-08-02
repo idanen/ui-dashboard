@@ -135,7 +135,12 @@
     fetchStability: function () {
       this.goLoading = true;
       return this.buildTestsService.getStability(this.build.name, this.build.number, this.buildsCount, this.selectedBuildsBranch())
+          .then(this.renderResults.bind(this))
           .finally(() => this.goLoading = false);
+    },
+    renderResults: function (stabilityResults) {
+      this.testWraps = stabilityResults;
+      return this.testWraps;
     },
     selectedBuildsBranch: function () {
       let selectedBuild = _.find(this.availableBuilds[this.build.group], {$id: this.build.name});
