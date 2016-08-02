@@ -8,14 +8,14 @@
         templateUrl: 'js/tabs/content/stability/stability-tmpl.html'
       });
 
-  CIStabilityController.$inject = ['$q', '$stateParams', 'buildTestsService', 'ciStatusService', 'build', '$filter', 'DEFAULT_JOB_NAME', 'GENERIC_JOB_NAME'];
-  function CIStabilityController($q, $stateParams, buildTestsService, ciStatusService, build, $filter, DEFAULT_JOB_NAME, GENERIC_JOB_NAME) {
+  CIStabilityController.$inject = ['$q', '$stateParams', 'buildTestsService', 'ciStatusService', 'build', '$filter', 'DEFAULT_JOB_NAME', 'GENERIC_JOB_NAME', 'DEFAULT_BUILDS_COUNT'];
+  function CIStabilityController($q, $stateParams, buildTestsService, ciStatusService, build, $filter, DEFAULT_JOB_NAME, GENERIC_JOB_NAME, DEFAULT_BUILDS_COUNT) {
     this.buildTestsService = buildTestsService;
     this.ciStatusService = ciStatusService;
     this.$filter = $filter;
     this.DEFAULT_JOB_NAME = DEFAULT_JOB_NAME;
     this.GENERIC_JOB_NAME = GENERIC_JOB_NAME;
-    this.buildsCount = 10;
+    this.buildsCount = DEFAULT_BUILDS_COUNT;
     this.filterFailedPercent = 0.0;
     this.tests = [];
     this.stability = {};
@@ -41,10 +41,6 @@
       this.appendToTests(this.reFormatTestsStructure(testsFromState));
     }
 
-    //ciStatusService.getLastBuildNumber('masters', this.build.name).then((lastBuild) => {
-    //  this.build.number = lastBuild;
-    //  this.fetchFailedOfBuild();
-    //});
     $q.all(this.availableBuilds.masters.$loaded(), this.availableBuilds.teams.$loaded())
         .then(this.selectDefaultOptions.bind(this));
         //.then(this.fetchFailedOfBuild.bind(this));
@@ -56,13 +52,6 @@
         this.reFetchLoading = true;
         this.fetchStability()
             .finally(() => this.reFetchLoading = false);
-        //this.buildTestsService.fetch(this.build.name, this.build.number)
-        //this.buildTestsService.fetchLastFailedOfBuild(this.build.name, this.build.number, this.buildsCount)
-        //    .then(this.reFormatTestsStructure.bind(this))
-        //    .then(this.appendToTests.bind(this))
-        //    //.then(this.fetchStability.bind(this))
-        //    .catch(this.handleError)
-        //    .finally(() => this.reFetchLoading = false);
       }
     },
     reFormatTestsStructure: function (tests) {
@@ -143,40 +132,17 @@
     removeTest: function (testClass) {
       this.tests = _.filter(this.tests, test => test.testClass !== testClass);
     },
-    renderResults: function (stabilityResults) {
-      this.testWraps = [];
-      _.forEach(stabilityResults, ((stabilityResult) => {
-        let testWrap = _.find(this.testWraps, (testWrap) => testWrap.testClassName === stabilityResult._id.testClassName);
-        let testData = _.extend(stabilityResult.tests[0], {
-          stabilityResult: {
-            testName: stabilityResult._id.testName,
-            stability: stabilityResult.stability,
-            failed: stabilityResult.failed,
-            count: stabilityResult.buildIds.length,
-            buildIds: stabilityResult.buildIds
-          }
-        });
-        if (!testWrap) {
-          this.testWraps.push({
-            testClassName: stabilityResult._id.testClassName,
-            tests: [testData]
-          });
-        } else {
-          testWrap.tests.push(testData);
-        }
-      }));
-
-      return this.testWraps;
-    },
     fetchStability: function () {
       this.goLoading = true;
       return this.buildTestsService.getStability(this.build.name, this.build.number, this.buildsCount, this.selectedBuildsBranch())
-          .then(this.renderResults.bind(this))
           .finally(() => this.goLoading = false);
     },
     selectedBuildsBranch: function () {
       let selectedBuild = _.find(this.availableBuilds[this.build.group], {$id: this.build.name});
-      return selectedBuild.builds[this.build.number].branchName;
+      if (selectedBuild) {
+        return selectedBuild.builds[this.build.number].branchName;
+      }
+      return null;
     },
     handleError: console.error.bind(console)
   };

@@ -4,8 +4,8 @@
   angular.module('ci-site')
     .controller('CompareCtrl', CompareController);
 
-  CompareController.$inject = ['build', 'toBuild', '$state', '$filter', '$q', 'ciStatusService', 'buildTestsService', 'JENKINS_BASE_URL', 'DEFAULT_JOB_NAME'];
-  function CompareController(build, toBuild, $state, $filter, $q, ciStatusService, buildTestsService, JENKINS_BASE_URL, DEFAULT_JOB_NAME) {
+  CompareController.$inject = ['build', 'toBuild', '$state', '$filter', '$q', 'ciStatusService', 'buildTestsService', 'JENKINS_BASE_URL', 'DEFAULT_JOB_NAME', 'DEFAULT_BUILDS_COUNT'];
+  function CompareController(build, toBuild, $state, $filter, $q, ciStatusService, buildTestsService, JENKINS_BASE_URL, DEFAULT_JOB_NAME, DEFAULT_BUILDS_COUNT) {
     this.build = build;
     this.toBuild = toBuild;
     this.$state = $state;
@@ -18,7 +18,7 @@
     this.loading = false;
     this.stabilityLoading = false;
     this.title = `Comparing build ${this.build.name}#${this.build.number} and ${this.toBuild.name}#${this.toBuild.number}`;
-    this.buildsCount = 10;
+    this.buildsCount = DEFAULT_BUILDS_COUNT;
     this.totalFailed = {
       left: 0,
       right: 0
@@ -149,16 +149,15 @@
       this.openTestLists[whichTest] = !this.openTestLists[whichTest];
     },
     assignToViewModel: function (both) {
-      var leftGrouped = _.groupBy(both.left, 'testClassName'),
-          rightGrouped = _.groupBy(both.right, 'testClassName');
+      let leftBuildName = this.$filter('releasever')(this.selected.left.name),
+          rightBuildName = this.$filter('releasever')(this.selected.right.name),
+          leftKey = leftBuildName + this.selected.left.number,
+          rightKey = rightBuildName + this.selected.right.number;
+      let leftGrouped = _.groupBy(both[leftKey], 'testClassName'),
+          rightGrouped = _.groupBy(both[rightKey], 'testClassName');
 
-      if (both.left.length && both.left[0].jobName === this.selected.left.name && String(both.left[0].buildId) === this.selected.left.number && !this.allAliens(both.left)) {
-        this.leftTests = this._toArray(leftGrouped);
-        this.rightTests = this._toArray(rightGrouped);
-      } else {
-        this.leftTests = this._toArray(rightGrouped);
-        this.rightTests = this._toArray(leftGrouped);
-      }
+      this.leftTests = this._toArray(leftGrouped);
+      this.rightTests = this._toArray(rightGrouped);
 
       // Sum all failures on each side
       this.totalFailed.left = this.leftTests.reduce((total, testsWrap) => {
@@ -192,24 +191,17 @@
       }
     },
     addStabilityResultsToTestsList: function (testsWraps, stabilityResults) {
-      let groupedStabilityResults = _.groupBy(stabilityResults, (stabilityResult) => stabilityResult._id.testClassName);
       _.forEach(testsWraps, (testsWrap) => {
-        let stabilityResults = _.omit(groupedStabilityResults[testsWrap.testClassName], 'tests');
-        testsWrap.tests = testsWrap.tests.map((test) => {
-          let stability = _.find(stabilityResults, (result) => result._id.testName === test.testName);
-          if (stability) {
-            return _.extend({}, test, {
-              stabilityResult: {
-                testName: stability._id.testName,
-                stability: stability.stability,
-                failed: stability.failed,
-                count: stability.buildIds.length,
-                buildIds: stability.buildIds
-              }
-            });
-          }
-          return test;
-        });
+        let stabilityResultsTests = _.find(stabilityResults, { testClassName: testsWrap.testClassName });
+        if (stabilityResultsTests) {
+          testsWrap.tests = testsWrap.tests.map((test) => {
+            let stability = _.find(stabilityResultsTests.tests, {testName: test.testName});
+            if (stability) {
+              return _.extend({}, test, { stabilityResult: stability.stabilityResult });
+            }
+            return test;
+          });
+        }
       });
     },
     goToStability: function (side) {

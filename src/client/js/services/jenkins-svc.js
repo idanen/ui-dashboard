@@ -3,38 +3,39 @@
 
     angular
         .module('ci-site')
-        .constant('JenkinsBaseUrl', 'http://mydtbld0022.hpeswlab.net:8080/jenkins/')
         .service('JenkinsService', JenkinsService);
 
-    JenkinsService.$inject = ['$http', '$q', 'JenkinsBaseUrl'];
-    function JenkinsService($http, $q, JenkinsBaseUrl) {
+    JenkinsService.$inject = ['$http', '$q', 'JENKINS_BASE_URL'];
+    function JenkinsService($http, $q, JENKINS_BASE_URL) {
         this.$http = $http;
         this.$q = $q;
-        this.JenkinsBaseUrl = JenkinsBaseUrl;
+        this.JENKINS_BASE_URL = JENKINS_BASE_URL;
     }
 
     JenkinsService.prototype = {
         getBuildStatus: function (buildName) {
-            var buildURL = `${this.JenkinsBaseUrl}job/${buildName}/api/json`;
+            var buildURL = `${this.JENKINS_BASE_URL}${buildName}/api/json`;
             return this.$http.get(buildURL)
                 .then(this._processResponse)
                 .then(this.getRelevantBuilds.bind(this));
         },
         getMastersBranches: function () {
-            var mastersURL = this.JenkinsBaseUrl + 'job/MaaS-SAW-USB-master/api/json';
+            var mastersURL = `${this.JENKINS_BASE_URL}MaaS-SAW-USB-master/api/json`;
             return this.$http.get(mastersURL)
                 .then(this._processResponse)
                 .then(this.getRelevantBuilds.bind(this));
         },
 
         getHealthReport: function () {
-            var url = this.JenkinsBaseUrl + 'view/USB-Team-Branches-Currently-Running/api/json';
+            var jenkinsJobUrl = this.JENKINS_BASE_URL.replace('job/', '');
+            var url = `${jenkinsJobUrl}view/USB-Team-Branches-Currently-Running/api/json`;
             return this.$http.get(url)
                 .then(this._getReports.bind(this));
         },
 
         gerCurrentlyRunningBranches: function () {
-            var url = this.JenkinsBaseUrl + 'view/USB-Team-Branches-Currently-Running/api/json';
+            var jenkinsJobUrl = this.JENKINS_BASE_URL.replace('job/', '');
+            var url = `${jenkinsJobUrl}view/USB-Team-Branches-Currently-Running/api/json`;
             return this.$http.get(url).then(this._getRunningBranches.bind(this))
                 .catch(function (error) {
                     console.log('error loading branches');

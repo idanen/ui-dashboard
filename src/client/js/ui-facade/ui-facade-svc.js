@@ -56,6 +56,7 @@
         this.widgets.forEach((widget) => this.statesToTitles[widget.id] = widget.title);
         this.statesToTitles.compare = 'Builds Compare';
         this.statesToTitles.stability = 'Build Analysis';
+        this.statesToTitles.userprofile = 'User Profile';
 
         this.currentWidget = this.widgets[0];
     }
@@ -70,6 +71,17 @@
             } else {
                 return _.filter(this.widgets, (widget) => !widget.requiresAuth || this.userService.isAdmin());
             }
+        },
+        getStatesNames: function () {
+            let allStates = Object.keys(this.statesToTitles),
+                authWidgets = this.getAuthWidgets();
+
+            return allStates.filter(state => {
+                let isWidget = !!_.find(this.widgets, {id: state});
+                let authorized = !!_.find(authWidgets, {id: state});
+
+                return !isWidget || authorized;
+            });
         },
         setCurrent: function (idx) {
             this.currentWidget = this.widgets[idx];

@@ -2,19 +2,20 @@
     'use strict';
 
     angular.module('ci-site.filters', []);
-    angular.module('ci-site', ['firebase', 'ngAnimate', 'ngSanitize', 'ngResource', 'ui.router', 'ui.select', 'ui.bootstrap', 'angular-ladda', 'ngclipboard', 'ci-site.filters', 'collapsiblePanel'])
+    angular.module('ci-site', ['firebase', 'ngAnimate', 'ngSanitize', 'ngResource', 'ui.router', 'ui.select', 'ui.bootstrap', 'angular-ladda', 'ngclipboard', 'pushState', 'ci-site.filters', 'collapsiblePanel'])
         .constant('ENV', {
           PROTOCOL: 'http',
           HOST: 'cidashboard.hpe.guru',
           // HOST: 'localhost',
           PORT: '4000'
         })
-        .constant('JENKINS_BASE_URL', 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/')
+        .constant('JENKINS_BASE_URL', 'http://jenkins.hpe.guru:8080/jenkins/job/')
         .constant('DATE_FORMAT', 'HH:mm dd/MM/yyyy')
         .constant('DEFAULT_JOB_NAME', 'MaaS-SAW-USB-master')
         .constant('GENERIC_JOB_NAME', 'MaaS-SAW-USB-generic')
         .constant('IMAGE_GENERATOR_URL', 'https://robohash.org/')
         .constant('NAME_GENERATOR_URL', 'https://www.mockaroo.com/api/generate.json?key=921088f0')
+        .constant('DEFAULT_BUILDS_COUNT', 20)
         .constant('NotificationTags', {
           PUSH_Q: 'PushQueueNotification',
           BRANCH_UPDATES: 'NotificationTagMasterMerge',

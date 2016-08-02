@@ -10,25 +10,44 @@
     this.$q = $q;
     this.$window = $window;
     this.$firebaseObject = $firebaseObject;
+    this.authObj = $firebaseAuth();
     this.mockData = mockData;
 
+    this._currentUser = null;
     this._admin = false;
     this._adminListeners = [];
+    this._userChangeListeners = [];
 
-    $firebaseAuth().$onAuthStateChanged(authData => {
-      let promise;
+    this.authObj.$onAuthStateChanged(authData => {
+      let adminPromise,
+          userPromise;
       if (authData) {
-        promise = this.$q.when(
+        // Admin state
+        adminPromise = this.$q.resolve(
             Ref.child('admins').child(authData.uid).once('value')
               .then(snap => this._admin = snap.exists())
         );
+
+        // Save user
+        userPromise = this.usersRef
+            .child(authData.uid)
+            .once('value')
+            .then(user => this._currentUser = user.val());
       } else {
+        // Admin state
         this._admin = false;
-        promise = this.$q.when(this._admin);
+        adminPromise = this.$q.when(this._admin);
+
+        // Current user
+        this._currentUser = null;
+        userPromise = this.$q.resolve(this._currentUser);
       }
 
-      promise.then((isAdmin) => {
+      adminPromise.then((isAdmin) => {
         this._adminListeners.forEach((listener) => listener(isAdmin));
+      });
+      userPromise.then(user => {
+        this._userChangeListeners.forEach(listener => listener(user));
       });
     });
   }
@@ -40,13 +59,15 @@
      * @returns {Promise} A promise which resolves with the existence result (boolean value)
      */
     exists: function (email) {
-      return this.$q(function (resolve, reject) {
-        this.usersRef.orderByChild('email').equalTo(email).once('value', function (snap) {
-          resolve(snap.val() !== null);
-        }, function (error) {
-          reject(error);
-        });
-      }.bind(this));
+      return this.$q.resolve(
+        this.usersRef
+            .orderByChild('email')
+            .equalTo(email)
+            .once('value')
+            .then(function (snap) {
+              return snap.exists();
+            })
+      );
     },
     /**
      * Saves an authenticated user
@@ -88,6 +109,33 @@
           this.usersRef.child(anonymous.uid).set(anonymous)
       );
     },
+
+    isAnonymousUser: function (uid) {
+      return this.$q.resolve(
+          this.usersRef
+              .child(uid)
+              .child('anonymous')
+              .once('value')
+              .then(snap => snap.exists())
+      );
+    },
+
+    getCurrentUser: function () {
+      if (!this._currentUser) {
+        return null;
+      }
+
+      return this.getUser(this._currentUser.uid);
+    },
+
+    getCurrentUserId: function () {
+      if (!this._currentUser) {
+        return '';
+      }
+
+      return this._currentUser.uid;
+    },
+
     /**
      * Gets user's data
      * @param {string} uid The user's identifier
@@ -106,6 +154,57 @@
         }
       };
     },
+
+    onUserChange: function (listener) {
+      this._userChangeListeners.push(listener);
+      listener(this._currentUser);
+      return () => {
+        let idx = this._userChangeListeners.indexOf(listener);
+        if (idx > -1) {
+          this._userChangeListeners.splice(idx, 1);
+        }
+      };
+    },
+
+    addSubscriptionId: function (subscriptionId) {
+      var subscription = {
+        subscriptionId: subscriptionId
+      };
+      if (!this._currentUser) {
+        return;
+      }
+      return this.usersRef
+          .child(this._currentUser.uid)
+          .child('devices')
+          .orderByChild('subscriptionId')
+          .equalTo(subscriptionId)
+          .once('value')
+          .then(snapshot => {
+            if (!snapshot.exists()) {
+              snapshot.ref.push().set(subscription);
+            } else {
+              console.log('this endpoint is already subscribed');
+            }
+          });
+    },
+
+    removeSubscriptionId: function (subscriptionId) {
+      if (!this._currentUser) {
+        return;
+      }
+      return this.usersRef
+          .child(this._currentUser.uid)
+          .child('devices')
+          .orderByChild('subscriptionId')
+          .equalTo(subscriptionId)
+          .once('value')
+          .then(snapArr => {
+            if (snapArr.hasChildren()) {
+              snapArr.forEach(deviceSnap => deviceSnap.ref.remove());
+            }
+          });
+    },
+
     /**
      * Says weather the user is an admin
      * @returns {boolean|*} `true` if the user is an admin, `false` otherwise

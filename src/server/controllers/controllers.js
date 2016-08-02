@@ -7,10 +7,6 @@ var Promise = require('promise'),
 module.exports = (function () {
     'use strict';
 
-    var JENKINS_JOB_URL = 'http://mydtbld0021.hpeswlab.net:8080/jenkins/job/';
-    var FIREBASE_URL_CI_JOBS = 'https://boiling-inferno-9766.firebaseio.com/allJobs';
-    var FIREBASE_REST_SUFFIX = '.json';
-
     function UIDashboardController() {
         this.statusUpdater = new StatusUpdater();
         this.testsRetriever = new TestsRetriever(consts.TESTS_MONGO_CONNECTION);
@@ -165,7 +161,7 @@ module.exports = (function () {
             var promises = [];
             jobs.forEach(function (job) {
                 var jobPromise = new Promise(function getJobStatus(resolveJob, rejectJob) {
-                    var jenkinsUrl = JENKINS_JOB_URL + job.name + '/lastBuild/api/json';
+                    var jenkinsUrl = consts.JENKINS_JOB_URL + job.name + '/lastBuild/api/json';
                     eRequest.get(jenkinsUrl, function (error, response, body) {
                         var jsonIt = JSON.parse(body);
                         job.result = jsonIt.result;
@@ -215,7 +211,7 @@ module.exports = (function () {
      * @return {string} The resource URL
      */
     function buildFirebaseURL(jobName) {
-        return FIREBASE_URL_CI_JOBS + (jobName ? '/' + jobName : '') + FIREBASE_REST_SUFFIX;
+        return consts.FIREBASE_URL_CI_JOBS + (jobName ? '/' + jobName : '') + consts.FIREBASE_REST_SUFFIX;
     }
 
     return UIDashboardController;
