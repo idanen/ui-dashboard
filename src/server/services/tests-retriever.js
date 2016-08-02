@@ -352,11 +352,23 @@ module.exports = (function () {
       return aggregated;
     },
     addComplementingTests: function (buildName, buildNumber, toBuildName, toBuildNumber, failedOfBoth) {
-      var leftTests = failedOfBoth[0] && failedOfBoth[0].tests || [],
-          rightTests = failedOfBoth[1] && failedOfBoth[1].tests || [],
-          toReturn = {},
+      var toReturn = {},
+          leftIdx = 0,
+          rightIdx = 1,
+          leftTests,
+          rightTests,
           addToLeft,
           addToRight;
+
+      if (failedOfBoth[0] && failedOfBoth[0].tests && failedOfBoth[0].tests[0] && failedOfBoth[0].tests[0].jobName === toBuildName && failedOfBoth[0].tests[0].buildId === toBuildNumber) {
+        leftIdx = 1;
+        rightIdx = 0;
+      } else if (failedOfBoth[1] && failedOfBoth[1].tests && failedOfBoth[1].tests[0] && failedOfBoth[1].tests[0].jobName === buildName && failedOfBoth[1].tests[0].buildId === buildNumber) {
+        leftIdx = 1;
+        rightIdx = 0;
+      }
+      leftTests = failedOfBoth[leftIdx] && failedOfBoth[leftIdx].tests || [];
+      rightTests = failedOfBoth[rightIdx] && failedOfBoth[rightIdx].tests || [];
 
       addToLeft = _.differenceWith(rightTests, leftTests, _testEquals);
       addToRight = _.differenceWith(leftTests, rightTests, _testEquals);

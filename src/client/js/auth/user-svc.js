@@ -16,32 +16,38 @@
     this._currentUser = null;
     this._admin = false;
     this._adminListeners = [];
+    this._userChangeListeners = [];
 
     this.authObj.$onAuthStateChanged(authData => {
-      let promise;
+      let adminPromise,
+          userPromise;
       if (authData) {
         // Admin state
-        promise = this.$q.resolve(
+        adminPromise = this.$q.resolve(
             Ref.child('admins').child(authData.uid).once('value')
               .then(snap => this._admin = snap.exists())
         );
 
         // Save user
-        this.usersRef
+        userPromise = this.usersRef
             .child(authData.uid)
             .once('value')
-            .then(user => this._currentUser = user);
+            .then(user => this._currentUser = user.val());
       } else {
         // Admin state
         this._admin = false;
-        promise = this.$q.when(this._admin);
+        adminPromise = this.$q.when(this._admin);
 
         // Current user
         this._currentUser = null;
+        userPromise = this.$q.resolve(this._currentUser);
       }
 
-      promise.then((isAdmin) => {
+      adminPromise.then((isAdmin) => {
         this._adminListeners.forEach((listener) => listener(isAdmin));
+      });
+      userPromise.then(user => {
+        this._userChangeListeners.forEach(listener => listener(user));
       });
     });
   }
@@ -122,6 +128,14 @@
       return this.getUser(this._currentUser.uid);
     },
 
+    getCurrentUserId: function () {
+      if (!this._currentUser) {
+        return '';
+      }
+
+      return this._currentUser.uid;
+    },
+
     /**
      * Gets user's data
      * @param {string} uid The user's identifier
@@ -137,6 +151,17 @@
         let idx = this._adminListeners.indexOf(listener);
         if (idx > -1) {
           this._adminListeners.splice(idx, 1);
+        }
+      };
+    },
+
+    onUserChange: function (listener) {
+      this._userChangeListeners.push(listener);
+      listener(this._currentUser);
+      return () => {
+        let idx = this._userChangeListeners.indexOf(listener);
+        if (idx > -1) {
+          this._userChangeListeners.splice(idx, 1);
         }
       };
     },

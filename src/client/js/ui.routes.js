@@ -26,10 +26,10 @@
           }
         },
         userProfile = {
-          name: 'userProfile',
+          name: 'userprofile',
           parent: home,
-          url: '^/user-profile/:userId',
-          templateUrl: '/js/tabs/content/user-configs/user-configs-tmpl.html',
+          url: '^/user/:userId',
+          templateUrl: '/js/tabs/content/user-profile/user-profile-tmpl.html',
           controller: 'UserConfigsCtrl',
           controllerAs: '$ctrl',
           resolve: {
@@ -114,14 +114,17 @@
   userResolver.$inject = ['$q', '$firebaseAuth', 'userService'];
   function userResolver($q, $firebaseAuth, userService) {
     return $firebaseAuth().$requireSignIn()
-        .then(authData => {
-          return userService.isAnonymousUser(authData.uid);
-        })
-        .then(isAnonymous => {
-          if (isAnonymous) {
-            return $q.reject('Not available for anonymous users');
-          }
-
+        // .then(authData => {
+        //   return userService.isAnonymousUser(authData.uid);
+        // })
+        // .then(isAnonymous => {
+        //   if (isAnonymous) {
+        //     return $q.reject('Not available for anonymous users');
+        //   }
+        //
+        //   return userService.getCurrentUser();
+        // });
+        .then(() => {
           return userService.getCurrentUser();
         });
   }

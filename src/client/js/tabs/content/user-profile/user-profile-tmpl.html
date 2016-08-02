@@ -9,7 +9,16 @@
       <div class="col-xs-12">
         <paper-card heading="{{ $ctrl.user.displayName }}" image="{{ $ctrl.user.photoURL }}">
           <div class="card-content">
-            User details
+            <div class="row">
+              <div class="col-xs-12">
+                Preferences
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
+                <push-state-btn></push-state-btn>
+              </div>
+            </div>
           </div>
           <div class="card-actions">
             <paper-button>Logout</paper-button>
