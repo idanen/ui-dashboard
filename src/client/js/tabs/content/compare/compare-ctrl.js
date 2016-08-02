@@ -149,16 +149,15 @@
       this.openTestLists[whichTest] = !this.openTestLists[whichTest];
     },
     assignToViewModel: function (both) {
-      var leftGrouped = _.groupBy(both.left, 'testClassName'),
-          rightGrouped = _.groupBy(both.right, 'testClassName');
+      let leftBuildName = this.$filter('releasever')(this.selected.left.name),
+          rightBuildName = this.$filter('releasever')(this.selected.right.name),
+          leftKey = leftBuildName + this.selected.left.number,
+          rightKey = rightBuildName + this.selected.right.number;
+      let leftGrouped = _.groupBy(both[leftKey], 'testClassName'),
+          rightGrouped = _.groupBy(both[rightKey], 'testClassName');
 
-      if (both.left.length && both.left[0].jobName === this.selected.left.name && String(both.left[0].buildId) === this.selected.left.number && !this.allAliens(both.left)) {
-        this.leftTests = this._toArray(leftGrouped);
-        this.rightTests = this._toArray(rightGrouped);
-      } else {
-        this.leftTests = this._toArray(rightGrouped);
-        this.rightTests = this._toArray(leftGrouped);
-      }
+      this.leftTests = this._toArray(leftGrouped);
+      this.rightTests = this._toArray(rightGrouped);
 
       // Sum all failures on each side
       this.totalFailed.left = this.leftTests.reduce((total, testsWrap) => {

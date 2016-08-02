@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('ci-site.filters', []);
-    angular.module('ci-site', ['firebase', 'ngAnimate', 'ngSanitize', 'ngResource', 'ui.router', 'ui.select', 'ui.bootstrap', 'angular-ladda', 'ngclipboard', 'ci-site.filters', 'collapsiblePanel'])
+    angular.module('ci-site', ['firebase', 'ngAnimate', 'ngSanitize', 'ngResource', 'ui.router', 'ui.select', 'ui.bootstrap', 'angular-ladda', 'ngclipboard', 'pushState', 'ci-site.filters', 'collapsiblePanel'])
         .constant('ENV', {
           PROTOCOL: 'http',
           HOST: 'cidashboard.hpe.guru',

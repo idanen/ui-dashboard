@@ -25,6 +25,17 @@
             widget: widgetResolver
           }
         },
+        userProfile = {
+          name: 'userprofile',
+          parent: home,
+          url: '^/user/:userId',
+          templateUrl: '/js/tabs/content/user-profile/user-profile-tmpl.html',
+          controller: 'UserConfigsCtrl',
+          controllerAs: '$ctrl',
+          resolve: {
+            currentUser: userResolver
+          }
+        },
         login = {
           name: 'login',
           url: '/login',
@@ -87,6 +98,7 @@
 
     $stateProvider.state(home);
     $stateProvider.state(widget);
+    $stateProvider.state(userProfile);
     $stateProvider.state(login);
     $stateProvider.state(compare);
     $stateProvider.state(stability);
@@ -99,9 +111,22 @@
     return UiFacadeService.getById($stateParams.widgetId);
   }
 
-  userResolver.$inject = ['$firebaseAuth'];
-  function userResolver($firebaseAuth) {
-    return $firebaseAuth().$requireSignIn();
+  userResolver.$inject = ['$q', '$firebaseAuth', 'userService'];
+  function userResolver($q, $firebaseAuth, userService) {
+    return $firebaseAuth().$requireSignIn()
+        // .then(authData => {
+        //   return userService.isAnonymousUser(authData.uid);
+        // })
+        // .then(isAnonymous => {
+        //   if (isAnonymous) {
+        //     return $q.reject('Not available for anonymous users');
+        //   }
+        //
+        //   return userService.getCurrentUser();
+        // });
+        .then(() => {
+          return userService.getCurrentUser();
+        });
   }
 
   previousStateResolver.$inject = ['$state'];
