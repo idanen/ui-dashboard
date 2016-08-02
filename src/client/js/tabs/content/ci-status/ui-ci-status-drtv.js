@@ -35,29 +35,33 @@
       this.ResultsToIconNames = ResultsToIconNames;
       this.DEFAULT_JOB_NAME = DEFAULT_JOB_NAME;
       this.userConfigs = userConfigs;
-      this.jobs = {
-        masters: this.ciStatusService.getJobs(),
-        teams: this.ciStatusService.getJobs('teams')
-      };
-      this.loading = false; // when it true , progress bar enabled and job list disabled..
-      this.buildsLimit = 3;
+
+      this.loading = false;
       this.newBuild = {};
       this.legendShown = false;
+      this.jobs = {
+        masters: [],
+        teams: []
+      };
 
       this.userConfigs.registerForConfigsChanges(this.configsChanged.bind(this));
-
       this.filterConfig = this.userConfigs.getUserConfig('statusFilter');
       this.listenToFilterConfigChanges();
+
+      this.ciStatusService.getJobsIds()
+          .then(mastersIds => this.jobs.masters = Object.keys(mastersIds));
+      this.ciStatusService.getJobsIds('teams')
+          .then(teamsIds => this.jobs.teams = Object.keys(teamsIds));
     }
 
     CiStatusController.prototype = {
-      filterJob: function (group, job) {
-        this.filtered[group][job.$id] = !this.filtered[group][job.$id];
-        this.configFilterChanged();
+      filterJob: function (group, jobId) {
+        this.filtered[group][jobId] = !this.filtered[group][jobId];
+        this.saveConfigChanges();
       },
       unfilter: function (group, jobId) {
         this.filtered[group][jobId] = false;
-        this.configFilterChanged();
+        this.saveConfigChanges();
       },
       clearAll: function (group) {
         this.filtered[group] = {};
@@ -91,10 +95,15 @@
             masters: {},
             teams: {}
           };
-          this.filtered.masters[this.DEFAULT_JOB_NAME] = true;
+          this.userConfigs.getUnboundConfig('statusFilter')
+              .then((globalStatusFilter) => {
+                if (_.isEmpty(this.filtered.masters) && _.isEmpty(this.filtered.teams)) {
+                  this.filtered = _.extend({masters: {}, teams: {}}, globalStatusFilter);
+                }
+              });
         }
       },
-      configFilterChanged: function () {
+      saveConfigChanges: function () {
         this.filterConfig.masters = this.filtered.masters;
         this.filterConfig.teams = this.filtered.teams;
         this.filterConfig.$save();

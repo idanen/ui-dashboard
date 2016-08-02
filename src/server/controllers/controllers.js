@@ -100,6 +100,15 @@ module.exports = (function () {
         }.bind(this));
       },
 
+      deleteOldBuildsStatuses: function (request, response) {
+        var group = request.params.group,
+            buildName = request.params.buildName;
+        return this._handleRequest(request, response, function (req) {
+          return this.statusUpdater.fetchOldBuildsIds(group, buildName, parseInt(req.params.threshold, 10))
+              .then(this.statusUpdater.deleteBuildStatuses.bind(this.statusUpdater, group, buildName));
+        }.bind(this));
+      },
+
       getFailedOfLast: function (request, response) {
         return this._handleRequest(request, response, function () {
           return this.testsRetriever.fetchFailedOfLastBuilds(request.params.buildName, request.params.buildCount, parseInt(request.params.startFromNumber, 10))

@@ -53,10 +53,10 @@
               <span>Filter masters</span>
             </paper-button>
             <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-              <li role="menuitem" ng-repeat="job in ciJobsCtrl.jobs.masters">
-                <a ng-click="ciJobsCtrl.filterJob('masters', job)">
-                  <iron-icon icon="{{ ciJobsCtrl.filtered.masters[job.$id] ? 'check-box' : 'check-box-outline-blank' }}"></iron-icon>
-                  <span>{{ job.alias || job.$id | releasever }}</span>
+              <li role="menuitem" ng-repeat="jobId in ciJobsCtrl.jobs.masters">
+                <a ng-click="ciJobsCtrl.filterJob('masters', jobId)">
+                  <iron-icon icon="{{ ciJobsCtrl.filtered.masters[jobId] ? 'check-box' : 'check-box-outline-blank' }}"></iron-icon>
+                  <span>{{ jobId | releasever }}</span>
                 </a>
               </li>
             </ul>
@@ -79,10 +79,10 @@
               <span>Filter teams</span>
             </paper-button>
             <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-              <li role="menuitem" ng-repeat="job in ciJobsCtrl.jobs.teams">
-                <a ng-click="ciJobsCtrl.filterJob('teams', job)">
-                  <iron-icon icon="{{ ciJobsCtrl.filtered.teams[job.$id] ? 'check-box' : 'check-box-outline-blank' }}"></iron-icon>
-                  <span>{{ job.alias || job.$id | releasever }}</span>
+              <li role="menuitem" ng-repeat="jobId in ciJobsCtrl.jobs.teams">
+                <a ng-click="ciJobsCtrl.filterJob('teams', jobId)">
+                  <iron-icon icon="{{ ciJobsCtrl.filtered.teams[jobId] ? 'check-box' : 'check-box-outline-blank' }}"></iron-icon>
+                  <span>{{ jobId | releasever }}</span>
                 </a>
               </li>
             </ul>
@@ -102,12 +102,12 @@
     <div class="row">
         <div class="col-xs-12">
           <h4>Master Branches</h4>
-          <div class="row-fluid" ng-repeat="job in ciJobsCtrl.jobs.masters | multivalue:'$id':ciJobsCtrl.filtered.masters track by job.$id">
-            <build-status class="builds-group slide-in" build-name="job.$id" group="'masters'" jobs-limit="3"></build-status>
+          <div class="row-fluid" ng-repeat="jobId in ciJobsCtrl.jobs.masters | multivalue:'.':ciJobsCtrl.filtered.masters">
+            <build-status class="builds-group slide-in" build-name="jobId" group="'masters'" jobs-limit="3"></build-status>
           </div>
           <h4>Team Branches</h4>
-          <div class="row-fluid" ng-repeat="job in ciJobsCtrl.jobs.teams | multivalue:'$id':ciJobsCtrl.filtered.teams track by job.$id">
-            <build-status class="builds-group slide-in" build-name="job.$id" group="'teams'" jobs-limit="3"></build-status>
+          <div class="row-fluid" ng-repeat="jobId in ciJobsCtrl.jobs.teams | multivalue:'.':ciJobsCtrl.filtered.teams">
+            <build-status class="builds-group slide-in" build-name="jobId" group="'teams'" jobs-limit="3"></build-status>
           </div>
         </div>
     </div>

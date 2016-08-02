@@ -9,6 +9,18 @@
     return ('0' + num).slice(-2);
   }
 
+  function makeFormatter(options) {
+    if ('Intl' in window) {
+      try {
+        return new window.Intl.DateTimeFormat(undefined, options);
+      } catch (e) {
+        if (!(e instanceof RangeError)) {
+          throw e;
+        }
+      }
+    }
+  }
+
   function strftime(time, formatString) {
     var day = time.getDay();
     var date = time.getDate();
@@ -93,7 +105,12 @@
     if (ago) {
       return ago;
     } else {
-      return 'on ' + this.formatDate();
+      var ahead = this.timeAhead();
+      if (ahead) {
+        return ahead;
+      } else {
+        return 'on ' + this.formatDate();
+      }
     }
   };
 
@@ -103,31 +120,34 @@
     var min = Math.round(sec / 60);
     var hr = Math.round(min / 60);
     var day = Math.round(hr / 24);
-    if (ms < 0) {
-      return 'just now';
-    } else if (sec < 10) {
-      return 'just now';
-    } else if (sec < 45) {
-      return sec + ' seconds ago';
-    } else if (sec < 90) {
-      return 'a minute ago';
-    } else if (min < 45) {
-      return min + ' minutes ago';
-    } else if (min < 90) {
-      return 'an hour ago';
-    } else if (hr < 24) {
-      return hr + ' hours ago';
-    } else if (hr < 36) {
-      return 'a day ago';
-    } else if (day < 30) {
-      return day + ' days ago';
-    } else {
+    if (ms >= 0 && day < 30) {
+      return this.timeAgoFromMs(ms);
+    }
+    else {
+      return null;
+    }
+  };
+
+  RelativeTime.prototype.timeAhead = function() {
+    var ms = this.date.getTime() - (new Date().getTime());
+    var sec = Math.round(ms / 1000);
+    var min = Math.round(sec / 60);
+    var hr = Math.round(min / 60);
+    var day = Math.round(hr / 24);
+    if (ms >= 0 && day < 30) {
+      return this.timeUntil();
+    }
+    else {
       return null;
     }
   };
 
   RelativeTime.prototype.timeAgo = function() {
     var ms = new Date().getTime() - this.date.getTime();
+    return this.timeAgoFromMs(ms);
+  };
+
+  RelativeTime.prototype.timeAgoFromMs = function(ms) {
     var sec = Math.round(ms / 1000);
     var min = Math.round(sec / 60);
     var hr = Math.round(min / 60);
@@ -165,22 +185,82 @@
 
   RelativeTime.prototype.microTimeAgo = function() {
     var ms = new Date().getTime() - this.date.getTime();
-    var sec = ms / 1000;
-    var min = sec / 60;
-    var hr = min / 60;
-    var day = hr / 24;
-    var month = day / 30;
-    var year = month / 12;
+    var sec = Math.round(ms / 1000);
+    var min = Math.round(sec / 60);
+    var hr = Math.round(min / 60);
+    var day = Math.round(hr / 24);
+    var month = Math.round(day / 30);
+    var year = Math.round(month / 12);
     if (min < 1) {
       return '1m';
     } else if (min < 60) {
-      return Math.round(min) + 'm';
+      return min + 'm';
     } else if (hr < 24) {
-      return Math.round(hr) + 'h';
+      return hr + 'h';
     } else if (day < 365) {
-      return Math.round(day) + 'd';
+      return day + 'd';
     } else {
-      return Math.round(year) + 'y';
+      return year + 'y';
+    }
+  };
+
+  RelativeTime.prototype.timeUntil = function() {
+    var ms = this.date.getTime() - (new Date().getTime());
+    return this.timeUntilFromMs(ms);
+  };
+
+  RelativeTime.prototype.timeUntilFromMs = function(ms) {
+    var sec = Math.round(ms / 1000);
+    var min = Math.round(sec / 60);
+    var hr = Math.round(min / 60);
+    var day = Math.round(hr / 24);
+    var month = Math.round(day / 30);
+    var year = Math.round(month / 12);
+    if (month >= 18) {
+      return year + ' years from now';
+    } else if (month >= 12) {
+      return 'a year from now';
+    } else if (day >= 45) {
+      return month + ' months from now';
+    } else if (day >= 30) {
+      return 'a month from now';
+    } else if (hr >= 36) {
+      return day + ' days from now';
+    } else if (hr >= 24) {
+      return 'a day from now';
+    } else if (min >= 90) {
+      return hr + ' hours from now';
+    } else if (min >= 45) {
+      return 'an hour from now';
+    } else if (sec >= 90) {
+      return min + ' minutes from now';
+    } else if (sec >= 45) {
+      return 'a minute from now';
+    } else if (sec >= 10) {
+      return sec + ' seconds from now';
+    } else {
+      return 'just now';
+    }
+  };
+
+  RelativeTime.prototype.microTimeUntil = function() {
+    var ms = this.date.getTime() - (new Date().getTime());
+    var sec = Math.round(ms / 1000);
+    var min = Math.round(sec / 60);
+    var hr = Math.round(min / 60);
+    var day = Math.round(hr / 24);
+    var month = Math.round(day / 30);
+    var year = Math.round(month / 12);
+    if (day >= 365) {
+      return year + 'y';
+    } else if (hr >= 24) {
+      return day + 'd';
+    } else if (min >= 60) {
+      return hr + 'h';
+    } else if (min > 1) {
+      return min + 'm';
+    } else {
+      return '1m';
     }
   };
 
@@ -194,16 +274,14 @@
       return dayFirst;
     }
 
-    if (!('Intl' in window)) {
+    var formatter = makeFormatter({day: 'numeric', month: 'short'});
+    if (formatter) {
+      var output = formatter.format(new Date(0));
+      dayFirst = !!output.match(/^\d/);
+      return dayFirst;
+    } else {
       return false;
     }
-
-    var options = {day: 'numeric', month: 'short'};
-    var formatter = new window.Intl.DateTimeFormat(undefined, options);
-    var output = formatter.format(new Date(0));
-
-    dayFirst = !!output.match(/^\d/);
-    return dayFirst;
   }
   var dayFirst = null;
 
@@ -216,16 +294,14 @@
       return yearSeparator;
     }
 
-    if (!('Intl' in window)) {
+    var formatter = makeFormatter({day: 'numeric', month: 'short', year: 'numeric'});
+    if (formatter) {
+      var output = formatter.format(new Date(0));
+      yearSeparator = !!output.match(/\d,/);
+      return yearSeparator;
+    } else {
       return true;
     }
-
-    var options = {day: 'numeric', month: 'short', year: 'numeric'};
-    var formatter = new window.Intl.DateTimeFormat(undefined, options);
-    var output = formatter.format(new Date(0));
-
-    yearSeparator = !!output.match(/\d,/);
-    return yearSeparator;
   }
   var yearSeparator = null;
 
@@ -248,8 +324,8 @@
   };
 
   RelativeTime.prototype.formatTime = function() {
-    if ('Intl' in window) {
-      var formatter = new window.Intl.DateTimeFormat(undefined, {hour: 'numeric', minute: '2-digit'});
+    var formatter = makeFormatter({hour: 'numeric', minute: '2-digit'});
+    if (formatter) {
       return formatter.format(this.date);
     } else {
       return strftime(this.date, '%l:%M%P');
@@ -275,12 +351,7 @@
   }
 
 
-  var ExtendedTimePrototype;
-  if ('HTMLTimeElement' in window) {
-    ExtendedTimePrototype = Object.create(window.HTMLTimeElement.prototype);
-  } else {
-    ExtendedTimePrototype = Object.create(window.HTMLElement.prototype);
-  }
+  var ExtendedTimePrototype = Object.create(window.HTMLElement.prototype);
 
   // Internal: Refresh the time element's formatted date when an attribute changes.
   //
@@ -316,13 +387,20 @@
       return this.getAttribute('title');
     }
 
-    if ('Intl' in window) {
-      var options = {day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short'};
-      var formatter = new window.Intl.DateTimeFormat(undefined, options);
+    var formatter = makeFormatter({day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short'});
+    if (formatter) {
       return formatter.format(this._date);
+    } else {
+      try {
+        return this._date.toLocaleString();
+      } catch(e) {
+        if (e instanceof RangeError) {
+          return this._date.toString();
+        } else {
+          throw e;
+        }
+      }
     }
-
-    return this._date.toLocaleString();
   };
 
 
@@ -372,6 +450,18 @@
         return new RelativeTime(this._date).microTimeAgo();
       } else {
         return new RelativeTime(this._date).timeAgo();
+      }
+    }
+  };
+
+  var TimeUntilPrototype = Object.create(RelativeTimePrototype);
+  TimeUntilPrototype.getFormattedDate = function() {
+    if (this._date) {
+      var format = this.getAttribute('format');
+      if (format === 'micro') {
+        return new RelativeTime(this._date).microTimeUntil();
+      } else {
+        return new RelativeTime(this._date).timeUntil();
       }
     }
   };
@@ -486,40 +576,41 @@
       return;
     }
 
-    // locale-aware formatting of 24 or 12 hour times
-    if ('Intl' in window) {
-      var formatter = new window.Intl.DateTimeFormat(undefined, options);
+    var formatter = makeFormatter(options);
+    if (formatter) {
+      // locale-aware formatting of 24 or 12 hour times
       return formatter.format(el._date);
+    } else {
+      // fall back to strftime for non-Intl browsers
+      var timef = options.second ? '%H:%M:%S' : '%H:%M';
+      return strftime(el._date, timef);
     }
-
-    // fall back to strftime for non-Intl browsers
-    var timef = options.second ? '%H:%M:%S' : '%H:%M';
-    return strftime(el._date, timef);
   }
 
   // Public: RelativeTimeElement constructor.
   //
   //   var time = new RelativeTimeElement()
-  //   # => <time is='relative-time'></time>
+  //   # => <relative-time></relative-time>
   //
   window.RelativeTimeElement = document.registerElement('relative-time', {
-    prototype: RelativeTimePrototype,
-    'extends': 'time'
+    prototype: RelativeTimePrototype
   });
 
   window.TimeAgoElement = document.registerElement('time-ago', {
-    prototype: TimeAgoPrototype,
-    'extends': 'time'
+    prototype: TimeAgoPrototype
+  });
+
+  window.TimeUntilElement = document.registerElement('time-until', {
+    prototype: TimeUntilPrototype
   });
 
   // Public: LocalTimeElement constructor.
   //
   //   var time = new LocalTimeElement()
-  //   # => <time is='local-time'></time>
+  //   # => <local-time></local-time>
   //
   window.LocalTimeElement = document.registerElement('local-time', {
-    prototype: LocalTimePrototype,
-    'extends': 'time'
+    prototype: LocalTimePrototype
   });
 
 })();

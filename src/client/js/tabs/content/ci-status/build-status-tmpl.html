@@ -11,10 +11,10 @@
                    ng-class="'job-result-icon-' + $ctrl.resultToIconName($ctrl.build.result)"></iron-icon>
         <span> {{ $ctrl.build.result }} (</span>
         <em>
-          <time is="time-ago" datetime="{{ $ctrl.build.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
-                uib-tooltip="{{ $ctrl.build.lastUpdate | date }}">
+          <time-ago datetime="{{ $ctrl.build.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
+                    uib-tooltip="{{ $ctrl.build.lastUpdate | date }}">
             {{ $ctrl.build.lastUpdate | date }}
-          </time>
+          </time-ago>
         </em>
         <span>)</span>
       </div>
@@ -26,7 +26,26 @@
       </div>
     </div>
   </div>
-  <div class="build-status-rows">
+  <div class="build-status-rows" ng-if="$ctrl.loadingBuildResults">
+    <div class="row builds-group slide-in">
+      <div class="col-sm-4">
+        <a><em>Loading...</em></a>
+      </div>
+      <div class="col-sm-4">
+        <build-result result="build.result" show-label="true"></build-result>
+        <em>
+          ( Just now )
+        </em>
+      </div>
+      <div class="col-sm-4">
+        <div class="build-progress build-progress-running">
+          <div class="sub-build slide-in build-state-unknown build-state-running">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="build-status-rows" ng-if="!$ctrl.loadingBuildResults">
     <div class="row builds-group slide-in" ng-repeat="build in $ctrl.buildResults | orderBy:'$id':true track by $index">
       <div class="col-sm-4">
         <a ng-href="{{ $ctrl.buildCompareLink(build.$id) }}" uib-tooltip="Compare this build to another">{{ build.$id }}</a>
@@ -39,10 +58,10 @@
         <build-result result="build.result" show-label="true"></build-result>
         <em>
           (
-          <time is="time-ago" datetime="{{ build.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
-                uib-tooltip="{{ build.lastUpdate | date }}">
+          <time-ago datetime="{{ build.lastUpdate | date:'yyyy-MM-ddTHH:mmZ' }}"
+                    uib-tooltip="{{ build.lastUpdate | date }}">
             {{ build.lastUpdate | date }}
-          </time>
+          </time-ago>
           )
         </em>
         <div class="build-status-result-setter under-construction">

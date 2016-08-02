@@ -9,11 +9,12 @@
           }
 
           return _.filter(arr, (item) => {
+            let itemValue = (fieldName === '.') ? item : item[fieldName];
             if (Array.isArray(values)) {
-              return _.includes(values, item[fieldName]);
+              return _.includes(values, itemValue);
             }
             if (_.isObject(values)) {
-              return values[item[fieldName]];
+              return values[itemValue];
             }
           });
         };

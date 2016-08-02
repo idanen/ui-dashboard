@@ -2,21 +2,13 @@
  * Created by matarfa on 15/07/2015.
  */
 (function (angular) {
-
     'use strict';
 
-    /**
-     * Filters out all duplicate items from an array by checking the specified key
-     * @param [key] {string} the name of the attribute of each object to compare for uniqueness
-     if the key is empty, the entire object will be compared
-     if the key === false then no filtering will be performed
-     * @return {array}
-     */
     angular.module('ci-site')
         .service('ciStatusService', CiStatusService);
 
-    CiStatusService.$inject = ['$http', '$q', 'Ref', '$firebaseObject', '$firebaseArray', 'DEFAULT_JOB_NAME'];
-    function CiStatusService($http, $q, ref, $firebaseObject, $firebaseArray, DEFAULT_JOB_NAME) {
+    CiStatusService.$inject = ['$http', '$q', 'Ref', '$firebaseObject', '$firebaseArray', 'DEFAULT_JOB_NAME', 'FB_INIT_CONFIG'];
+    function CiStatusService($http, $q, ref, $firebaseObject, $firebaseArray, DEFAULT_JOB_NAME, FB_INIT_CONFIG) {
         this._statusRef = ref.child('ciStatus');
         this._mastersRef = this._statusRef.child('masters');
         this.$http = $http;
@@ -24,12 +16,17 @@
         this.$firebaseObject = $firebaseObject;
         this.$firebaseArray = $firebaseArray;
         this.DEFAULT_JOB_NAME = DEFAULT_JOB_NAME;
+        this.FB_INIT_CONFIG = FB_INIT_CONFIG;
     }
 
     CiStatusService.prototype = {
         getJobs: function (group = 'masters') {
             var ref = (group !== 'masters') ? this._statusRef.child(group) : this._statusRef.child(group);
             return this.$firebaseArray(ref);
+        },
+        getJobsIds: function (group = 'masters') {
+            return this.$http.get(`${this.FB_INIT_CONFIG.databaseURL}/ciStatus/${group}.json?shallow=true`)
+                .then(response => this._responseToData(response));
         },
         getLastBuildNumber: function (group = 'masters', buildName = this.DEFAULT_JOB_NAME) {
             return this.$q((resolve) => {
@@ -105,6 +102,9 @@
                     .update(newBuild)
                     .then(() => newBuild)
             );
+        },
+        _responseToData: function (response) {
+            return response.data;
         },
         _getRef: function (jobId, group) {
             if (group) {

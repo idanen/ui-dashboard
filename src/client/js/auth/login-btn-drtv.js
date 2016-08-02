@@ -35,10 +35,9 @@
   function LoginBtnController($firebaseAuth, authService, userService) {
     this.authService = authService;
     this.userService = userService;
-    this.authObj = $firebaseAuth();
     this.ready = false;
 
-    this.authObj.$onAuthStateChanged(this.updateAuthState.bind(this));
+    $firebaseAuth().$onAuthStateChanged(this.updateAuthState.bind(this));
   }
 
   LoginBtnController.prototype = {

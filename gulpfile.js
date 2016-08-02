@@ -235,9 +235,12 @@ gulp.task('serve', ['build'], function () {
     server: ['.tmp', 'dist']
   });
 
-  gulp.watch(['src/client/**/*.html'], ['html'], reload);
-  gulp.watch(['src/client/**/*.{scss,css}'], ['styles', 'inject'], reload);
-  gulp.watch(['src/client/js/**/*.js'], ['inject'], reload);
+  gulp.watch(['src/client/**/*.html', 'src/client/js/**/*.js'], function () {
+    runSequence('inject', reload);
+  });
+  gulp.watch(['src/client/**/*.{scss,css}'], function () {
+    runSequence('styles', 'inject', reload);
+  });
   gulp.watch(['src/client/images/**/*'], reload);
 });
 
