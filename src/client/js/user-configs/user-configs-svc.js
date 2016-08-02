@@ -46,7 +46,11 @@
         return this.$firebaseObject(ref);
       }
 
-      return this.$firebaseObject(this.configsRef.child(configKey));
+      if (this.configsRef) {
+        return this.$firebaseObject(this.configsRef.child(configKey));
+      }
+
+      return null;
     },
     registerForConfigsChanges: function (listener) {
       this.configsChangesListeners.push(listener);

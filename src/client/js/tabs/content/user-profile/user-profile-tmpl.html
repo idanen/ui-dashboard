@@ -14,10 +14,16 @@
                 <push-state-btn></push-state-btn>
               </div>
             </div>
+            <div class="row">
+              <div class="col-xs-12">
+                <login-btn></login-btn>
+              </div>
+            </div>
           </div>
           <div class="card-actions">
-            <paper-button>Logout</paper-button>
-            <paper-button>Link to user</paper-button>
+            <paper-button ng-click="$ctrl.logout()" ng-if="!$ctrl.isAnon">Logout</paper-button>
+            <paper-button ng-click="$ctrl.linkToUser(true)" ng-if="!$ctrl.user || $ctrl.isAnon">New user</paper-button>
+            <paper-button ng-click="$ctrl.linkToUser()" ng-if="!$ctrl.user || $ctrl.isAnon">Existing user</paper-button>
           </div>
         </paper-card>
       </div>

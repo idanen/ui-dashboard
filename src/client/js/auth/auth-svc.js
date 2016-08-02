@@ -40,6 +40,12 @@
           .then(this.saveUser.bind(this))
           .catch(error => console.error(error));
     },
+    signUp: function (email, password) {
+      if (/@hpe\.com$/.test(email) && password.length > 5) {
+        return this.authObj.$createUserWithEmailAndPassword(email, password)
+            .then(this.saveUser.bind(this));
+      }
+    },
     saveUser: function (authResult) {
       const authUserData = _.extend({}, authResult.user);
       return this.userService.saveUser(authUserData);

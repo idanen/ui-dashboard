@@ -28,7 +28,7 @@
         userProfile = {
           name: 'userprofile',
           parent: home,
-          url: '^/user/:userId',
+          url: '^/user/:userId?newUid',
           templateUrl: '/js/tabs/content/user-profile/user-profile-tmpl.html',
           controller: 'UserConfigsCtrl',
           controllerAs: '$ctrl',
@@ -38,7 +38,7 @@
         },
         login = {
           name: 'login',
-          url: '/login',
+          url: '/login?newUser',
           onEnter: loginModal,
           resolve: {
             previousState: previousStateResolver
@@ -143,9 +143,13 @@
       controller: 'LoginCtrl'
     }).result
       .then(function (user) {
-          console.log('Successfully logged in with user ', user);
+        console.log('Successfully logged in with user ', user);
+        if (!!$state.params.newUser) {
+          $state.go(previousState.name, _.extend(previousState.params, {newUser: $state.params.newUser}));
+        } else {
           $state.go(previousState.name, previousState.params);
-        })
+        }
+      })
       .catch(function (reason) {
           console.log('Login dismissed with reason: ' + reason);
           $state.go(previousState.name, previousState.params);

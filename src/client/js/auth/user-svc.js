@@ -111,6 +111,9 @@
     },
 
     isAnonymousUser: function (uid) {
+      if (!uid) {
+        return this.$q.resolve(false);
+      }
       return this.$q.resolve(
           this.usersRef
               .child(uid)
