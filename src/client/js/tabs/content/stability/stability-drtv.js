@@ -139,7 +139,10 @@
     },
     selectedBuildsBranch: function () {
       let selectedBuild = _.find(this.availableBuilds[this.build.group], {$id: this.build.name});
-      return selectedBuild.builds[this.build.number].branchName;
+      if (selectedBuild) {
+        return selectedBuild.builds[this.build.number].branchName;
+      }
+      return null;
     },
     handleError: console.error.bind(console)
   };

@@ -153,15 +153,15 @@ module.exports = (function () {
             }
           },
           {
-            $limit: 10
+            $limit: buildCount
           }
         ])
             .then(function (results) {
               var buildIds = [];
 
               if (results) {
-                results.forEach(function (aggregated) {
-                  buildIds.push(aggregated._id.buildId);
+                buildIds = results.map(function (aggregated) {
+                  return aggregated._id.buildId;
                 });
               }
 
