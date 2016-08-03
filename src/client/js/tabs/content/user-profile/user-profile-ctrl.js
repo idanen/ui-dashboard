@@ -11,6 +11,7 @@
     this.authService = authService;
     this.user = currentUser;
     this.isAnon = true;
+    this.loginOpen = false;
 
     this.userService.onUserChange(user => {
       if (!user) {
@@ -25,15 +26,14 @@
   }
 
   UserConfigsController.prototype = {
-    linkToUser: function (isNew) {
-      if (isNew) {
-        this.$state.go('login', {newUser: true});
-      } else {
-        this.$state.go('login');
-      }
+    login: function () {
+      this.loginOpen = true;
     },
     logout: function () {
       this.authService.logout();
+    },
+    closeLogin: function () {
+      this.loginOpen = false;
     }
   };
 }());

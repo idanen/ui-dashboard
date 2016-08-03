@@ -22,10 +22,35 @@
           </div>
           <div class="card-actions">
             <paper-button ng-click="$ctrl.logout()" ng-if="!$ctrl.isAnon">Logout</paper-button>
-            <paper-button ng-click="$ctrl.linkToUser(true)" ng-if="!$ctrl.user || $ctrl.isAnon">New user</paper-button>
-            <paper-button ng-click="$ctrl.linkToUser()" ng-if="!$ctrl.user || $ctrl.isAnon">Existing user</paper-button>
+            <paper-button ng-click="$ctrl.login()" ng-if="!$ctrl.user || $ctrl.isAnon">New user</paper-button>
+            <paper-button ng-click="$ctrl.login()" ng-if="!$ctrl.user || $ctrl.isAnon">Existing user</paper-button>
           </div>
         </paper-card>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 login-wrap" ng-class="{'open': $ctrl.loginOpen}">
+        <paper-button ng-click="$ctrl.closeLogin()">Close</paper-button>
+        <form class="form-signin">
+          <h2 class="form-signin-heading">Please sign in</h2>
+          <paper-input-container>
+            <label>Name</label>
+            <input is="iron-input" ng-model="$ctrl.displayName" required>
+          </paper-input-container>
+          <paper-input-container>
+            <label>Email</label>
+            <input is="iron-input" ng-model="$ctrl.email" required>
+          </paper-input-container>
+          <paper-input-container>
+            <label>Password</label>
+            <input is="iron-input" type="password" ng-model="$ctrl.password" required>
+          </paper-input-container>
+          <paper-button raised ng-click="$ctrl.login()">Sign in</paper-button>
+        </form>
+        <form class="form-signin">
+          <h2 class="rom-signin-heading">Sign in with Google</h2>
+          <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="$ctrl.loginWithProvider('google')">Sign in with Google</button>
+        </form>
       </div>
     </div>
   </div>

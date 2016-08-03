@@ -1,4 +1,4 @@
-@import './ci-status/ci-status';
+@import './ci-status/_ci-status';
 
 $body-top-padding: 70px;
 $body-bottom-padding: 10px;
@@ -122,6 +122,21 @@ login-btn {
     .btn-link:not(:first-of-type)::before {
       content: ' | ';
     }
+  }
+}
+
+@mixin slide-down($final-height) {
+  transition: all .3s ease-in-out;
+  height: 0;
+  overflow: hidden;
+  &.open {
+    height: $final-height;
+  }
+}
+
+.user-profile {
+  .login-wrap {
+    @include slide-down(20vh);
   }
 }
 
