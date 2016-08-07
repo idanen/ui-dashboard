@@ -20,6 +20,7 @@
 
       $scope.$on('$stateChangeSuccess', (event, toState) => {
         this.title = this.facadeService.getTitleOfState(toState.name);
+        this.closeDrawer();
       });
 
       $scope.$on('$destroy', offAdminChange);
@@ -67,23 +68,28 @@
           this.closeDrawer();
           if (stateName === 'compare') {
             this.$state.go(stateName, this.paramsForState(stateName));
-            return;
-          }
-          if (stateName === 'stability') {
+          } else if (stateName === 'stability') {
             this.$state.go(stateName, this.paramsForState(stateName));
-            return;
-          }
-          if (stateName === 'userprofile') {
+          } else if (stateName === 'userprofile') {
             this.$state.go(stateName, this.paramsForState(stateName));
-            return;
+          } else {
+            this.$state.go('widget', {widgetId: stateName});
           }
-          this.$state.go('widget', { widgetId: stateName });
+      },
+      hrefForState: function (stateName) {
+        if (['compare', 'stability', 'userprofile'].indexOf(stateName) > -1) {
+          return this.$state.href(stateName, this.paramsForState(stateName));
+        }
+        return this.$state.href('widget', this.paramsForState(stateName));
       },
         setMainWidget: function (index) {
             this.currentWidget = this.mainWidgets[index];
         },
         closeDrawer: function () {
-            this.$element.find('paper-drawer-panel')[0].closeDrawer();
+          let $drawer = this.$element.find('paper-drawer-panel');
+          if ($drawer.length && _.isFunction($drawer[0].closeDrawer)) {
+            $drawer[0].closeDrawer();
+          }
         }
     };
 })(window.angular);

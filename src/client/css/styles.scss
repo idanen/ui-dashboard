@@ -136,7 +136,22 @@ login-btn {
 
 .user-profile {
   .login-wrap {
-    @include slide-down(20vh);
+    transition: all .3s ease-in-out;
+    transform: translate(-50%) scale(.7);
+    transform-origin: bottom left;
+    opacity: 0;
+    &.open {
+      transform: translate(0) scale(1);
+      opacity: 1;
+    }
+  }
+}
+
+@media (max-width: 992px) {
+  .user-profile {
+    .login-wrap {
+      transform-origin: top;
+    }
   }
 }
 

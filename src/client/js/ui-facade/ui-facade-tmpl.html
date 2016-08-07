@@ -16,9 +16,9 @@
             <ul class="nav navbar-nav">
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ facade.title }} <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu" ng-if="facade.defaultBuild">
                         <li ui-sref-active="active" ng-repeat="state in facade.otherStates">
-                            <a ng-click="facade.gotoState(state)">{{facade.getTitleOfState(state)}}</a>
+                            <a ng-href="{{facade.hrefForState(state)}}">{{facade.getTitleOfState(state)}}</a>
                         </li>
                     </ul>
                 </li>
@@ -36,13 +36,15 @@
                         <paper-toolbar>
                             <!--<div class="title">Change Content</div>-->
                         </paper-toolbar>
-                        <paper-menu>
-                            <paper-item class="widget-link" ng-repeat="state in facade.otherStates" ng-click="facade.gotoState(state)" uib-tooltip="{{facade.getTitleOfState(state)}}">
-                                <paper-item-body two-line>
-                                    <div>{{facade.getTitleOfState(state)}}</div>
-                                    <!--<div secondary>requires auth</div>-->
-                                </paper-item-body>
-                            </paper-item>
+                        <paper-menu ng-if="facade.defaultBuild">
+                            <a ng-repeat="state in facade.otherStates" ng-href="{{facade.hrefForState(state)}}" tabindex="-1">
+                                <paper-item class="widget-link">
+                                    <paper-item-body two-line>
+                                        <div>{{facade.getTitleOfState(state)}}</div>
+                                        <!--<div secondary>requires auth</div>-->
+                                    </paper-item-body>
+                                </paper-item>
+                            </a>
                         </paper-menu>
                     </paper-header-panel>
                     <paper-header-panel main>

@@ -1,7 +1,7 @@
 <div class="row user-profile">
   <div class="col-md-12">
     <div class="row">
-      <div class="col-xs-12">
+      <div class="col-xs-12 col-md-4" ng-if="$ctrl.user.photoURL">
         <paper-card heading="{{ $ctrl.user.displayName }}" image="{{ $ctrl.user.photoURL }}">
           <div class="card-content">
             <div class="row">
@@ -21,36 +21,60 @@
             </div>
           </div>
           <div class="card-actions">
-            <paper-button ng-click="$ctrl.logout()" ng-if="!$ctrl.isAnon">Logout</paper-button>
-            <paper-button ng-click="$ctrl.login()" ng-if="!$ctrl.user || $ctrl.isAnon">New user</paper-button>
-            <paper-button ng-click="$ctrl.login()" ng-if="!$ctrl.user || $ctrl.isAnon">Existing user</paper-button>
+            <paper-button ng-click="$ctrl.logout()">Logout</paper-button>
+            <paper-button ng-click="$ctrl.openLogin()" ng-if="!$ctrl.user || $ctrl.isAnon">Link to a User</paper-button>
           </div>
         </paper-card>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-xs-12 login-wrap" ng-class="{'open': $ctrl.loginOpen}">
-        <paper-button ng-click="$ctrl.closeLogin()">Close</paper-button>
-        <form class="form-signin">
-          <h2 class="form-signin-heading">Please sign in</h2>
-          <paper-input-container>
-            <label>Name</label>
-            <input is="iron-input" ng-model="$ctrl.displayName" required>
-          </paper-input-container>
-          <paper-input-container>
-            <label>Email</label>
-            <input is="iron-input" ng-model="$ctrl.email" required>
-          </paper-input-container>
-          <paper-input-container>
-            <label>Password</label>
-            <input is="iron-input" type="password" ng-model="$ctrl.password" required>
-          </paper-input-container>
-          <paper-button raised ng-click="$ctrl.login()">Sign in</paper-button>
-        </form>
-        <form class="form-signin">
-          <h2 class="rom-signin-heading">Sign in with Google</h2>
-          <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="$ctrl.loginWithProvider('google')">Sign in with Google</button>
-        </form>
+      <div class="col-xs-12 col-md-8 login-wrap" ng-class="{'open': $ctrl.loginOpen}">
+        <div class="row">
+          <div class="col-xs-4">
+            <paper-fab mini icon="close" ng-click="$ctrl.closeLogin()"></paper-fab>
+          </div>
+          <div class="col-xs-8">
+            <paper-radio-select options="$ctrl.loginOptions" selection="$ctrl.selectedLoginOption" on-change="$ctrl.changeLoginOption(value)"></paper-radio-select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <form class="form-signin">
+              <div ng-switch on="$ctrl.selectedLoginOption">
+                <fieldset ng-switch-when="signup">
+                  <legend class="form-signin-heading">Sign Up</legend>
+                  <paper-input-container>
+                    <label>Name</label>
+                    <input is="iron-input" ng-model="$ctrl.displayName" required>
+                  </paper-input-container>
+                  <paper-input-container>
+                    <label>Email</label>
+                    <input is="iron-input" ng-model="$ctrl.email" required>
+                  </paper-input-container>
+                  <paper-input-container>
+                    <label>Password</label>
+                    <input is="iron-input" type="password" ng-model="$ctrl.password" required>
+                  </paper-input-container>
+                  <paper-button raised ng-click="$ctrl.signup()">Sign Up</paper-button>
+                </fieldset>
+                <fieldset ng-switch-when="google">
+                  <legend class="rom-signin-heading">Sign in with Google</legend>
+                  <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="$ctrl.loginWithProvider('google')">Sign in with Google</button>
+                </fieldset>
+                <fieldset ng-switch-default>
+                  <legend class="form-signin-heading">Log In</legend>
+                  <paper-input-container>
+                    <label>Email</label>
+                    <input is="iron-input" ng-model="$ctrl.email" required>
+                  </paper-input-container>
+                  <paper-input-container>
+                    <label>Password</label>
+                    <input is="iron-input" type="password" ng-model="$ctrl.password" required>
+                  </paper-input-container>
+                  <paper-button raised ng-click="$ctrl.login()">Log In</paper-button>
+                </fieldset>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   </div>

@@ -50,7 +50,7 @@
         }
         if (changes.selected.currentValue.number) {
           this.number = changes.selected.currentValue.number;
-          this.selectedBuildResult = _.find(this.buildResults, {id: this.number}).result;
+          this.getSelectedBuildResult();
         }
       }
       if (changes.builds && changes.builds.currentValue) {
@@ -62,7 +62,7 @@
         }
         this.buildResults = this.buildResultsData(this.builds, this.name);
         this.number = this.buildResults[0].id;
-        this.selectedBuildResult = _.find(this.buildResults, {id: this.number}).result;
+        this.getSelectedBuildResult();
         this.onChange({prop: 'name', value: this.name});
         this.onChange({prop: 'number', value: this.number});
       }
@@ -79,7 +79,15 @@
       } else {
         this.onChange({prop: prop, value: value});
       }
-      this.selectedBuildResult = _.find(this.buildResults, {id: this.number}).result;
+      this.getSelectedBuildResult();
+    },
+    getSelectedBuildResult: function () {
+      let buildResult = _.find(this.buildResults, {id: this.number});
+      if (!this.number) {
+        this.number = this.buildResults[0].id;
+        this.onChange({prop: 'number', value: this.number});
+      }
+      this.selectedBuildResult = buildResult ? buildResult.result : 'UNKNOWN';
     },
     buildResultsData: function (builds, selectedName) {
       let buildResults,
