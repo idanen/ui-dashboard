@@ -54,7 +54,7 @@
         <paper-input-container>
           <iron-icon icon="search" prefix></iron-icon>
           <label>Test Class Name</label>
-          <input is="iron-input" ng-model="$ctrl.filterTestName">
+          <input is="iron-input" ng-model="$ctrl.filterTestName" ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 300, 'blur': 0 } }">
         </paper-input-container>
       </div>
     </fieldset>
