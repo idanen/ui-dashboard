@@ -37,10 +37,10 @@
   </span>
   <span ng-show="$ctrl.manualMode">
     <input class="form-control build-selector-number-manual" ng-model="$ctrl.number">
-    <paper-button raised ng-click="$ctrl.change('number', $ctrl.number)">
+    <paper-button raised ng-click="$ctrl.manualChange()">
       <iron-icon icon="send"></iron-icon>
       <span>Go</span>
     </paper-button>
   </span>
-  <paper-icon-button icon="create" ng-click="$ctrl.manualMode = !$ctrl.manualMode"></paper-icon-button>
+  <paper-icon-button icon="create" ng-click="$ctrl.toggleManualMode()"></paper-icon-button>
 </div>

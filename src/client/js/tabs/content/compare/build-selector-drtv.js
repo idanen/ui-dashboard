@@ -81,6 +81,13 @@
       }
       this.getSelectedBuildResult();
     },
+    manualChange: function () {
+      this.change('number', this.number);
+      this.toggleManualMode();
+    },
+    toggleManualMode: function () {
+      this.manualMode = !this.manualMode;
+    },
     getSelectedBuildResult: function () {
       let buildResult = _.find(this.buildResults, {id: this.number});
       if (!this.number) {
