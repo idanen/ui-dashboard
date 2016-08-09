@@ -42,7 +42,7 @@
     }
 
     this.sortFields = ['category', 'testClassName', 'markedUnstable'];
-    this.sortField = this.sortFields[0];
+    this.sortField = this.sortFields[1];
 
     $q.all(this.availableBuilds.masters.$loaded(), this.availableBuilds.teams.$loaded())
       .then(this.selectDefaultOptions.bind(this))
