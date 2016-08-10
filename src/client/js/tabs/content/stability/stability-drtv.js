@@ -139,8 +139,15 @@
           .finally(() => this.goLoading = false);
     },
     renderResults: function (stabilityResults) {
-      this.testWraps = stabilityResults;
+      this.testWraps = stabilityResults.map(testWrap => this.countTotalFails(testWrap));
       return this.testWraps;
+    },
+    countTotalFails: function (testWrap) {
+      testWrap.totalFailed = testWrap.tests.reduce((count, test) => {
+        return count + (test.stabilityResult.failed);
+      }, 0);
+
+      return testWrap;
     },
     selectedBuildsBranch: function () {
       let selectedBuild = _.find(this.availableBuilds[this.build.group], {$id: this.build.name});

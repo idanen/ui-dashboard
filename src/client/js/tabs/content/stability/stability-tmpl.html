@@ -58,17 +58,15 @@
         </paper-input-container>
       </div>
     </fieldset>
-    <fieldset class="form-group">
-      <div class="col-xs-12">
-        <ul class="list-group">
-          <li class="list-group-item slide-in" ng-repeat="testWrap in $ctrl.testWraps | classNameOrder | stabilityFilter:$ctrl.filterFailedPercent | filter:$ctrl.filterTestName track by $index">
-            <strong>{{ testWrap.testClassName | className }}</strong>
-            <test-list tests="testWrap.tests" stability-count="$ctrl.buildsCount"></test-list>
-          </li>
-        </ul>
-      </div>
-    </fieldset>
   </form>
+
+  <div class="row" ng-repeat="testWrap in $ctrl.testWraps | orderByFailed:true | stabilityFilter:$ctrl.filterFailedPercent | filter:$ctrl.filterTestName track by testWrap.testClassName">
+    <paper-card class="col-xs-12" heading="{{ testWrap.testClassName | className }} ({{ testWrap.totalFailed }})">
+      <div class="card-content">
+        <test-list tests="testWrap.tests" stability-count="$ctrl.buildsCount"></test-list>
+      </div>
+    </paper-card>
+  </div>
 
   <!--<ul class="list-group">-->
     <!--<li class="list-group-item" ng-repeat="test in $ctrl.tests">-->
