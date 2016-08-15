@@ -175,6 +175,10 @@ module.exports = (function () {
       }
 
       buildIds = Object.keys(builds);
+      if (buildIds.length < threshold) {
+        return Promise.resolve([]);
+      }
+
       return buildIds.slice(0, buildIds.length - (threshold || 100));
     },
     isMastersGroup: function (buildParams) {
