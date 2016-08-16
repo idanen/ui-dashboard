@@ -18,6 +18,7 @@
 
   PaperSliderCtrl.prototype = {
     $postLink: function () {
+      this.$element[0].value = parseInt(this.bindFrom, 10);
       this.$element[0].addEventListener('value-change', () => {
         if (this.$element[0].value !== this.bindFrom) {
           // This is a regular DOM event so we have to manually trigger change detection (a $digest loop)

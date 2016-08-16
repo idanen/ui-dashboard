@@ -8,10 +8,11 @@
         templateUrl: 'js/tabs/content/stability/stability-tmpl.html'
       });
 
-  CIStabilityController.$inject = ['$q', '$stateParams', 'buildTestsService', 'ciStatusService', 'build', '$filter', 'DEFAULT_JOB_NAME', 'GENERIC_JOB_NAME', 'DEFAULT_BUILDS_COUNT'];
-  function CIStabilityController($q, $stateParams, buildTestsService, ciStatusService, build, $filter, DEFAULT_JOB_NAME, GENERIC_JOB_NAME, DEFAULT_BUILDS_COUNT) {
+  CIStabilityController.$inject = ['$q', '$stateParams', 'buildTestsService', 'ciStatusService', 'build', 'downloadService', '$filter', 'DEFAULT_JOB_NAME', 'GENERIC_JOB_NAME', 'DEFAULT_BUILDS_COUNT'];
+  function CIStabilityController($q, $stateParams, buildTestsService, ciStatusService, build, downloadService, $filter, DEFAULT_JOB_NAME, GENERIC_JOB_NAME, DEFAULT_BUILDS_COUNT) {
     this.buildTestsService = buildTestsService;
     this.ciStatusService = ciStatusService;
+    this.downloadService = downloadService;
     this.$filter = $filter;
     this.DEFAULT_JOB_NAME = DEFAULT_JOB_NAME;
     this.GENERIC_JOB_NAME = GENERIC_JOB_NAME;
@@ -142,6 +143,21 @@
     renderResults: function (stabilityResults) {
       this.testWraps = stabilityResults.map(testWrap => this.countTotalFails(testWrap));
       return this.testWraps;
+    },
+    exportCSV: function () {
+      let csvPrefix = `data:text/csv;charset=utf-8,`,
+          headers = `testClassName,testName,faildCount,faildBuilds`;
+
+      let csvData = this.testWraps.reduce((data, testWrap) => {
+        let rows = testWrap.tests.reduce((rows, test) => {
+          let failedBuilds = _.map(_.filter(test.stabilityResult.trends, {testFailed: true}), 'buildId').join(' ');
+          return `${rows}\n${test.testClassName},${test.testName},${test.stabilityResult.failed},${failedBuilds}`;
+        }, '');
+
+        return `${data}${rows}`;
+      }, '');
+
+      this.downloadService.download({data: `${csvPrefix}${headers}${csvData}`, filename: `${this.build.name}_${this.build.number}_${this.buildsCount}.csv`});
     },
     countTotalFails: function (testWrap) {
       testWrap.totalFailed = testWrap.tests.reduce((count, test) => {

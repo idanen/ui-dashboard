@@ -60,6 +60,14 @@
     </fieldset>
   </form>
 
+  <div class="row" ng-if="$ctrl.testWraps.length">
+    <div class="col-xs-12">
+      <paper-button raised ng-click="$ctrl.exportCSV()">
+        <iron-icon icon="file-download"></iron-icon>
+        <span>Export CSV</span>
+      </paper-button>
+    </div>
+  </div>
   <div class="row" ng-repeat="testWrap in $ctrl.testWraps | orderByFailed:true | stabilityFilter:$ctrl.filterFailedPercent | filter:$ctrl.filterTestName track by testWrap.testClassName">
     <paper-card class="col-xs-12" heading="{{ testWrap.testClassName | className }} ({{ testWrap.totalFailed }})">
       <div class="card-content">
