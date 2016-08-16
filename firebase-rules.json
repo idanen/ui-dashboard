@@ -1,0 +1,32 @@
+{
+  "rules": {
+    ".read": true,
+    ".write": "auth != null && root.child('admins').child(auth.uid).exists()",
+    "ciStatus": {
+      ".read": true
+    },
+    "users": {
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "members": {
+      ".indexOn": "memberId",
+      "$member_id": {
+        "memberOf": {
+          ".validate": "root.child('teams/' + newData.val()).exists()"
+        }
+      }
+    },
+    "config": {
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "branches_updates": {
+      "$branch_name": {
+        ".indexOn": "lastUpdateTime"
+      }
+    }
+  }
+}

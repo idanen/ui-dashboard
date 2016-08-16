@@ -134,6 +134,7 @@
     },
     fetchStability: function () {
       this.goLoading = true;
+      this.testWraps = [];
       return this.buildTestsService.getStability(this.build.name, this.build.number, this.buildsCount, this.selectedBuildsBranch())
           .then(this.renderResults.bind(this))
           .finally(() => this.goLoading = false);

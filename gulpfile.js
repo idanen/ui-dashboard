@@ -4,6 +4,7 @@ var $ = require('gulp-load-plugins')();
 var del = require('del');
 var runSequence = require('run-sequence');
 var browserSync = require('browser-sync');
+var historyApiFallback = require('connect-history-api-fallback');
 var reload = browserSync.reload;
 var inject = require('gulp-inject');
 var series = require('stream-series');
@@ -232,7 +233,10 @@ gulp.task('serve', ['build'], function () {
     //       will present a certificate warning in the browser.
     //https: true,
     port: 3080,
-    server: ['.tmp', 'dist']
+    server: {
+      baseDir: ['.tmp', 'dist'],
+      middleware: [historyApiFallback()]
+    }
   });
 
   gulp.watch(['src/client/**/*.html', 'src/client/js/**/*.js'], function () {
@@ -253,7 +257,10 @@ gulp.task('serve:dist', ['clear', 'build'], function () {
     // Note: this uses an unsigned certificate which on first access
     //       will present a certificate warning in the browser.
     // https: true,
-    server: 'dist'
+    server: {
+      baseDir: './dist',
+      middleware: [historyApiFallback()]
+    }
   });
 });
 

@@ -4,8 +4,8 @@
   angular.module('ci-site')
     .config(configRoutes);
 
-  configRoutes.$inject = ['$stateProvider', '$urlRouterProvider', 'laddaProvider'];
-  function configRoutes($stateProvider, $urlRouterProvider, laddaProvider) {
+  configRoutes.$inject = ['$stateProvider', '$locationProvider', '$urlRouterProvider', 'laddaProvider'];
+  function configRoutes($stateProvider, $locationProvider, $urlRouterProvider, laddaProvider) {
     var home = {
           name: 'home',
           url: '/',
@@ -94,7 +94,7 @@
       style: 'expand-right'
     });
 
-    //$locationProvider.html5Mode(true);
+    $locationProvider.html5Mode(true);
 
     $stateProvider.state(home);
     $stateProvider.state(widget);
