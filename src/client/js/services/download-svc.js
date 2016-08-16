@@ -21,12 +21,9 @@
     download(options) {
       this.downloadLink.setAttribute('href', encodeURI(options.data));
       this.downloadLink.setAttribute('download', options.filename || 'file.csv');
-      // this.$document.find('body').append(this.downloadLink);
       this.$timeout(() => {
         this.downloadLink.click();
       }, 50, false);
-
-      // this.$timeout(() => downloader.remove(), 2000, false);
     }
   };
 }());
