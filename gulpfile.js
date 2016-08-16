@@ -55,14 +55,23 @@ gulp.task('images', function () {
     .pipe($.size({title: 'images'}));
 });
 
+gulp.task('vulcanize', function () {
+  return gulp.src('src/client/components/elements.html')
+      .pipe($.vulcanize())
+      .pipe(gulp.dest('dist/components'));
+});
+
 // Copy all files at the root level (src/client)
-gulp.task('copy', function () {
+gulp.task('copy', ['vulcanize'], function () {
   return gulp.src([
-    'src/client/components/**/*.*'/*,
+    'src/client/components/vanilla/**/*',
+    'src/client/components/web-animations-js/**/*',
+    'src/client/components/webcomponentsjs/**/*'/*,
     '!src/client/*.html',
     'node_modules/apache-server-configs/dist/.htaccess'*/
   ], {
-    dot: true
+    dot: true,
+    base: 'src/client/components'
   }).pipe(gulp.dest('dist/components'))
     .pipe($.size({title: 'copy'}));
 });
@@ -219,7 +228,7 @@ gulp.task('inject', ['templatecopy', 'html'], function () {
 });
 
 gulp.task('build', function (cb) {
-  runSequence('clean', ['styles', 'copy', 'inject', 'images'], cb);
+  runSequence('clean', ['html', 'styles', 'copy', 'inject', 'images'], cb);
 });
 
 // Watch files for changes & reload

@@ -110,7 +110,7 @@
   function widgetResolver($stateParams, UiFacadeService) {
     let widgets = _.map(UiFacadeService.getWidgets(), 'id');
 
-    if ($stateParams.widgetId in widgets) {
+    if (widgets.indexOf($stateParams.widgetId) > -1) {
       return UiFacadeService.getById($stateParams.widgetId);
     }
     return UiFacadeService.getById(widgets[0]);
