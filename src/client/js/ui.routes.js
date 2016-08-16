@@ -108,7 +108,12 @@
 
   widgetResolver.$inject = ['$stateParams', 'UiFacadeService'];
   function widgetResolver($stateParams, UiFacadeService) {
-    return UiFacadeService.getById($stateParams.widgetId);
+    let widgets = _.map(UiFacadeService.getWidgets(), 'id');
+
+    if ($stateParams.widgetId in widgets) {
+      return UiFacadeService.getById($stateParams.widgetId);
+    }
+    return UiFacadeService.getById(widgets[0]);
   }
 
   userResolver.$inject = ['$q', '$firebaseAuth', 'userService'];
