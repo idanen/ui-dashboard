@@ -174,8 +174,23 @@ module.exports = (function () {
       }.bind(this));
     },
     fetchStabilitySuccessTests: function (buildName, buildIdsRange, stabilityResults) {
-      var classesAndMethods, aggregations;
-      classesAndMethods = _.transform(stabilityResults, function (result, value) {
+      var classesAndMethods, aggregations, filteredResults,
+          buildsFailCount = {};
+
+      // Count failed per build
+      buildsFailCount = _.reduce(stabilityResults, function (builds, result) {
+        if (_.isUndefined(builds[result.tests[0].buildId])) {
+          builds[result.tests[0].buildId] = 0;
+        }
+        builds[result.tests[0].buildId] += result.failed;
+        return builds;
+      }, buildsFailCount);
+      // Filter builds with too many failures
+      filteredResults = _.filter(stabilityResults, function (result) {
+        return buildsFailCount[result.tests[0].buildId] <= 100;
+      });
+
+      classesAndMethods = _.transform(filteredResults, function (result, value) {
         result.classes.push(value._id.testClassName);
         result.methods.push(value._id.testName);
       }, { classes: [], methods: [] });
@@ -213,6 +228,7 @@ module.exports = (function () {
             testReportUrl: 1,
             exceptionType: 1,
             errorMessage: 1,
+            category: 1,
             successCount: { $cond: ['$testFailed', 0, 1] }
           }
         },
@@ -236,7 +252,7 @@ module.exports = (function () {
         }
       ];
       return this._promisize('aggregate', aggregations)
-          .then(this.addSuccessTestsToStability.bind(this, stabilityResults));
+          .then(this.addSuccessTestsToStability.bind(this, filteredResults));
     },
     addSuccessTestsToStability: function (stabilityResults, complementingData) {
       _.forEach(complementingData, function (successTest) {
@@ -538,6 +554,7 @@ module.exports = (function () {
           testReportUrl: 1,
           exceptionType: 1,
           errorMessage: 1,
+          category: 1,
           failedCount: { $cond: ['$testFailed', 1, 0] }
         }
       },

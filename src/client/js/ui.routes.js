@@ -103,6 +103,7 @@
     $stateProvider.state(compare);
     $stateProvider.state(stability);
 
+    $urlRouterProvider.when('', '/cistatus');
     $urlRouterProvider.otherwise('/cistatus');
   }
 
