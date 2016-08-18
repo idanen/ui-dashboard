@@ -181,14 +181,21 @@
       if (this.buildsCount) {
         this.stabilityLoading = true;
 
-        promises.push(this.buildTestsService.getStability(leftBuildName, this.selected.left.number, this.buildsCount)
+        promises.push(this.buildTestsService.getStability(leftBuildName, this.selected.left.number, this.buildsCount, this.selectedBuildsBranch(this.selected.left.group, leftBuildName, this.selected.left.number))
             .then(this.addStabilityResultsToTestsList.bind(this, this.leftTests)));
-        promises.push(this.buildTestsService.getStability(rightBuildName, this.selected.right.number, this.buildsCount)
+        promises.push(this.buildTestsService.getStability(rightBuildName, this.selected.right.number, this.buildsCount, this.selectedBuildsBranch(this.selected.right.group, rightBuildName, this.selected.right.number))
             .then(this.addStabilityResultsToTestsList.bind(this, this.rightTests)));
 
         this.$q.all(promises)
             .finally(() => this.stabilityLoading = false);
       }
+    },
+    selectedBuildsBranch: function (group, buildName, buildNumber) {
+      let selectedBuild = _.find(this.availableBuilds[group], {$id: buildName});
+      if (selectedBuild) {
+        return selectedBuild.builds[buildNumber].branchName;
+      }
+      return null;
     },
     addStabilityResultsToTestsList: function (testsWraps, stabilityResults) {
       _.forEach(testsWraps, (testsWrap) => {
