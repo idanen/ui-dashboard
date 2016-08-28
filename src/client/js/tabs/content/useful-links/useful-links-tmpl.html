@@ -5,7 +5,12 @@
             <label>Search</label>
             <input is="iron-input" ng-model="usefulLinksCtrl.filter">
         </paper-input-container>
-        <ul class="list-group">
+        <ul class="list-group pulsing-template" ng-if="usefulLinksCtrl.loading">
+            <li class="list-group-item" uib-tooltip="Loading..."><paper-icon-button icon="cancel"></paper-icon-button><a target="_blank">loading...</a></li>
+            <li class="list-group-item" uib-tooltip="Loading..."><paper-icon-button icon="cancel"></paper-icon-button><a target="_blank">loading...</a></li>
+            <li class="list-group-item" uib-tooltip="Loading..."><paper-icon-button icon="cancel"></paper-icon-button><a target="_blank">loading...</a></li>
+        </ul>
+        <ul class="list-group" ng-if="!usefulLinksCtrl.loading">
             <li class="list-group-item" ng-repeat="link in usefulLinksCtrl.links | filter:usefulLinksCtrl.filter"><paper-icon-button icon="cancel" ng-click="usefulLinksCtrl.deleteLink(link)"></paper-icon-button><a target="_blank" ng-href="{{ link.href }}">{{ link.name }}</a></li>
         </ul>
         <div class="row">

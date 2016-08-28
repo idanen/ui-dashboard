@@ -3,19 +3,31 @@
 
     angular.module('ci-site').controller('UsefulLinksCtrl', UsefulLinksController);
 
-    UsefulLinksController.$inject = ['UsefulLinksService'];
+    UsefulLinksController.$inject = ['usefulLinksService'];
 
-    function UsefulLinksController(UsefulLinksService) {
-        this.links = UsefulLinksService.getLinks();
+    function UsefulLinksController(usefulLinksService) {
+        this.usefulLinksService = usefulLinksService;
+
+        this.loading = false;
+        this.links = [];
         this.newLink = {
             name: '',
             href: ''
         };
 
         this.filter = '';
+
+        this.loadLinks();
     }
 
     UsefulLinksController.prototype = {
+        loadLinks: function () {
+            this.loading = true;
+            this.links = this.usefulLinksService.getLinks();
+
+            this.links.$loaded()
+                .finally(() => this.loading = false);
+        },
         add: function () {
             if (this.newLink) {
                 this.links.$add(this.newLink).then((function () {

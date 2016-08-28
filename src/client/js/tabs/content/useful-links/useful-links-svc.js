@@ -1,7 +1,7 @@
 (function (angular) {
     'use strict';
 
-    angular.module('ci-site').service('UsefulLinksService', UsefulLinksService);
+    angular.module('ci-site').service('usefulLinksService', UsefulLinksService);
 
     UsefulLinksService.$inject = ['FirebaseService'];
 
