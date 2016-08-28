@@ -6,7 +6,7 @@
 
   configRoutes.$inject = ['$stateProvider', '$locationProvider', '$urlRouterProvider', 'laddaProvider'];
   function configRoutes($stateProvider, $locationProvider, $urlRouterProvider, laddaProvider) {
-    var home = {
+    const home = {
           name: 'home',
           url: '/',
           templateUrl: '/js/ui-facade/ui-facade-tmpl.html',
@@ -74,7 +74,7 @@
         stability = {
           name: 'stability',
           parent: home,
-          url: '^/stability/:group/:buildName/:buildNumber',
+          url: '^/analysis/:group/:buildName/:buildNumber',
           templateUrl: '/js/tabs/content/stability/stability-tmpl.html',
           controller: 'CIStabilityCtrl',
           controllerAs: '$ctrl',
