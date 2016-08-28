@@ -244,6 +244,7 @@ module.exports = (function () {
               $push: {
                 buildId: '$buildId',
                 testFailed: '$testFailed',
+                category: '$category',
                 markedUnstable: '$markedUnstable'
               }
             },
@@ -570,6 +571,7 @@ module.exports = (function () {
             $push: {
               buildId: '$buildId',
               testFailed: '$testFailed',
+              category: '$category',
               markedUnstable: '$markedUnstable'
             }
           },

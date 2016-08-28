@@ -146,12 +146,15 @@
     },
     exportCSV: function () {
       let csvPrefix = `data:text/csv;charset=utf-8,`,
-          headers = `testClassName,testName,faildCount,faildBuilds`;
+          headers = `Class Name,Test Name,Failed Count,Failed Builds,Profile`;
 
       let csvData = this.testWraps.reduce((data, testWrap) => {
         let rows = testWrap.tests.reduce((rows, test) => {
-          let failedBuilds = _.map(_.filter(test.stabilityResult.trends, {testFailed: true}), 'buildId').join(' ');
-          return `${rows}\n${test.testClassName},${test.testName},${test.stabilityResult.failed},${failedBuilds}`;
+          const profileRegex = /\/(\w+)$/i;
+          let failedBuilds = _.map(_.filter(test.stabilityResult.trends, {testFailed: true}), 'buildId').join(' '),
+              profile = profileRegex.test(test.stabilityResult.category) ? profileRegex.exec(test.stabilityResult.category) : '';
+
+          return `${rows}\n${test.testClassName},${test.testName},${test.stabilityResult.failed},${failedBuilds},${profile}`;
         }, '');
 
         return `${data}${rows}`;
