@@ -23,6 +23,7 @@
                         selected="$ctrl.build"
                         on-change="$ctrl.selectionChanged(prop, value)"></build-selector>
       </div>
+      <div class="col-md-3">{{$ctrl.branchOfSelected}}</div>
     </fieldset>
     <fieldset class="form-group">
       <label class="col-md-3">Previous builds count <iron-icon icon="info-outline" uib-tooltip="Calculate stability of the last {{$ctrl.buildsCount}} builds (NOTE: that this is not related to the selected build id below)"></iron-icon></label>

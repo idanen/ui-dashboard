@@ -42,7 +42,7 @@
       this.appendToTests(this.reFormatTestsStructure(testsFromState));
     }
 
-    $q.all(this.availableBuilds.masters.$loaded(), this.availableBuilds.teams.$loaded())
+    $q.all([this.availableBuilds.masters.$loaded(), this.availableBuilds.teams.$loaded()])
         .then(this.selectDefaultOptions.bind(this));
         //.then(this.fetchFailedOfBuild.bind(this));
   }
@@ -93,14 +93,16 @@
     },
     selectDefaultOptions: function () {
       if (this.build) {
-        let selectedBuild = _.find(this.availableBuilds[this.build.group], this.build.name);
+        let selectedBuild = _.find(this.availableBuilds[this.build.group], {$id: this.build.name});
         if (selectedBuild && !this.build.number) {
           this.build.number = selectedBuild.builds[0].buildId;
         }
+        this.selectedBuildsBranch();
       }
     },
     selectionChanged: function (prop, value) {
       this.build[prop] = value;
+      this.selectedBuildsBranch();
       //if (prop === 'number') {
       //  this.fetchFailedOfBuild();
       //}
@@ -136,7 +138,7 @@
     fetchStability: function () {
       this.goLoading = true;
       this.testWraps = [];
-      return this.buildTestsService.getStability(this.build.name, this.build.number, this.buildsCount, this.selectedBuildsBranch())
+      return this.buildTestsService.getStability(this.build.name, this.build.number, this.buildsCount, this.branchOfSelected)
           .then(this.renderResults.bind(this))
           .finally(() => this.goLoading = false);
     },
@@ -172,7 +174,8 @@
     selectedBuildsBranch: function () {
       let selectedBuild = _.find(this.availableBuilds[this.build.group], {$id: this.build.name});
       if (selectedBuild) {
-        return selectedBuild.builds[this.build.number].branchName;
+        this.branchOfSelected = selectedBuild.builds[this.build.number].branchName;
+        return this.branchOfSelected;
       }
       return null;
     },
