@@ -152,9 +152,9 @@
 
       let csvData = this.testWraps.reduce((data, testWrap) => {
         let rows = testWrap.tests.reduce((rows, test) => {
-          const profileRegex = /\/(\w+)$/i;
+          const profileRegex = /\/([\w\-]+)$/i;
           let failedBuilds = _.map(_.filter(test.stabilityResult.trends, {testFailed: true}), 'buildId').join(' '),
-              profile = profileRegex.test(test.stabilityResult.category) ? profileRegex.exec(test.stabilityResult.category) : '';
+              profile = profileRegex.test(test.category) ? profileRegex.exec(test.category)[1] : '';
 
           return `${rows}\n${test.testClassName},${test.testName},${test.stabilityResult.failed},${failedBuilds},${profile}`;
         }, '');
