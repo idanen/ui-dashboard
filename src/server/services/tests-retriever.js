@@ -137,6 +137,7 @@ module.exports = (function () {
           {
             $match: {
               jobName: buildName,
+              buildId: {$lte: startFromNumber},
               branchName: branchName
             }
           },
