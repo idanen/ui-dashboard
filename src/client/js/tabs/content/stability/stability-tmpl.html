@@ -61,12 +61,18 @@
     </fieldset>
   </form>
 
-  <div class="row" ng-if="$ctrl.testWraps.length">
+  <div class="row">
     <div class="col-xs-12">
-      <paper-button raised ng-click="$ctrl.exportCSV()">
+      <paper-button raised ng-click="$ctrl.exportCSV()" ng-if="$ctrl.testWraps.length">
         <iron-icon icon="file-download"></iron-icon>
         <span>Export CSV</span>
       </paper-button>
+      <a ng-href="{{ $ctrl.buildJenkinsLink() }}" target="_blank">
+        <paper-button raised>
+          <iron-icon icon="open-in-new"></iron-icon>
+          <span>Open in Jenkins</span>
+        </paper-button>
+      </a>
     </div>
   </div>
   <div class="row" ng-repeat="testWrap in $ctrl.testWraps | orderByFailed:true | stabilityFilter:$ctrl.filterFailedPercent | filter:$ctrl.filterTestName track by testWrap.testClassName">

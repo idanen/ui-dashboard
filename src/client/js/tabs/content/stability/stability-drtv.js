@@ -8,8 +8,8 @@
         templateUrl: 'js/tabs/content/stability/stability-tmpl.html'
       });
 
-  CIStabilityController.$inject = ['$q', '$stateParams', 'buildTestsService', 'ciStatusService', 'build', 'downloadService', '$filter', 'DEFAULT_JOB_NAME', 'GENERIC_JOB_NAME', 'DEFAULT_BUILDS_COUNT'];
-  function CIStabilityController($q, $stateParams, buildTestsService, ciStatusService, build, downloadService, $filter, DEFAULT_JOB_NAME, GENERIC_JOB_NAME, DEFAULT_BUILDS_COUNT) {
+  CIStabilityController.$inject = ['$q', '$stateParams', 'buildTestsService', 'ciStatusService', 'build', 'downloadService', '$filter', 'DEFAULT_JOB_NAME', 'GENERIC_JOB_NAME', 'DEFAULT_BUILDS_COUNT', 'JENKINS_BASE_URL'];
+  function CIStabilityController($q, $stateParams, buildTestsService, ciStatusService, build, downloadService, $filter, DEFAULT_JOB_NAME, GENERIC_JOB_NAME, DEFAULT_BUILDS_COUNT, JENKINS_BASE_URL) {
     this.buildTestsService = buildTestsService;
     this.ciStatusService = ciStatusService;
     this.downloadService = downloadService;
@@ -17,6 +17,7 @@
     this.DEFAULT_JOB_NAME = DEFAULT_JOB_NAME;
     this.GENERIC_JOB_NAME = GENERIC_JOB_NAME;
     this.buildsCount = DEFAULT_BUILDS_COUNT;
+    this.JENKINS_BASE_URL = JENKINS_BASE_URL;
     this.filterFailedPercent = 0.0;
     this.tests = [];
     this.stability = {};
@@ -106,6 +107,10 @@
       //if (prop === 'number') {
       //  this.fetchFailedOfBuild();
       //}
+    },
+    buildJenkinsLink: function () {
+      let buildName = this.$filter('releasever')(this.build.name);
+      return `${this.JENKINS_BASE_URL}${buildName}/${this.build.number}`;
     },
     buildsCountUpdated: function (value) {
       this.buildsCount = value;
