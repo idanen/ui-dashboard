@@ -10,7 +10,7 @@
           buildsHidden: '<?',
           group: '<?',
           jobsLimit: '<?',
-          changeLimit: '&'
+          limitChanged: '&'
         }
       });
 
@@ -104,6 +104,7 @@
         this.buildResults.$destroy();
       }
       this.buildResults = this.ciStatusService.getJobBuilds(this.buildName, this.group, this.jobsLimit);
+      this.limitChanged({$event: this.jobsLimit});
     }
   };
 }());

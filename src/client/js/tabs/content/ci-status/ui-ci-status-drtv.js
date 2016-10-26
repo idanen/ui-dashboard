@@ -19,7 +19,6 @@
             return {
                 restrict: 'E',
                 controller: 'ciStatusController',
-                // If you change this, be sure to change also in the controller where we $bind to the controller's property
                 controllerAs: 'ciJobsCtrl',
                 templateUrl: 'js/tabs/content/ci-status/ui-ci-status-tmpl.html'
             };
@@ -56,11 +55,18 @@
 
     CiStatusController.prototype = {
       filterJob: function (group, jobId) {
-        this.filtered[group][jobId] = !this.filtered[group][jobId];
+        if (!this.filtered[group][jobId]) {
+          this.filtered[group][jobId] = {
+            show: true,
+            limit: 3
+          };
+        } else {
+          this.filtered[group][jobId].show = !this.filtered[group][jobId].show;
+        }
         this.saveConfigChanges();
       },
       unfilter: function (group, jobId) {
-        this.filtered[group][jobId] = false;
+        this.filtered[group][jobId].show = false;
         this.saveConfigChanges();
       },
       clearAll: function (group) {
@@ -108,14 +114,25 @@
         this.filterConfig.teams = this.filtered.teams;
         this.filterConfig.$save();
       },
-        addNewBuildNumber: function () {
-          this.ciStatusService.addBuildNumber(this.newBuild.name, this.newBuild.number, 'masters').then(() => this.newBuild = {});
-        },
-        toggleLegend: function () {
-          this.legendShown = !this.legendShown;
-        },
-        setNewBuildName: function (value) {
-          this.newBuild.name = value;
+      limitChanged: function ($event, group, jobId) {
+        if (!this.filtered[group][jobId]) {
+          this.filtered[group][jobId] = {
+            limit: $event,
+            show: true
+          };
+        } else {
+          this.filtered[group][jobId].limit = $event;
         }
+        this.saveConfigChanges();
+      },
+      addNewBuildNumber: function () {
+        this.ciStatusService.addBuildNumber(this.newBuild.name, this.newBuild.number, 'masters').then(() => this.newBuild = {});
+      },
+      toggleLegend: function () {
+        this.legendShown = !this.legendShown;
+      },
+      setNewBuildName: function (value) {
+        this.newBuild.name = value;
+      }
     };
 })();
