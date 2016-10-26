@@ -10,7 +10,9 @@
           buildsHidden: '<?',
           group: '<?',
           jobsLimit: '<?',
-          limitChanged: '&'
+          branchName: '<?',
+          limitChanged: '&',
+          branchNameChanged: '&'
         }
       });
 
@@ -39,7 +41,7 @@
   BuildStatusController.prototype = {
     $onInit: function () {
       this.build = this.ciStatusService.getJob(this.buildName, this.group);
-      this.buildResults = this.ciStatusService.getJobBuilds(this.buildName, this.group, this.jobsLimit);
+      this.buildResults = this.ciStatusService.getJobBuilds(this.buildName, this.group, this.branchName, this.jobsLimit);
 
       this.build.$loaded()
           .then((job) => this.determineInitialFreezeState(job));
@@ -99,11 +101,27 @@
         }
       }
     },
+    toggleBranchNameEdit: function () {
+      this.editingBranchName = !this.editingBranchName;
+    },
+    reFetch: function () {
+      if (this.buildResults && this.buildResults.$destroy) {
+        this.buildResults.$destroy();
+      }
+      this.buildResults = this.ciStatusService.getJobBuilds(this.buildName, this.group, this.branchName, this.jobsLimit);
+      this.editingBranchName = false;
+    },
+    onBranchNameChange: function () {
+      if (this.buildResults && this.buildResults.$destroy) {
+        this.buildResults.$destroy();
+      }
+      this.buildResults = this.ciStatusService.getJobBuilds(this.buildName, this.group, this.branchName, this.jobsLimit);
+    },
     onLimitChange: function () {
       if (this.buildResults && this.buildResults.$destroy) {
         this.buildResults.$destroy();
       }
-      this.buildResults = this.ciStatusService.getJobBuilds(this.buildName, this.group, this.jobsLimit);
+      this.buildResults = this.ciStatusService.getJobBuilds(this.buildName, this.group, this.branchName, this.jobsLimit);
       this.limitChanged({$event: this.jobsLimit});
     }
   };

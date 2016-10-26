@@ -1,10 +1,21 @@
 <div class="build-status-wrap" ng-class="{'build-status-close': $ctrl.buildsHidden}">
   <div class="build-status-header">
+    <div class="row" ng-show="$ctrl.editingBranchName">
+      <div class="col-xs-6">
+        <paper-input-container>
+          <label>Branch Name</label>
+          <input is="iron-input" ng-model="$ctrl.branchName">
+        </paper-input-container>
+      </div>
+      <div class="col-xs-6">
+        <paper-button raised ng-click="$ctrl.reFetch()">Go</paper-button>
+      </div>
+    </div>
     <div class="row">
       <div class="col-sm-4 build-name-column">
         <paper-icon-button icon="unfold-less" ng-click="$ctrl.buildsHiddenToggle()" ng-show="!$ctrl.buildsHidden"></paper-icon-button>
         <paper-icon-button icon="unfold-more" ng-click="$ctrl.buildsHiddenToggle()" ng-show="$ctrl.buildsHidden"></paper-icon-button>
-        <strong uib-tooltip="{{ $ctrl.build.$id | releasever }}"> {{ $ctrl.build.alias || $ctrl.build.$id | releasever }}</strong>
+        <strong uib-tooltip="{{ $ctrl.build.$id | releasever }}" ng-click="$ctrl.toggleBranchNameEdit()"> {{ $ctrl.build.alias || $ctrl.build.$id | releasever }}<em ng-click="$ctrl.toggleBranchNameEdit()"> {{ $ctrl.branchName }}</em></strong>
       </div>
       <div class="col-sm-4">
         <iron-icon class="job-result-icon" icon="{{ $ctrl.resultToIconName($ctrl.build.result) }}"
@@ -46,7 +57,7 @@
     </div>
   </div>
   <div class="build-status-rows" ng-if="!$ctrl.loadingBuildResults">
-    <div class="row builds-group slide-in" ng-repeat="build in $ctrl.buildResults | orderBy:'$id':true track by $index">
+    <div class="row builds-group slide-in" ng-repeat="build in $ctrl.buildResults | orderBy:'$id':true track by build.$id">
       <div class="col-sm-4">
         <a ng-href="{{ $ctrl.buildCompareLink(build.$id) }}" uib-tooltip="Compare this build to another">{{ build.$id }}</a>
         <a ng-href="{{ $ctrl.buildJenkinsLink(build.$id) }}" uib-tooltip="Open in Jenkins" target="_blank">

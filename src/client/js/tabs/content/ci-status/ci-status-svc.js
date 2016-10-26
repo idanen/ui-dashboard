@@ -52,11 +52,25 @@
 
             return this.$firebaseObject(this._mastersRef.child(jobId));
         },
-        getJobBuilds: function (jobId, group = 'masters', limit = 10) {
+        getJobBuilds: function (jobId, group = 'masters', branchName = '', limit = 10) {
             var startRef = this._getRef(jobId, group);
 
+            if (branchName) {
+              return this.$firebaseArray(
+                  startRef
+                      .child('builds')
+                      .orderByChild('branchName')
+                      .equalTo(branchName)
+                      .limitToLast(limit)
+              );
+            }
             if (limit && angular.isNumber(limit)) {
-                return this.$firebaseArray(startRef.child('builds').orderByKey().limitToLast(limit));
+                return this.$firebaseArray(
+                    startRef
+                        .child('builds')
+                        .orderByKey()
+                        .limitToLast(limit)
+                );
             }
 
             return this.$firebaseArray(startRef.child('builds'));
