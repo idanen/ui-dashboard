@@ -10,7 +10,7 @@
     this.globalConfigRef = Ref.child('config/global');
     this.configsRef = Ref.child('config');
     this.$q = $q;
-    this.configsChangesListeners = [];
+    this._configsChangesListeners = [];
 
     $firebaseAuth().$onAuthStateChanged((authState) => {
       if (authState) {
@@ -26,7 +26,7 @@
 
   UserConfigs.prototype = {
     getGlobalConfig: function (configKey) {
-      return this._getConfig(configKey, 'user');
+      return this._getConfig(configKey);
     },
     getUserConfig: function (configKey) {
       return this._getConfig(configKey, 'user');
@@ -46,14 +46,17 @@
         return this.$firebaseObject(ref);
       }
 
-      if (this.configsRef) {
-        return this.$firebaseObject(this.configsRef.child(configKey));
+      if (ref) {
+        return this.$firebaseObject(ref.child(configKey));
       }
 
       return null;
     },
     registerForConfigsChanges: function (listener) {
-      this.configsChangesListeners.push(listener);
+      if (_.isFunction(listener)) {
+        this._configsChangesListeners.push(listener);
+        listener(this.userId);
+      }
     },
     getUnboundConfig: function (configKey) {
       if (configKey) {
@@ -61,22 +64,18 @@
             this.globalConfigRef
                 .child(configKey)
                 .once('value')
-                .then(function (snap) {
-                  return snap.val();
-                })
+                .then(snap => snap.val())
         );
       }
 
       return this.$q.resolve(
           this.globalConfigRef
               .once('value')
-              .then(function (snap) {
-                return snap.val();
-              })
+              .then(snap => snap.val())
       );
     },
     publishConfigsChanged: function () {
-      this.configsChangesListeners.forEach((listener) => {
+      this._configsChangesListeners.forEach((listener) => {
         if (_.isFunction(listener)) {
           listener(this.userId);
         }
