@@ -133,6 +133,13 @@
       );
     },
 
+    /**
+     * Logs a user in
+     * @param {string} provider The method to use to log the user in
+     * @param {string} [email] The user's email. Required only when logging in with `password`.
+     * @param {string} [password] The user's password. Required only when logging in with `password`.
+     * @returns {Promise<Object>} A promise with the logged in user
+     */
     login: function (provider, email, password) {
       var loginPromise;
       switch (provider) {
@@ -152,43 +159,56 @@
       }
 
       return loginPromise
-          .then(this.saveUser.bind(this))
+          .then(authData => this.getUser(authData.uid))
           .catch(error => console.error(error));
     },
 
+    /**
+     * Signs up a new user
+     * @param {string} [displayName] User's name. Required only when logging in with `password`.
+     * @param {string} [email] User's email address. Required only when logging in with `password`.
+     * @param {string} [password] User's password. Required only when logging in with `password`.
+     * @param {string} [providerType='password'] Sign up method. Available values are 'password' or 'google'
+     * @returns {*|Promise<Object>} A promise with the newly saved user.
+     * @throws When `providerType` is `password` and one of the inputs is illegal or a signed up user is currently logged in
+     */
     signUp: function (displayName, email, password, providerType = 'password') {
-      if (!/@hpe\.com$/.test(email)) {
-        throw new Error(`You can login with an HPE email only (tried "${email}")`);
-      }
-      if (password.length < 6) {
-        throw new Error(`Password should be at least 6 characters`);
-      }
-      if (this._currentUser && !this._currentUser.anonymous) {
-        throw new Error('A logged in user tries to sign up');
-      }
-
-      if (providerType === 'password') {
-        if (this._currentUser && this._currentUser.anonymous) {
-          let credential = this.$window.firebase.auth.EmailAuthProvider.credential(email, password);
-          return this.authObj.$getAuth().link(credential)
-              .then(authData => this.saveUser(authData, displayName));
-        } else {
-          return this.authObj.$createUserWithEmailAndPassword(email, password)
-              .then(authData => this.saveUser(authData, displayName));
-        }
-      } else if (providerType === 'google') {
+      if (providerType === 'google') {
         let googleProvider = this.createGoogleProvider();
 
         if (this._currentUser && this._currentUser.anonymous) {
           return this.authObj.$getAuth().linkWithPopup(googleProvider)
               .then(this.saveUser.bind(this));
-        } else {
-          return this.authObj.$signInWithPopup(googleProvider)
-              .then(this.saveUser.bind(this));
         }
+        return this.authObj.$signInWithPopup(googleProvider)
+            .then(this.saveUser.bind(this));
+      }
+
+      if (providerType === 'password') {
+        if (!/@hpe\.com$/.test(email)) {
+          throw new Error(`You can login with an HPE email only (tried "${email}")`);
+        }
+        if (password.length < 6) {
+          throw new Error(`Password should be at least 6 characters`);
+        }
+        if (this._currentUser && !this._currentUser.anonymous) {
+          throw new Error('A logged in user tries to sign up');
+        }
+
+        if (this._currentUser && this._currentUser.anonymous) {
+          let credential = this.$window.firebase.auth.EmailAuthProvider.credential(email, password);
+          return this.authObj.$getAuth().link(credential)
+              .then(authData => this.saveUser(authData, displayName));
+        }
+        return this.authObj.$createUserWithEmailAndPassword(email, password)
+            .then(authData => this.saveUser(authData, displayName));
       }
     },
 
+    /**
+     * Helper method that creates the provider we need to log a user in using `GoogleAuthProvider`
+     * @returns {firebase.auth.GoogleAuthProvider} A google auth provider
+     */
     createGoogleProvider: function () {
       let googleProvider = new this.$window.firebase.auth.GoogleAuthProvider();
       this.GOOGLE_AUTH_SCOPES.forEach(scope => googleProvider.addScope(scope));
@@ -215,10 +235,24 @@
     /**
      * Gets user's data
      * @param {string} uid The user's identifier
-     * @returns {Object} User's data
+     * @returns {FirebaseObject} User's data
      */
     getUser: function (uid) {
       return this.$firebaseObject(this.usersRef.child(uid));
+    },
+
+    /**
+     * Gets user's data asynchronously
+     * @param {string} uid The user's identifier
+     * @returns {Promise<Object>} A promise with the requested user
+     */
+    getUnboundUser: function (uid) {
+      return this.$q.resolve(
+          this.usersRef
+              .child(uid)
+              .once('value')
+              .then(snap => snap.val())
+      );
     },
     onAdminChange: function (listener) {
       this._adminListeners.push(listener);
