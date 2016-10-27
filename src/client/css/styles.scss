@@ -122,9 +122,12 @@ body {
     height: auto;
 }
 
+.btn-link {
+  cursor: pointer;
+}
+
 .navbar {
-  a,
-  .btn-link {
+  a {
     cursor: pointer;
   }
 }
