@@ -4,14 +4,15 @@
   angular.module('ci-site')
     .service('userService', UserService);
 
-  UserService.$inject = ['Ref', '$q', '$window', '$firebaseObject', '$firebaseAuth', 'mockData'];
-  function UserService(Ref, $q, $window, $firebaseObject, $firebaseAuth, mockData) {
+  UserService.$inject = ['Ref', '$q', '$window', '$firebaseObject', '$firebaseAuth', 'mockData', 'GOOGLE_AUTH_SCOPES'];
+  function UserService(Ref, $q, $window, $firebaseObject, $firebaseAuth, mockData, GOOGLE_AUTH_SCOPES) {
     this.usersRef = Ref.child('users');
     this.$q = $q;
     this.$window = $window;
     this.$firebaseObject = $firebaseObject;
     this.authObj = $firebaseAuth();
     this.mockData = mockData;
+    this.GOOGLE_AUTH_SCOPES = GOOGLE_AUTH_SCOPES;
 
     this._currentUser = null;
     this._admin = false;
@@ -24,19 +25,23 @@
       if (authData) {
         // Admin state
         adminPromise = this.$q.resolve(
-            Ref.child('admins').child(authData.uid).once('value')
+            Ref.child('admins')
+              .child(authData.uid)
+              .once('value')
               .then(snap => this._admin = snap.exists())
         );
 
         // Save user
-        userPromise = this.usersRef
-            .child(authData.uid)
-            .once('value')
-            .then(user => this._currentUser = user.val());
+        userPromise = this.$q.resolve(
+            this.usersRef
+              .child(authData.uid)
+              .once('value')
+              .then(user => this._currentUser = user.val())
+        );
       } else {
         // Admin state
         this._admin = false;
-        adminPromise = this.$q.when(this._admin);
+        adminPromise = this.$q.resolve(this._admin);
 
         // Current user
         this._currentUser = null;
@@ -64,26 +69,26 @@
             .orderByChild('email')
             .equalTo(email)
             .once('value')
-            .then(function (snap) {
-              return snap.exists();
-            })
+            .then(snap => snap.exists())
       );
     },
     /**
      * Saves an authenticated user
      * @param {Object} authData The authenticated user's data
+     * @param {string} [displayName] The name to save for the user. This should be used when signing up a user with email and password (other services will provide `displayName`s)
      * @returns {Promise} A promise which resolves with user's authentication data
      */
-    saveUser: function (authData) {
+    saveUser: function (authData, displayName) {
       const userId = authData.uid,
             profile = authData.providerData[0],
             generatedPhotoURL = profile.email ? this.mockData.getImageUrl(profile.email) : this.mockData.getImageUrl(authData.uid);
       let toSave = {
         uid: userId,
         email: profile.email,
-        displayName: profile.displayName || profile.email,
+        displayName: profile.displayName || displayName || profile.email,
         // photoURL: profile.photoURL || `https://secure.gravatar.com/avatar/${this.$window.escape(this.$window.btoa(profile.email))}?d=retro`
-        photoURL: profile.photoURL || generatedPhotoURL
+        photoURL: profile.photoURL || generatedPhotoURL,
+        anonymous: authData.isAnonymous
       };
 
       return this.$q((resolve, reject) => {
@@ -98,6 +103,11 @@
           if (!committed) {
             // TODO: decide what to do when user already exists.
             console.log(`User with uid "${authData.uid}" already exists`);
+            resolve(
+                this.usersRef
+                    .child(authData.uid)
+                    .update(toSave)
+            );
           }
           resolve(authData);
         });
@@ -119,8 +129,71 @@
               .child(uid)
               .child('anonymous')
               .once('value')
-              .then(snap => snap.exists())
+              .then(snap => snap.exists() && snap.val())
       );
+    },
+
+    login: function (provider, email, password) {
+      var loginPromise;
+      switch (provider) {
+        case 'google':
+          loginPromise = this.authObj.$signInWithPopup(this.createGoogleProvider());
+          break;
+          // case 'facebook':
+          // case 'twitter':
+          //   loginPromise = this.authObj.$signInWithPopup(provider);
+          //   break;
+        case 'password':
+          loginPromise = this.authObj.$signInWithEmailAndPassword(email, password);
+          break;
+        default:
+          loginPromise = this.authObj.$signInAnonymously();
+          break;
+      }
+
+      return loginPromise
+          .then(this.saveUser.bind(this))
+          .catch(error => console.error(error));
+    },
+
+    signUp: function (displayName, email, password, providerType = 'password') {
+      if (!/@hpe\.com$/.test(email)) {
+        throw new Error(`You can login with an HPE email only (tried "${email}")`);
+      }
+      if (password.length < 6) {
+        throw new Error(`Password should be at least 6 characters`);
+      }
+      if (this._currentUser && !this._currentUser.anonymous) {
+        throw new Error('A logged in user tries to sign up');
+      }
+
+      if (providerType === 'password') {
+        if (this._currentUser && this._currentUser.anonymous) {
+          let credential = this.$window.firebase.auth.EmailAuthProvider.credential(email, password);
+          return this.authObj.$getAuth().link(credential)
+              .then(authData => this.saveUser(authData, displayName));
+        } else {
+          return this.authObj.$createUserWithEmailAndPassword(email, password)
+              .then(authData => this.saveUser(authData, displayName));
+        }
+      } else if (providerType === 'google') {
+        let googleProvider = this.createGoogleProvider();
+
+        if (this._currentUser && this._currentUser.anonymous) {
+          return this.authObj.$getAuth().linkWithPopup(googleProvider)
+              .then(this.saveUser.bind(this));
+        } else {
+          return this.authObj.$signInWithPopup(googleProvider)
+              .then(this.saveUser.bind(this));
+        }
+      }
+    },
+
+    createGoogleProvider: function () {
+      let googleProvider = new this.$window.firebase.auth.GoogleAuthProvider();
+      this.GOOGLE_AUTH_SCOPES.forEach(scope => googleProvider.addScope(scope));
+
+      return googleProvider;
     },
 
     getCurrentUser: function () {
