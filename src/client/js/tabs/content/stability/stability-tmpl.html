@@ -27,11 +27,22 @@
     </fieldset>
     <fieldset class="form-group">
       <label class="col-md-3">Previous builds count <iron-icon icon="info-outline" uib-tooltip="Calculate stability of the last {{$ctrl.buildsCount}} builds (NOTE: that this is not related to the selected build id below)"></iron-icon></label>
-      <div class="col-md-6">
-        <paper-slider class="paper-slider" pin min="10" max="50" bind-from="$ctrl.buildsCount" on-update="$ctrl.buildsCountUpdated(value)"></paper-slider>
+      <div class="col-md-5">
+        <paper-slider class="paper-slider" ng-if="!$ctrl.manualBuildsCount" pin min="10" max="50" bind-from="$ctrl.buildsCount" on-update="$ctrl.buildsCountUpdated(value)"></paper-slider>
       </div>
-      <div class="col-md-1">
-        <input class="form-control" type="number" ng-model="$ctrl.buildsCount">
+      <div class="col-md-2">
+        <paper-input-container>
+          <label>Builds count</label>
+          <input is="iron-input" type="number" ng-model="$ctrl.buildsCount">
+        </paper-input-container>
+      </div>
+      <div class="col-md-2">
+        <paper-button raised ng-show="$ctrl.manualBuildsCount">
+          <iron-icon icon="check" ng-click="$ctrl.manualBuildsCount = false"></iron-icon>
+        </paper-button>
+        <paper-button raised ng-hide="$ctrl.manualBuildsCount">
+          <iron-icon icon="create" ng-click="$ctrl.manualBuildsCount = true"></iron-icon>
+        </paper-button>
       </div>
     </fieldset>
     <div class="row">
