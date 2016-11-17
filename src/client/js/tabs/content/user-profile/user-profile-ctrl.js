@@ -21,7 +21,7 @@
       },
       {
         name: 'Sign Up',
-        value: 'signup'
+        value: 'password'
       },
       {
         name: 'Log In with Google',
@@ -45,15 +45,31 @@
   UserConfigsController.prototype = {
     login: function () {
       console.log('logging in');
+      return this.userService.login('password', this.email, this.password)
+          .then(this.closeLogin.bind(this));
     },
-    loginWithProvider: function () {
-      console.log('logging in with provider');
+    loginWithProvider: function (provider = 'google') {
+      if (this.user && !this.isAnon) {
+        return;
+      }
+
+      if (!this.user || this.user && this.isAnon) {
+        console.log('logging in with provider');
+        this.logout();
+        return this.userService.login(provider)
+            .then(this.closeLogin.bind(this));
+      }
+      console.log('signing up with provider');
+      return this.signup();
     },
     signup: function () {
       console.log('signing up');
+      return this.userService.signUp(this.displayName, this.email, this.password, this.selectedLoginOption)
+          .then(this.closeLogin.bind(this));
     },
     logout: function () {
       this.authService.logout();
+      this.openLogin();
     },
     openLogin: function () {
       this.loginOpen = true;
