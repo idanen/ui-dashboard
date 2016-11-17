@@ -60,7 +60,7 @@
                   startRef
                       .child('builds')
                       .orderByChild('branchName')
-                      .equalTo(branchName)
+                      .startAt(branchName)
                       .limitToLast(limit)
               );
             }

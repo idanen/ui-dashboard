@@ -58,12 +58,13 @@
   </div>
   <div class="build-status-rows" ng-if="!$ctrl.loadingBuildResults">
     <div class="row builds-group slide-in" ng-repeat="build in $ctrl.buildResults | orderBy:'$id':true track by build.$id">
-      <div class="col-sm-4">
+      <div class="col-sm-4 build-description">
         <a ng-href="{{ $ctrl.buildCompareLink(build.$id) }}" uib-tooltip="Compare this build to another">{{ build.$id }}</a>
         <a ng-href="{{ $ctrl.buildJenkinsLink(build.$id) }}" uib-tooltip="Open in Jenkins" target="_blank">
           <iron-icon icon="open-in-new"></iron-icon>
         </a>
-        <em>{{ build.branchName }}</em>
+        <em class="branch-name">{{ build.branchName }}</iron-icon></em>
+        <paper-icon-button class="branch-name__filter" icon="filter-list" ng-click="$ctrl.setBranchFilter(build.branchName)"></paper-icon-button>
       </div>
       <div class="col-sm-4"><!-- ng-class="{'text-danger build-status-running-long': $ctrl.isBuildTooLong(build)}"> ** performs poorly ** -->
         <build-result result="build.result" show-label="true"></build-result>

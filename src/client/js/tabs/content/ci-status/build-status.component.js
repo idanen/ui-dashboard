@@ -111,6 +111,11 @@
       this.buildResults = this.ciStatusService.getJobBuilds(this.buildName, this.group, this.branchName, this.jobsLimit);
       this.editingBranchName = false;
     },
+    setBranchFilter: function (branchName) {
+      this.branchName = branchName;
+      this.reFetch();
+      this.branchNameChanged(this.branchName);
+    },
     onBranchNameChange: function () {
       if (this.buildResults && this.buildResults.$destroy) {
         this.buildResults.$destroy();
