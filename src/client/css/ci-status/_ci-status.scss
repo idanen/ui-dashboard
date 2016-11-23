@@ -1,4 +1,9 @@
 .ci-status {
+  .branch-name-filter-clear {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
   .build-description {
     position: relative;
     overflow: hidden;

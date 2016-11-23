@@ -61,6 +61,7 @@
                       .child('builds')
                       .orderByChild('branchName')
                       .startAt(branchName)
+                      .endAt(`${branchName}\uf8ff`)
                       .limitToLast(limit)
               );
             }

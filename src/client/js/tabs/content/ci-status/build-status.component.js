@@ -116,6 +116,11 @@
       this.reFetch();
       this.branchNameChanged(this.branchName);
     },
+    clearBranchFilter: function () {
+      this.branchName = '';
+      this.reFetch();
+      this.branchNameChanged(this.branchName);
+    },
     onBranchNameChange: function () {
       if (this.buildResults && this.buildResults.$destroy) {
         this.buildResults.$destroy();
