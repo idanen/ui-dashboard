@@ -1,4 +1,23 @@
 .ci-status {
+  .branch-name-filter-clear {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  .build-description {
+    position: relative;
+    overflow: hidden;
+    .branch-name__filter {
+      position: absolute;
+      right: -40px;
+      transition: transform 300ms ease-out;
+    }
+    &:hover {
+      .branch-name__filter {
+        transform: translate(-40px);
+      }
+    }
+  }
   .build-status-wrap {
     padding: 10px;
     box-shadow: 0 1px 5px rgba(0,0,0,.3);
