@@ -114,12 +114,12 @@
     setBranchFilter: function (branchName) {
       this.branchName = branchName;
       this.reFetch();
-      this.branchNameChanged(this.branchName);
+      this.branchNameChanged({$event: this.branchName});
     },
     clearBranchFilter: function () {
       this.branchName = '';
       this.reFetch();
-      this.branchNameChanged(this.branchName);
+      this.branchNameChanged({$event: this.branchName});
     },
     onBranchNameChange: function () {
       if (this.buildResults && this.buildResults.$destroy) {
