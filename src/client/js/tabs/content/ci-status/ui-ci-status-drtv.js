@@ -57,6 +57,7 @@
       filterJob: function (group, jobId) {
         if (!this.filtered[group][jobId]) {
           this.filtered[group][jobId] = {
+            branchFilter: '',
             show: true,
             limit: 3
           };
@@ -114,15 +115,15 @@
         this.filterConfig.teams = this.filtered.teams;
         this.filterConfig.$save();
       },
-      limitChanged: function ($event, group, jobId) {
+      filterConfigChanged: function ($event, group, jobId, configKey) {
         if (!this.filtered[group][jobId]) {
           this.filtered[group][jobId] = {
-            limit: $event,
-            show: true
+            branchFilter: '',
+            show: true,
+            limit: 3
           };
-        } else {
-          this.filtered[group][jobId].limit = $event;
         }
+        this.filtered[group][jobId][configKey] = $event;
         this.saveConfigChanges();
       },
       addNewBuildNumber: function () {
