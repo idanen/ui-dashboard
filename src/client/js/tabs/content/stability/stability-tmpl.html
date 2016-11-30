@@ -37,11 +37,11 @@
         </paper-input-container>
       </div>
       <div class="col-md-2">
-        <paper-button raised ng-show="$ctrl.manualBuildsCount">
-          <iron-icon icon="check" ng-click="$ctrl.manualBuildsCount = false"></iron-icon>
+        <paper-button raised ng-show="$ctrl.manualBuildsCount" ng-tap="$ctrl.toggleManualBuildsCount()">
+          <iron-icon icon="check"></iron-icon>
         </paper-button>
-        <paper-button raised ng-hide="$ctrl.manualBuildsCount">
-          <iron-icon icon="create" ng-click="$ctrl.manualBuildsCount = true"></iron-icon>
+        <paper-button raised ng-hide="$ctrl.manualBuildsCount" ng-tap="$ctrl.toggleManualBuildsCount()">
+          <iron-icon icon="create"></iron-icon>
         </paper-button>
       </div>
     </fieldset>

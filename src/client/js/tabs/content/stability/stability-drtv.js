@@ -115,6 +115,9 @@
     buildsCountUpdated: function (value) {
       this.buildsCount = value;
     },
+    toggleManualBuildsCount: function () {
+      this.manualBuildsCount = !this.manualBuildsCount;
+    },
     filterFailedPercentChanged: function (value) {
       this.filterFailedPercent = value;
     },

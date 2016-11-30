@@ -67,7 +67,7 @@
         this.saveConfigChanges();
       },
       unfilter: function (group, jobId) {
-        this.filtered[group][jobId].show = false;
+        this.filtered[group][jobId] = null;
         this.saveConfigChanges();
       },
       clearAll: function (group) {
