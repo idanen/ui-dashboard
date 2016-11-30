@@ -159,7 +159,7 @@
       }
 
       return loginPromise
-          .then(authData => this.getUser(authData.uid))
+          .then(authData => this.getUser(authData.user.uid))
           .catch(error => console.error(error));
     },
 

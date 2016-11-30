@@ -12,13 +12,17 @@ html {
  * This is added to support fixed navbar
  */
 body {
-  padding-top: $body-top-padding;
+  /*padding-top: $body-top-padding;*/
   padding-bottom: $body-bottom-padding;
   height: 100%;
 }
 
 .ui-facade {
   display: block;
+  height: 100%;
+}
+
+.main-panel-container {
   height: 100%;
 }
 
@@ -29,7 +33,8 @@ body {
   }
 }
 
-.container {
+.container,
+.container-fluid {
   height: 100%;
 }
 
@@ -132,6 +137,16 @@ body {
   }
 }
 
+paper-toolbar {
+  a,
+  a.btn-link {
+    color: white;
+    &:hover {
+      color: #ccc;
+    }
+  }
+}
+
 login-btn {
   .profile-image {
     margin: auto;
@@ -141,6 +156,9 @@ login-btn {
     margin-bottom: 8px;
     .btn-link:not(:first-of-type)::before {
       content: ' | ';
+      &:hover {
+        text-underline: none;
+      }
     }
   }
 }
