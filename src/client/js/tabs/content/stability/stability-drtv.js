@@ -181,7 +181,7 @@
     },
     selectedBuildsBranch: function () {
       let selectedBuild = _.find(this.availableBuilds[this.build.group], {$id: this.build.name});
-      if (selectedBuild) {
+      if (selectedBuild && selectedBuild.builds[this.build.number]) {
         this.branchOfSelected = selectedBuild.builds[this.build.number].branchName;
         return this.branchOfSelected;
       }
