@@ -129,7 +129,7 @@ module.exports = (function () {
         }
       ]);
     },
-    fetchStability: function (buildName, buildCount, startFromNumber, branchName) {
+    fetchStability: function (buildName, buildCount, startFromNumber, branchName, failedThresholdForInclusion) {
       // console.log('buildName: \"' + buildName + '", buildCount: ' + buildCount + ', tests: ', tests);
       var buildIdsRange = Promise.resolve(this._arrayWithReverse(buildCount, startFromNumber));
       if (branchName) {
@@ -171,10 +171,10 @@ module.exports = (function () {
       }
       return buildIdsRange.then(function (buildIds) {
         return this._promisize('aggregate', _buildStabilityAggregator(buildName, buildIds))
-            .then(this.fetchStabilitySuccessTests.bind(this, buildName, buildIds));
+            .then(this.fetchStabilitySuccessTests.bind(this, buildName, buildIds, failedThresholdForInclusion));
       }.bind(this));
     },
-    fetchStabilitySuccessTests: function (buildName, buildIdsRange, stabilityResults) {
+    fetchStabilitySuccessTests: function (buildName, buildIdsRange, failedThresholdForInclusion, stabilityResults) {
       var classesAndMethods, aggregations, filteredResults,
           buildsFailCount = {};
 
@@ -188,7 +188,7 @@ module.exports = (function () {
       }, buildsFailCount);
       // Filter builds with too many failures
       filteredResults = _.filter(stabilityResults, function (result) {
-        return buildsFailCount[result.tests[0].buildId] <= 100;
+        return buildsFailCount[result.tests[0].buildId] <= failedThresholdForInclusion || 100;
       });
 
       classesAndMethods = _.transform(filteredResults, function (result, value) {

@@ -91,12 +91,17 @@ module.exports = (function () {
       },
 
       getTestsStability: function (request, response) {
-        var branchName;
-        if (request.query && request.query.branchName) {
-          branchName = request.query.branchName;
+        var branchName, failedThresholdForInclusion;
+        if (request.query) {
+          if (request.query.branchName) {
+            branchName = request.query.branchName;
+          }
+          if (request.query.failedThreshold) {
+            failedThresholdForInclusion = request.query.failedThreshold;
+          }
         }
         return this._handleRequest(request, response, function (req) {
-          return this.testsRetriever.fetchStability(req.params.buildName, parseInt(req.params.buildCount, 10), parseInt(req.params.startFromNumber, 10), branchName)
+          return this.testsRetriever.fetchStability(req.params.buildName, parseInt(req.params.buildCount, 10), parseInt(req.params.startFromNumber, 10), branchName, failedThresholdForInclusion)
         }.bind(this));
       },
 
